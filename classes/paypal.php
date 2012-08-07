@@ -153,7 +153,10 @@ abstract class PayPal {
 		$request = Request::factory($this->api_url())
 			->client($client)
 			->method(Request::POST)
-			->body($post);
+			->body($post);              
+                
+                
+                
 		
 		try
 		{
@@ -165,7 +168,7 @@ abstract class PayPal {
 			$code 	= $e->getCode();
 			$error 	= $e->getMessage();
 
-			throw new Kohana_Exception('PayPal API request for :method failed: :error (:code)',
+			throw new PayPal_Exception('PayPal API request for :method failed: :error (:code)',
 				array(':method' => $method, ':error' => $error, ':code' => $code));
 		}
 
@@ -174,7 +177,7 @@ abstract class PayPal {
 
 		if ( ! isset($data['ACK']) OR strpos($data['ACK'], 'Success') === FALSE)
 		{
-			throw new Kohana_Exception('PayPal API request for :method failed: :error (:code)',
+			throw new PayPal_Exception('PayPal API request for :method failed: :error (:code)',
 				array(':method' => $method, ':error' => $data['L_LONGMESSAGE0'], ':code' => $data['L_ERRORCODE0']));
 		}
 
