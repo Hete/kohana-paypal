@@ -33,14 +33,15 @@ class PayPal_Authenticate extends PayPal {
 			// Add the default parameters
 			$params += $this->_default;
 		}
+                /*
 
 		if ( ! isset($params['AMT']))
 		{
 			throw new Kohana_Exception('You must provide a :param parameter for :method',
 				array(':param' => 'AMT', ':method' => __METHOD__));
 		}
-
-		return $this->_post('SetExpressCheckout', $params);
+*/
+		return $this->_post('SetAuthFlowParam', $params);
 	}
 
 } // End PayPal_ExpressCheckout
