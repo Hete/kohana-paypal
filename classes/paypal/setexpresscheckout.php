@@ -9,11 +9,11 @@
  * @copyright  (c) 2009 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class PayPal_Authenticate extends PayPal {
+class PayPal_SetExpressCheckout extends PayPal {
 
 	// Default parameters
 	protected $_default = array(
-		'METHOD' => 'SetAuthFlowParam',
+		'PAYMENTACTION' => 'Sale',
 	);
 
 	/**
@@ -33,15 +33,14 @@ class PayPal_Authenticate extends PayPal {
 			// Add the default parameters
 			$params += $this->_default;
 		}
-                /*
 
 		if ( ! isset($params['AMT']))
 		{
-			throw new Kohana_Exception('You must provide a :param parameter for :method',
+			throw new PayPal_Exception('You must provide a :param parameter for :method',
 				array(':param' => 'AMT', ':method' => __METHOD__));
 		}
-*/
-		return $this->_post('SetAuthFlowParam', $params);
+
+		return $this->_post('SetExpressCheckout', $params);
 	}
 
 } // End PayPal_ExpressCheckout
