@@ -17,11 +17,13 @@ class PayPal_Permissions_RequestPermissions extends PayPal {
     // Default parameters
     protected $_default = array(
     );
-    
     protected $_required = array(
-        'scope', 'callback', 'requestEnvelope'
-        
-        
+        'scope' => array(),
+        'callback',
+        'requestEnvelope' => array(
+            'detailLevel',
+            'errorLanguage'
+        )
     );
 
 }
