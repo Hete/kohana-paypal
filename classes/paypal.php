@@ -148,33 +148,15 @@ class PayPal {
             'PWD' => $this->_password,
             'SIGNATURE' => $this->_signature,
                 ) + $params + $this->_default;
-
-        $query = wordwrap(http_build_query($post), 75, "\n", true);
-
-
-        foreach ($this->_required as $required_key) {
-            if (!isset($post[$required_key]) | $post[$required_key] === NULL) {
-                throw new PayPal_Exception('Field :field is missing. :query',
-                        array(
-                            ':field' => $required_key,
-                            ':query' => $query,
-                ));
-            }
-        }
-
-
-        // Set up new Request_Client_Curl
-        $client = new Request_Client_Curl;
-        $client->options(CURLOPT_SSL_VERIFYPEER, FALSE)
-                ->options(CURLOPT_SSL_VERIFYHOST, FALSE);
+      
 
         // Create the Request, using the client
-        $request = Request::factory($this->api_url())
-                ->client($client)
+        $request = Request::factory($this->api_url())                
                 ->method(Request::POST)
-                ->body($post);
-
-
+                ->body(http_build_query($post));
+        
+        $request->client()->options(CURLOPT_SSL_VERIFYPEER, FALSE)                
+                ->options(CURLOPT_SSL_VERIFYHOST, FALSE);
 
 
         try {
@@ -188,10 +170,9 @@ class PayPal {
                     array(':method' => $this->_method,
                         ':error' => $error,
                         ':code' => $code,
-                        ':query' => $query,
+                        ':query' => wordwrap($request->body()),
             ));
         }
-
 
         // Parse the response
         parse_str($response->body(), $data);
@@ -201,7 +182,7 @@ class PayPal {
                     array(':method' => $this->_method,
                         ':error' => $data['L_LONGMESSAGE0'],
                         ':code' => $data['L_ERRORCODE0'],
-                        ':query' => $query,
+                        ':query' => wordwrap($request->body()),
             ));
         }
 
