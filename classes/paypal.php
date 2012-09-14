@@ -14,6 +14,39 @@ defined('SYSPATH') or die('No direct script access.');
  */
 abstract class PayPal {
 
+    static function check_required_array_key_recursive($data, $req) {
+        // no more required fields
+        if (empty($req))
+            return true;
+
+        // no more data fields; obviously lacks required field(s)
+        if (empty($data))
+            return false;
+
+        foreach ($req as $name => $subtree) {
+            // unnamed; it's a list
+            if (is_numeric($name)) {
+                foreach ($data as $dataitem) {
+                    if (PayPal::check_required_array_key_recursive($dataitem, $subtree) == false)
+                        return false;
+                }
+            } else {
+                // required field doesn't exist
+                if (!isset($data[$name]))
+                    return false;
+
+                // fine so far; down we go
+                if (!empty($subtree)
+                        && PayPal::check_required_array_key_recursive($data[$name], $subtree) == false
+                ) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
     public static function factory($class, array $params) {
         $class = "PayPal_" . $class;
         $parts = explode("_", $class);
@@ -27,11 +60,13 @@ abstract class PayPal {
      * @var type 
      */
     protected $_environment;
+
     /**
      *
      * @var type 
      */
     private $_params = array();
+
     /**
      * PayPal method name. Can be overwritten by specifying the key METHOD in
      * the param.
@@ -66,7 +101,7 @@ abstract class PayPal {
     public function param($key = NULL, $value = NULL) {
         if ($key === NULL) {
             return $this->_params + $this->defaults();
-        } else if ($value === NULL) {            
+        } else if ($value === NULL) {
             return $this->_params[$key];
         } else {
             $this->_params[$key] = $value;
@@ -148,6 +183,11 @@ abstract class PayPal {
      * @return  array
      */
     public final function execute() {
+
+        if (!PayPal::check_required_array_key_recursive($this->param(), $this->required())) {
+            throw new Kohana_Exception("The param array does not validate the required keys.");
+        }
+
         // Create POST data        
         $request = Request::factory($this->api_url())
                 ->method(Request::POST)
