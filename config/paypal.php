@@ -10,6 +10,6 @@ return array(
 	'signature' => NULL,
 
 	// PayPal environment: live, sandbox, beta-sandbox
-	'environment' => 'sandbox',
+	'environment' => 'live',
 
 );

@@ -12,51 +12,32 @@ defined('SYSPATH') or die('No direct script access.');
  * @copyright  (c) 2009 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class PayPal {
+abstract class PayPal {
 
-    /**
-     * @var  array  instances
-     */
-    public static $instances = array();
-
-    /**
-     * Returns a singleton instance of one of the PayPal classes.
-     *
-     * @param   string  class type (ExpressCheckout, PaymentsPro, etc)
-     * @return  object
-     */
-    public static function instance($method) {
-        if (!isset(PayPal::$instances[$method])) {
-            // Set the class name
-            $class = 'PayPal_' . $method;
-
-            // Load default configuration
-            $config = Kohana::$config->load('paypal');
-
-            $parts = explode("_", $method);
-
-            $paypal_method = $parts[count($parts) - 1];
-
-            // Create a new PayPal instance with the default configuration
-            PayPal::$instances[$method] = new $class($config['username'], $config['password'], $config['signature'], $paypal_method, $config['environment']);
-        }
-
-        return PayPal::$instances[$method];
+    public static function factory($class, array $params) {
+        $class = "PayPal_" . $class;
+        $parts = explode("_", $class);
+        $method = $parts[count($parts) - 1];
+        return new $class($params, $method);
     }
 
-    // API username
-    protected $_username;
-    // API password
-    protected $_password;
-    // API signature
-    protected $_signature;
-    // Request method
-    protected $_method;
     // Environment type
-    protected $_environment = 'live';
-    protected $_default = array();
-    // Required fields
-    protected $_required = array();
+    /**
+     *
+     * @var type 
+     */
+    protected $_environment;
+    /**
+     *
+     * @var type 
+     */
+    private $_params = array();
+    /**
+     * PayPal method name. Can be overwritten by specifying the key METHOD in
+     * the param.
+     * @var string 
+     */
+    protected $_method;
 
     /**
      * Creates a new PayPal instance for the given username, password,
@@ -68,24 +49,51 @@ class PayPal {
      * @param   string  environment (one of: live, sandbox, sandbox-beta)
      * @return  void
      */
-    public function __construct($username, $password, $signature, $method, $environment = 'live') {
-        // Set the API username and password
-        $this->_username = $username;
-        $this->_password = $password;
-
-        // Set the API signature
-        $this->_signature = $signature;
-
-        // Set the environment
-        $this->_environment = $environment;
-
-        if ($this->_method === NULL)
-            $this->_method = $method;
+    public function __construct($method, array $params = array()) {
+        $this->_params = $params;
+        $this->_environment = Kohana::$config->load("paypal.environment");
+        $this->_method = $method;
     }
 
-    public function post(array $param) {
+    /**
+     * param() returns the param array, param($key) returns the value associated
+     * to the key $key and param($key, $value) sets the $value at the specified
+     * $key.
+     * @param type $key
+     * @param type $value
+     * @return type
+     */
+    public function param($key = NULL, $value = NULL) {
+        if ($key === NULL) {
+            return $this->_params + $this->defaults();
+        } else if ($value === NULL) {            
+            return $this->_params[$key];
+        } else {
+            $this->_params[$key] = $value;
+        }
+    }
 
-        return $this->_post($param);
+    /**
+     * Default values.
+     * @return type
+     */
+    protected function defaults() {
+        return array(
+            // Data from config
+            'METHOD' => $this->_method,
+            'VERSION' => 51.0,
+            'USER' => Kohana::$config->load('paypal.username'),
+            'PWD' => Kohana::$config->load('paypal.password'),
+            'SIGNATURE' => Kohana::$config->load('paypal.signature'),
+        );
+    }
+
+    /**
+     * Key tree of required values.
+     * @return type
+     */
+    protected function required() {
+        return array('METHOD', 'VERSION', 'USER', 'PWD', 'SIGNATURE');
     }
 
     /**
@@ -139,23 +147,14 @@ class PayPal {
      * @param   array   POST parameters
      * @return  array
      */
-    private final function _post(array $params) {
-        // Create POST data
-        $post = array(
-            'METHOD' => $this->_method,
-            'VERSION' => 51.0,
-            'USER' => $this->_username,
-            'PWD' => $this->_password,
-            'SIGNATURE' => $this->_signature,
-                ) + $params + $this->_default;
-      
-
-        // Create the Request, using the client
-        $request = Request::factory($this->api_url())                
+    public final function execute() {
+        // Create POST data        
+        $request = Request::factory($this->api_url())
                 ->method(Request::POST)
-                ->body(http_build_query($post));
-        
-        $request->client()->options(CURLOPT_SSL_VERIFYPEER, FALSE)                
+                ->body(http_build_query($this->param()));
+
+        // Setup the client
+        $request->client()->options(CURLOPT_SSL_VERIFYPEER, FALSE)
                 ->options(CURLOPT_SSL_VERIFYHOST, FALSE);
 
 

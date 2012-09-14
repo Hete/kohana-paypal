@@ -15,16 +15,18 @@ defined('SYSPATH') or die('No direct script access.');
 class PayPal_Permissions_RequestPermissions extends PayPal {
 
     // Default parameters
-    protected $_default = array(
-    );
-    protected $_required = array(
-        'scope' => array(),
-        'callback',
-        'requestEnvelope' => array(
-            'detailLevel',
-            'errorLanguage'
-        )
-    );
+
+    public function required() {
+
+        return array(
+            'scope' => array(),
+            'callback',
+            'requestEnvelope' => array(
+                'detailLevel',
+                'errorLanguage'
+            )
+                ) + parent::required();
+    }
 
 }
 
