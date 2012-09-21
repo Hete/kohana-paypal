@@ -14,7 +14,7 @@ defined('SYSPATH') or die('No direct script access.');
  */
 abstract class PayPal {
 
-    static function check_required_array_key_recursive($data, $req) {
+    private static function check_required_array_key_recursive($data, $req) {
         // no more required fields
         if (empty($req))
             return true;
@@ -47,11 +47,15 @@ abstract class PayPal {
         return true;
     }
 
+    /**
+     * 
+     * @param string $class 
+     * @param array $params
+     * @return \class
+     */
     public static function factory($class, array $params) {
         $class = "PayPal_" . $class;
-        $parts = explode("_", $class);
-        $method = $parts[count($parts) - 1];
-        return new $class($params, $method);
+        return new $class($params);
     }
 
     // Environment type
@@ -62,17 +66,16 @@ abstract class PayPal {
     protected $_environment;
 
     /**
-     *
+     * Basic params values.
      * @var type 
      */
     private $_params = array();
 
     /**
-     * PayPal method name. Can be overwritten by specifying the key METHOD in
-     * the param.
-     * @var string 
+     * 
+     * @var type 
      */
-    protected $_method;
+    private $_default_params = array();
 
     /**
      * Creates a new PayPal instance for the given username, password,
@@ -84,10 +87,27 @@ abstract class PayPal {
      * @param   string  environment (one of: live, sandbox, sandbox-beta)
      * @return  void
      */
-    public function __construct($method, array $params = array()) {
+    public function __construct(array $params = array()) {
+        $this->_default_params = array(
+            // Data from config
+            'METHOD' => $this->method(),
+            'VERSION' => 51.0,
+            'USER' => Kohana::$config->load('paypal.username'),
+            'PWD' => Kohana::$config->load('paypal.password'),
+            'SIGNATURE' => Kohana::$config->load('paypal.signature'),
+        );
         $this->_params = $params;
         $this->_environment = Kohana::$config->load("paypal.environment");
-        $this->_method = $method;
+    }
+
+    /**
+     * PayPal method name based on the class name.
+     * @var string 
+     */
+    private function method() {
+        $class = get_class($this);
+        $parts = explode("_", $class);
+        return $parts[count($parts) - 1];
     }
 
     /**
@@ -100,36 +120,26 @@ abstract class PayPal {
      */
     public function param($key = NULL, $value = NULL) {
         if ($key === NULL) {
-            return $this->_params + $this->defaults();
+            return $this->_default_params + $this->_params;
         } else if ($value === NULL) {
             return $this->_params[$key];
         } else {
             $this->_params[$key] = $value;
         }
     }
-
+    
     /**
-     * Default values.
-     * @return type
+     * Validate the parameters of the PayPal request.
      */
-    protected function defaults() {
-        return array(
-            // Data from config
-            'METHOD' => $this->_method,
-            'VERSION' => 51.0,
-            'USER' => Kohana::$config->load('paypal.username'),
-            'PWD' => Kohana::$config->load('paypal.password'),
-            'SIGNATURE' => Kohana::$config->load('paypal.signature'),
-        );
+    public function check() {
+        return PayPal::check_required_array_key_recursive($this->param(), $this->required());        
     }
 
     /**
      * Key tree of required values.
      * @return type
      */
-    protected function required() {
-        return array('METHOD', 'VERSION', 'USER', 'PWD', 'SIGNATURE');
-    }
+    protected abstract function required();
 
     /**
      * Returns the NVP API URL for the current environment.
@@ -173,7 +183,7 @@ abstract class PayPal {
     }
 
     /**
-     * Makes a POST request to PayPal NVP for the given method and parameters.
+     * Execute the PayPal POST request and returns the result.
      *
      * @see  https://cms.paypal.com/us/cgi-bin/?cmd=_render-content&content_ID=developer/e_howto_api_nvp_NVPAPIOverview
      *
@@ -184,8 +194,8 @@ abstract class PayPal {
      */
     public final function execute() {
 
-        if (!PayPal::check_required_array_key_recursive($this->param(), $this->required())) {
-            throw new Kohana_Exception("The param array does not validate the required keys.");
+        if (!$this->check()) {
+            throw new PayPal_Exception("The param array does not validate the required keys.");
         }
 
         // Create POST data        
