@@ -47,11 +47,28 @@ abstract class PayPal {
         return true;
     }
 
+    /**
+     * Build regular GET requests.
+     *
+     * @return  string
+     */
+    public static function direct_url(array $param = array()) {
+        if (Kohana::$config->load("paypal.environment") === 'live') {
+            // Live environment does not use a sub-domain
+            $env = '';
+        } else {
+            // Use the environment sub-domain
+            $env = Kohana::$config->load("paypal.environment") . '.';
+        }
+
+        return 'https://www.' . $env . 'paypal.com/cgi-bin/webscr?' . http_build_query($param);
+    }
+
     public static function factory($class, array $params) {
         $class = "PayPal_" . $class;
         $parts = explode("_", $class);
         $method = $parts[count($parts) - 1];
-        return new $class($params, $method);
+        return new $class($method, $params);
     }
 
     // Environment type
@@ -144,7 +161,6 @@ abstract class PayPal {
             // Use the environment sub-domain
             $env = $this->_environment . '.';
         }
-
         return 'https://api-3t.' . $env . 'paypal.com/nvp';
     }
 
@@ -172,6 +188,14 @@ abstract class PayPal {
         return 'https://www.' . $env . 'paypal.com/webscr?' . http_build_query($params, '', '&');
     }
 
+    public function build_query() {
+        return http_build_query($this->param());
+    }
+
+    public function check() {
+        return PayPal::check_required_array_key_recursive($this->param(), $this->required());
+    }
+
     /**
      * Makes a POST request to PayPal NVP for the given method and parameters.
      *
@@ -184,14 +208,13 @@ abstract class PayPal {
      */
     public final function execute() {
 
-        if (!PayPal::check_required_array_key_recursive($this->param(), $this->required())) {
-            throw new Kohana_Exception("The param array does not validate the required keys.");
-        }
-
+//        if (!$this->check()) {
+//            throw new Kohana_Exception("The param array does not validate the required keys.");
+//        }
         // Create POST data        
         $request = Request::factory($this->api_url())
                 ->method(Request::POST)
-                ->body(http_build_query($this->param()));
+                ->body($this->build_query());
 
         // Setup the client
         $request->client()->options(CURLOPT_SSL_VERIFYPEER, FALSE)
