@@ -166,7 +166,7 @@ abstract class PayPal {
     }
 
     /**
-     * Returns the NVP API URL for the current environment.
+     * Returns the NVP API URL for the current environment and method.
      *
      * @return  string
      */
@@ -191,7 +191,7 @@ abstract class PayPal {
      * @param   array    GET parameters
      * @return  string
      */
-    public function redirect_url() {
+    private function redirect_url($response_data) {
         if ($this->_environment === 'live') {
             // Live environment does not use a sub-domain
             $env = '';
@@ -201,7 +201,7 @@ abstract class PayPal {
         }
 
         // Add the command to the parameters
-        $params = array('cmd' => '_' . $this->redirect_command) + $this->redirect_param();
+        $params = array('cmd' => '_' . $this->redirect_command) + $this->redirect_param($response_data);
 
         return 'https://www.' . $env . 'paypal.com/webscr?' . http_build_query($params, '', '&');
     }
@@ -211,10 +211,11 @@ abstract class PayPal {
      *
      * @see  https://cms.paypal.com/us/cgi-bin/?cmd=_render-content&content_ID=developer/e_howto_api_nvp_NVPAPIOverview
      *
-     * @throws  Kohana_Exception
-     * @param   string  method to call
-     * @param   array   POST parameters
-     * @return  array
+     * @throws  Request_Exception if the connection to PayPal API fails.
+     * @throws PayPal_Exception if the PayPal request fails. 
+     * @return  array an associative array with the following keys :
+     *     response : which contains the PayPal NVP response.
+     *     redirect_url : which contains the precomputed redirection url.
      */
     public final function execute() {
 
@@ -235,30 +236,25 @@ abstract class PayPal {
         $request->client()->options(CURLOPT_SSL_VERIFYPEER, FALSE)
                 ->options(CURLOPT_SSL_VERIFYHOST, FALSE);
 
-
-        try {
-            // Get the Response for this Request
-            $response = $request->execute();
-        } catch (Request_Exception $e) {
-            $code = $e->getCode();
-            $error = $e->getMessage();
-
-            throw new Kohana_Exception('PayPal API request for :method failed: :error (:code). :query',
-                    array(':method' => $this->method(),
-                        ':error' => $error,
-                        ':code' => $code,
-                        ':query' => wordwrap($request->body()),
-            ));
-        }
+        // Get the Response for this Request
+        $response = $request->execute();
 
         // Parse the response
         parse_str($response->body(), $data);
 
-        if (!isset($data['responseEnvelope_ack']) OR strpos($data['responseEnvelope_ack'], 'Success') === FALSE) {
+        // Validate the response
+        $validation = Validation::factory($data)
+                ->rule('responseEnvelope_ack', 'not_empty')
+                ->rule('responseEnvelope_ack', 'equals', array(":value", "Success"));
+
+        if (!$validation->check()) {
             throw new PayPal_Exception($data);
         }
 
-        return $data;
+        return array(
+            "response" => $data,
+            "redirect_url" => $this->redirect_url($data)
+        );
     }
 
 }
