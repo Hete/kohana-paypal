@@ -14,19 +14,6 @@ defined('SYSPATH') or die('No direct script access.');
  */
 class PayPal_Permissions_GetAccessToken extends PayPal {
 
-    protected function redirect_command() {
-        // Pas de commande de redirection.
-        return "";
-    }
-
-    protected function redirect_param($results) {
-        return array();
-    }
-
-    protected function rules() {
-        return array();
-    }
-
     /**
      * Need a token and the verifier
      * @return type
@@ -44,7 +31,7 @@ class PayPal_Permissions_GetAccessToken extends PayPal {
 
     protected function response_rules() {
         return array(
-            'scope' => array(
+            'scope(0)' => array(
                 array('not_empty')
             ),
             'token' => array(

@@ -7,9 +7,8 @@ defined('SYSPATH') or die('No direct script access.');
  *
  * @link  https://cms.paypal.com/us/cgi-bin/?cmd=_render-content&content_ID=developer/library_documentation
  *
- * @package    Kohana
- * @author     Kohana Team
- * @copyright  (c) 2009 Kohana Team
+ * @author     Guillaume Poirier-Morency
+ * @copyright  Hète.ca Inc.
  * @license    http://kohanaphp.com/license.html
  */
 abstract class PayPal {
@@ -85,15 +84,22 @@ abstract class PayPal {
     private $_headers = array();
 
     /**
-     * Returns the redirection command.
-     * @var type 
+     * Commande de redirection.
+     * @return string
      */
-    protected abstract function redirect_command();
+    protected function redirect_command() {
+        return "";
+    }
 
     /**
-     * Returns pre-computed redirection parameters based on request results.
+     * Construit les paramètres de redirection avec le résultat de la 
+     * requête PayPal en API.
+     * @param array $results
+     * @return type
      */
-    protected abstract function redirect_param($results);
+    protected function redirect_param(array $results) {
+        return array();
+    }
 
     /**
      * Return the validation array for the specified request.
