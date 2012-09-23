@@ -99,13 +99,18 @@ abstract class PayPal {
      * Return the validation array for the specified request.
      * @return type
      */
-    protected abstract function rules();
+    protected abstract function request_rules();
+
+    /**
+     * Return the validation array for the PayPal response.
+     */
+    protected abstract function response_rules();
 
     /**
      * PayPal method name based on the class name.
      * @var string 
      */
-    private function method() {
+    public function method() {
 
         $method = str_replace("PayPal_", "", get_class($this));
 
@@ -188,6 +193,7 @@ abstract class PayPal {
      * @return  string
      */
     private function redirect_url($response_data) {
+
         if ($this->_environment === 'live') {
             // Live environment does not use a sub-domain
             $env = '';
@@ -218,17 +224,15 @@ abstract class PayPal {
         // Validate the request parameters
         $validation_request = Validation::factory($this->param())
                 // We define basic rules
-                ->rule('requestEnvelope_errorLanguage', 'not_empty')
-                ->rule('callback', 'not_empty');
+                ->rule('requestEnvelope_errorLanguage', 'not_empty');
 
         // We add custom rules proper to the request
-        foreach ($this->rules() as $field => $rules) {
+        foreach ($this->request_rules() as $field => $rules) {
             $validation_request->rules($field, $rules);
         }
 
-
         if (!$validation_request->check()) {
-            throw new Validation_Exception($validation_request);
+            throw new PayPal_Exception($this, $validation_request);
         }
 
         // Create POST data        
@@ -249,11 +253,17 @@ abstract class PayPal {
 
         // Validate the response
         $validation_response = Validation::factory($data)
+                // Basic response validations in response envelope.
                 ->rule('responseEnvelope_ack', 'not_empty')
                 ->rule('responseEnvelope_ack', 'equals', array(":value", "Success"));
 
+        // We add custom response rules proper to the request
+        foreach ($this->response_rules() as $field => $rules) {
+            $validation_response->rules($field, $rules);
+        }
+
         if (!$validation_response->check()) {
-            throw new PayPal_Exception($this->param(), $data);
+            throw new PayPal_Exception($this, $validation_response, $data);
         }
 
         return array(

@@ -18,8 +18,17 @@ class PayPal_Permissions_RequestPermissions extends PayPal {
         return 'grant-permission';
     }
 
-    protected function rules() {
-        return array();
+    protected function request_rules() {
+        return array(
+            'callback' => array(
+                array('not_empty', array(':value'))
+            )
+        );
+    }
+
+    protected function response_rules() {
+        return array(
+        );
     }
 
 }

@@ -3,17 +3,33 @@
 /**
  * 
  */
-class PayPal_Exception extends Kohana_Exception {
+class PayPal_Exception extends Validation_Exception {
 
-    public function __construct($request_params, $paypal_response) {
-        $variables = array(':method' => "",
-            ':error' => $paypal_response['error(0)_message'],
-            ':code' => $paypal_response['error(0)_errorId'],
-            ':query' => print_r($request_params, true),
-            ':response' => print_r($paypal_response, true),
+    public function __construct(PayPal $request, Validation $array, array $response = array(), $message = "", $code = 0) {
+
+        // Adding query and response
+        $values = array(':method' => $request->method(),
+            ':query' => print_r($request->param(), true),
+            ':response' => print_r($response, true),
         );
 
-        parent::__construct('PayPal API request for :method failed: :error (:code). :query :response', $variables);
+
+        if (isset($response['error(0)_errorId'])) {
+            $values += array(
+                ':error' => $response['error(0)_message'],
+                ':code' => $response['error(0)_errorId'],
+            );
+            $message .= "PayPal request failed.";
+        } else {
+            $message .= "PayPal request has failed to validate.";
+        }
+
+
+        $message .= " :method :query :response";
+
+
+
+        parent::__construct($array, $message, $values, $code);
     }
 
 }

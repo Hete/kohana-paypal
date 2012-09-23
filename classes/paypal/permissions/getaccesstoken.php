@@ -14,26 +14,47 @@ defined('SYSPATH') or die('No direct script access.');
  */
 class PayPal_Permissions_GetAccessToken extends PayPal {
 
-    // Default parameters
-    protected $_default = array(
-        'PAYMENTACTION' => 'Sale',
-    );
-
-    protected function required() {
-
-        return array("AMT", "Stuff");
-    }
-
-   
     protected function redirect_command() {
-        
+        // Pas de commande de redirection.
+        return "";
     }
 
     protected function redirect_param($results) {
-        
+        return array();
     }
 
-  
+    protected function rules() {
+        return array();
+    }
+
+    /**
+     * Need a token and the verifier
+     * @return type
+     */
+    protected function request_rules() {
+        return array(
+            'token' => array(
+                array('not_empty')
+            ),
+            'verifier' => array(
+                array('not_empty')
+            )
+        );
+    }
+
+    protected function response_rules() {
+        return array(
+            'scope' => array(
+                array('not_empty')
+            ),
+            'token' => array(
+                array('not_empty')
+            ),
+            'tokenSecret' => array(
+                array('not_empty')
+            ),
+        );
+    }
 
 }
 
