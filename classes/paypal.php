@@ -14,46 +14,6 @@ defined('SYSPATH') or die('No direct script access.');
 abstract class PayPal {
 
     /**
-     * Valide de façon récursive un tableau associatif avec un tableau de clés.
-     * @param type $data
-     * @param type $req
-     * @return boolean
-     */
-    private static function check_required_array_key_recursive($data, $req) {
-        // no more required fields
-        if (empty($req))
-            return true;
-
-        // no more data fields; obviously lacks required field(s)
-        if (empty($data))
-            return false;
-
-
-        foreach ($req as $name => $subtree) {
-            // unnamed; it's a list
-            if (is_numeric($name)) {
-                foreach ($data as $dataitem) {
-                    if (PayPal::check_required_array_key_recursive($dataitem, $subtree) == false)
-                        return false;
-                }
-            } else {
-                // required field doesn't exist
-                if (!isset($data[$name]))
-                    return false;
-
-                // fine so far; down we go
-                if (!empty($subtree)
-                        && PayPal::check_required_array_key_recursive($data[$name], $subtree) == false
-                ) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    }
-
-    /**
      * 
      * @param string $class 
      * @param array $params
@@ -69,7 +29,7 @@ abstract class PayPal {
      *
      * @var type 
      */
-    protected $_environment;
+    private $_environment;
 
     /**
      * Basic params values.
@@ -198,7 +158,7 @@ abstract class PayPal {
      * @param   array    GET parameters
      * @return  string
      */
-    private function redirect_url($response_data) {
+    private function redirect_url(array $response_data) {
 
         if ($this->_environment === 'live') {
             // Live environment does not use a sub-domain

@@ -31,9 +31,6 @@ class PayPal_Permissions_GetAccessToken extends PayPal {
 
     protected function response_rules() {
         return array(
-            'scope(0)' => array(
-                array('not_empty')
-            ),
             'token' => array(
                 array('not_empty')
             ),
