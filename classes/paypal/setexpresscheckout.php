@@ -21,4 +21,12 @@ class PayPal_SetExpressCheckout extends PayPal {
         );
     }
 
+    protected function redirect_command() {
+        
+    }
+
+    protected function redirect_param($results) {
+        
+    }
+
 }

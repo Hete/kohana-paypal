@@ -1,4 +1,7 @@
-<?php defined('SYSPATH') or die('No direct script access.');
+<?php
+
+defined('SYSPATH') or die('No direct script access.');
+
 /**
  * PayPal ExpressCheckout integration.
  *
@@ -11,36 +14,27 @@
  */
 class PayPal_Permissions_GetAccessToken extends PayPal {
 
-	// Default parameters
-	protected $_default = array(
-		'PAYMENTACTION' => 'Sale',
-	);
+    // Default parameters
+    protected $_default = array(
+        'PAYMENTACTION' => 'Sale',
+    );
 
-	/**
-	 * Make an SetExpressCheckout call.
-	 *
-	 * @param  array   NVP parameters
-	 */
-	public function set(array $params = NULL)
-	{
-		if ($params === NULL)
-		{
-			// Use the default parameters
-			$params = $this->_default;
-		}
-		else
-		{
-			// Add the default parameters
-			$params += $this->_default;
-		}
+    protected function required() {
 
-		if ( ! isset($params['AMT']))
-		{
-			throw new Kohana_Exception('You must provide a :param parameter for :method',
-				array(':param' => 'AMT', ':method' => __METHOD__));
-		}
+        return array("AMT", "Stuff");
+    }
 
-		return $this->_post('SetExpressCheckout', $params);
-	}
+   
+    protected function redirect_command() {
+        
+    }
 
-} // End PayPal_ExpressCheckout
+    protected function redirect_param($results) {
+        
+    }
+
+  
+
+}
+
+// End PayPal_ExpressCheckout

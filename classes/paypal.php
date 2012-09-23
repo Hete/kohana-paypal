@@ -14,6 +14,12 @@ defined('SYSPATH') or die('No direct script access.');
  */
 abstract class PayPal {
 
+    /**
+     * Valide de façon récursive un tableau associatif avec un tableau de clés.
+     * @param type $data
+     * @param type $req
+     * @return boolean
+     */
     private static function check_required_array_key_recursive($data, $req) {
         // no more required fields
         if (empty($req))
@@ -22,6 +28,7 @@ abstract class PayPal {
         // no more data fields; obviously lacks required field(s)
         if (empty($data))
             return false;
+
 
         foreach ($req as $name => $subtree) {
             // unnamed; it's a list
@@ -53,7 +60,7 @@ abstract class PayPal {
      * @param array $params
      * @return \class
      */
-    public static function factory($class, array $params) {
+    public static function factory($class, array $params = array()) {
         $class = "PayPal_" . $class;
         return new $class($params);
     }
@@ -75,7 +82,35 @@ abstract class PayPal {
      * 
      * @var type 
      */
-    private $_default_params = array();
+    private $_headers = array();
+
+    /**
+     * Returns the redirection command.
+     * @var type 
+     */
+    protected abstract function redirect_command();
+
+    /**
+     * Returns pre-computed redirection parameters based on request results.
+     */
+    protected abstract function redirect_param($results);
+
+    /**
+     * Key tree of required values.
+     * @return type
+     */
+    protected abstract function required();
+
+    /**
+     * PayPal method name based on the class name.
+     * @var string 
+     */
+    private function method() {
+
+        $method = str_replace("PayPal_", "", get_class($this));
+
+        return implode("/", explode("_", $method));
+    }
 
     /**
      * Creates a new PayPal instance for the given username, password,
@@ -88,26 +123,21 @@ abstract class PayPal {
      * @return  void
      */
     public function __construct(array $params = array()) {
-        $this->_default_params = array(
-            // Data from config
-            'METHOD' => $this->method(),
-            'VERSION' => 51.0,
-            'USER' => Kohana::$config->load('paypal.username'),
-            'PWD' => Kohana::$config->load('paypal.password'),
-            'SIGNATURE' => Kohana::$config->load('paypal.signature'),
-        );
-        $this->_params = $params;
-        $this->_environment = Kohana::$config->load("paypal.environment");
-    }
 
-    /**
-     * PayPal method name based on the class name.
-     * @var string 
-     */
-    private function method() {
-        $class = get_class($this);
-        $parts = explode("_", $class);
-        return $parts[count($parts) - 1];
+        $this->_environment = Kohana::$config->load("paypal.environment");
+
+        $config = Kohana::$config->load('paypal.' . $this->_environment);
+
+        $this->_headers = array(
+            'X-PAYPAL-SECURITY-USERID' => $config['username'],
+            'X-PAYPAL-SECURITY-PASSWORD' => $config['password'],
+            'X-PAYPAL-SECURITY-SIGNATURE' => $config['signature'],
+            'X-PAYPAL-REQUEST-DATA-FORMAT' => 'NV',
+            'X-PAYPAL-RESPONSE-DATA-FORMAT' => 'NV',
+            "X-PAYPAL-APPLICATION-ID" => Kohana::$config->load('paypal.app_id'),
+        );
+
+        $this->_params = $params;
     }
 
     /**
@@ -120,26 +150,20 @@ abstract class PayPal {
      */
     public function param($key = NULL, $value = NULL) {
         if ($key === NULL) {
-            return $this->_default_params + $this->_params;
+            return $this->_params;
         } else if ($value === NULL) {
             return $this->_params[$key];
         } else {
             $this->_params[$key] = $value;
         }
     }
-    
+
     /**
      * Validate the parameters of the PayPal request.
      */
     public function check() {
-        return PayPal::check_required_array_key_recursive($this->param(), $this->required());        
+        return PayPal::check_required_array_key_recursive($this->param(), $this->required()) | true;
     }
-
-    /**
-     * Key tree of required values.
-     * @return type
-     */
-    protected abstract function required();
 
     /**
      * Returns the NVP API URL for the current environment.
@@ -155,7 +179,7 @@ abstract class PayPal {
             $env = $this->_environment . '.';
         }
 
-        return 'https://api-3t.' . $env . 'paypal.com/nvp';
+        return 'https://svcs.' . $env . 'paypal.com/' . $this->method();
     }
 
     /**
@@ -167,7 +191,7 @@ abstract class PayPal {
      * @param   array    GET parameters
      * @return  string
      */
-    public function redirect_url($command, array $params) {
+    public function redirect_url() {
         if ($this->_environment === 'live') {
             // Live environment does not use a sub-domain
             $env = '';
@@ -177,7 +201,7 @@ abstract class PayPal {
         }
 
         // Add the command to the parameters
-        $params = array('cmd' => '_' . $command) + $params;
+        $params = array('cmd' => '_' . $this->redirect_command) + $this->redirect_param();
 
         return 'https://www.' . $env . 'paypal.com/webscr?' . http_build_query($params, '', '&');
     }
@@ -203,6 +227,10 @@ abstract class PayPal {
                 ->method(Request::POST)
                 ->body(http_build_query($this->param()));
 
+        foreach ($this->_headers as $key => $value) {
+            $request->headers($key, $value);
+        }
+
         // Setup the client
         $request->client()->options(CURLOPT_SSL_VERIFYPEER, FALSE)
                 ->options(CURLOPT_SSL_VERIFYHOST, FALSE);
@@ -215,8 +243,8 @@ abstract class PayPal {
             $code = $e->getCode();
             $error = $e->getMessage();
 
-            throw new PayPal_Exception('PayPal API request for :method failed: :error (:code). :query',
-                    array(':method' => $this->_method,
+            throw new Kohana_Exception('PayPal API request for :method failed: :error (:code). :query',
+                    array(':method' => $this->method(),
                         ':error' => $error,
                         ':code' => $code,
                         ':query' => wordwrap($request->body()),
@@ -226,13 +254,8 @@ abstract class PayPal {
         // Parse the response
         parse_str($response->body(), $data);
 
-        if (!isset($data['ACK']) OR strpos($data['ACK'], 'Success') === FALSE) {
-            throw new PayPal_Exception('PayPal API request for :method failed: :error (:code). :query',
-                    array(':method' => $this->_method,
-                        ':error' => $data['L_LONGMESSAGE0'],
-                        ':code' => $data['L_ERRORCODE0'],
-                        ':query' => wordwrap($request->body()),
-            ));
+        if (!isset($data['responseEnvelope_ack']) OR strpos($data['responseEnvelope_ack'], 'Success') === FALSE) {
+            throw new PayPal_Exception($data);
         }
 
         return $data;

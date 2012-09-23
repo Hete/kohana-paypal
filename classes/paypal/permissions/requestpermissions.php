@@ -3,14 +3,10 @@
 defined('SYSPATH') or die('No direct script access.');
 
 /**
- * PayPal ExpressCheckout integration.
+ * RequestPermissions API Operation.
  *
- * @see  https://cms.paypal.com/us/cgi-bin/?cmd=_render-content&content_ID=developer/e_howto_api_ECGettingStarted
+ * @see  https://cms.paypal.com/ca/cgi-bin/?cmd=_render-content&content_ID=developer/e_howto_api_PermissionsRequestPermissionsAPI
  *
- * @package    Kohana
- * @author     Kohana Team
- * @copyright  (c) 2009 Kohana Team
- * @license    http://kohanaphp.com/license.html
  */
 class PayPal_Permissions_RequestPermissions extends PayPal {
 
@@ -25,7 +21,15 @@ class PayPal_Permissions_RequestPermissions extends PayPal {
                 'detailLevel',
                 'errorLanguage'
             )
-                ) + parent::required();
+        );
+    }
+
+    protected function redirect_param($results) {
+        
+    }
+
+    protected function redirect_command() {
+        
     }
 
 }
