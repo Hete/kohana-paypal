@@ -96,10 +96,10 @@ abstract class PayPal {
     protected abstract function redirect_param($results);
 
     /**
-     * Key tree of required values.
+     * Return the validation array for the specified request.
      * @return type
      */
-    protected abstract function required();
+    protected abstract function rules();
 
     /**
      * PayPal method name based on the class name.
@@ -128,16 +128,19 @@ abstract class PayPal {
 
         $config = Kohana::$config->load('paypal.' . $this->_environment);
 
+        // Basic headers
         $this->_headers = array(
             'X-PAYPAL-SECURITY-USERID' => $config['username'],
             'X-PAYPAL-SECURITY-PASSWORD' => $config['password'],
             'X-PAYPAL-SECURITY-SIGNATURE' => $config['signature'],
             'X-PAYPAL-REQUEST-DATA-FORMAT' => 'NV',
             'X-PAYPAL-RESPONSE-DATA-FORMAT' => 'NV',
-            "X-PAYPAL-APPLICATION-ID" => Kohana::$config->load('paypal.app_id'),
+            "X-PAYPAL-APPLICATION-ID" => $config['api_id'],
         );
 
-        $this->_params = $params;
+        $this->_params = $params + array(
+            'requestEnvelope_errorLanguage' => 'fr_CA',
+        );
     }
 
     /**
@@ -156,13 +159,6 @@ abstract class PayPal {
         } else {
             $this->_params[$key] = $value;
         }
-    }
-
-    /**
-     * Validate the parameters of the PayPal request.
-     */
-    public function check() {
-        return PayPal::check_required_array_key_recursive($this->param(), $this->required()) | true;
     }
 
     /**
@@ -201,7 +197,7 @@ abstract class PayPal {
         }
 
         // Add the command to the parameters
-        $params = array('cmd' => '_' . $this->redirect_command) + $this->redirect_param($response_data);
+        $params = array('cmd' => '_' . $this->redirect_command()) + $this->redirect_param($response_data);
 
         return 'https://www.' . $env . 'paypal.com/webscr?' . http_build_query($params, '', '&');
     }
@@ -219,8 +215,20 @@ abstract class PayPal {
      */
     public final function execute() {
 
-        if (!$this->check()) {
-            throw new PayPal_Exception("The param array does not validate the required keys.");
+        // Validate the request parameters
+        $validation_request = Validation::factory($this->param())
+                // We define basic rules
+                ->rule('requestEnvelope_errorLanguage', 'not_empty')
+                ->rule('callback', 'not_empty');
+
+        // We add custom rules proper to the request
+        foreach ($this->rules() as $field => $rules) {
+            $validation_request->rules($field, $rules);
+        }
+
+
+        if (!$validation_request->check()) {
+            throw new Validation_Exception($validation_request);
         }
 
         // Create POST data        
@@ -236,23 +244,22 @@ abstract class PayPal {
         $request->client()->options(CURLOPT_SSL_VERIFYPEER, FALSE)
                 ->options(CURLOPT_SSL_VERIFYHOST, FALSE);
 
-        // Get the Response for this Request
-        $response = $request->execute();
-
-        // Parse the response
-        parse_str($response->body(), $data);
+        // Execute the request and parse the response
+        parse_str($request->execute()->body(), $data);
 
         // Validate the response
-        $validation = Validation::factory($data)
+        $validation_response = Validation::factory($data)
                 ->rule('responseEnvelope_ack', 'not_empty')
                 ->rule('responseEnvelope_ack', 'equals', array(":value", "Success"));
 
-        if (!$validation->check()) {
-            throw new PayPal_Exception($data);
+        if (!$validation_response->check()) {
+            throw new PayPal_Exception($this->param(), $data);
         }
 
         return array(
+            // Response data for multiple purposes
             "response" => $data,
+            // Pre-computed redirect url
             "redirect_url" => $this->redirect_url($data)
         );
     }
