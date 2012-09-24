@@ -1,6 +1,12 @@
 <?php
 /**
- * Utility functions for the PayPal module.
+ * Abstract PayPal integration.
+ *
+ * @link  https://cms.paypal.com/us/cgi-bin/?cmd=_render-content&content_ID=developer/library_documentation
+ *
+ * @author     Guillaume Poirier-Morency
+ * @copyright  Hète.ca Inc.
+ * @license    http://kohanaphp.com/license.html
  */
 class PayPal_Util {
 

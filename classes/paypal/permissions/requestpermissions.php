@@ -5,8 +5,11 @@ defined('SYSPATH') or die('No direct script access.');
 /**
  * RequestPermissions API Operation.
  *
- * @see  https://cms.paypal.com/ca/cgi-bin/?cmd=_render-content&content_ID=developer/e_howto_api_PermissionsRequestPermissionsAPI
+ * @link  https://cms.paypal.com/ca/cgi-bin/?cmd=_render-content&content_ID=developer/e_howto_api_PermissionsRequestPermissionsAPI
  *
+ * @author     Guillaume Poirier-Morency
+ * @copyright  Hète.ca Inc.
+ * @license    http://kohanaphp.com/license.html
  */
 class PayPal_Permissions_RequestPermissions extends PayPal_Permissions {
 

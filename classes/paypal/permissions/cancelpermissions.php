@@ -3,13 +3,12 @@
 defined('SYSPATH') or die('No direct script access.');
 
 /**
- * PayPal ExpressCheckout integration.
+ * Cancel permissions of a specified token.
  *
- * @see  https://cms.paypal.com/us/cgi-bin/?cmd=_render-content&content_ID=developer/e_howto_api_ECGettingStarted
+ * @link  https://cms.paypal.com/us/cgi-bin/?cmd=_render-content&content_ID=developer/library_documentation
  *
- * @package    Kohana
- * @author     Kohana Team
- * @copyright  (c) 2009 Kohana Team
+ * @author     Guillaume Poirier-Morency
+ * @copyright  Hète.ca Inc.
  * @license    http://kohanaphp.com/license.html
  */
 class PayPal_Permissions_CancelPermissions extends PayPal_Permissions {
