@@ -193,7 +193,7 @@ abstract class PayPal {
         }
 
         if (!$validation_request->check()) {
-            throw new PayPal_Exception($this, $validation_request);
+            throw new PayPal_Validation_Exception($this, $validation_request);
         }
 
         // Create POST data        
@@ -209,8 +209,12 @@ abstract class PayPal {
         $request->client()->options(CURLOPT_SSL_VERIFYPEER, FALSE)
                 ->options(CURLOPT_SSL_VERIFYHOST, FALSE);
 
+        try {
         // Execute the request and parse the response
         parse_str($request->execute()->body(), $data);
+        } catch(Request_Exception $re) {            
+            throw new PayPal_Request_Exception($this);
+        }
 
         // Validate the response
         $validation_response = Validation::factory($data)
@@ -224,7 +228,7 @@ abstract class PayPal {
         }
 
         if (!$validation_response->check()) {
-            throw new PayPal_Exception($this, $validation_response, $data);
+            throw new PayPal_Validation_Exception($this, $validation_response, $data);
         }
 
         return array(
