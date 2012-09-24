@@ -29,7 +29,13 @@ abstract class PayPal {
      *
      * @var type 
      */
-    private $_environment;
+    protected $_environment;
+
+    /**
+     *
+     * @var type 
+     */
+    protected $_config;
 
     /**
      * Basic params values.
@@ -73,40 +79,23 @@ abstract class PayPal {
     protected abstract function response_rules();
 
     /**
-     * PayPal method name based on the class name.
-     * @var string 
-     */
-    public function method() {
-
-        $method = str_replace("PayPal_", "", get_class($this));
-
-        return implode("/", explode("_", $method));
-    }
-
-    /**
-     * Creates a new PayPal instance for the given username, password,
-     * and signature for the given environment.
-     *
-     * @param   string  API username
-     * @param   string  API password
-     * @param   string  API signature
-     * @param   string  environment (one of: live, sandbox, sandbox-beta)
-     * @return  void
+     * 
+     * @param array $params
      */
     public function __construct(array $params = array()) {
 
         $this->_environment = Kohana::$config->load("paypal.environment");
 
-        $config = Kohana::$config->load('paypal.' . $this->_environment);
+        $this->_config = Kohana::$config->load('paypal.' . $this->_environment);
 
-        // Basic headers
+        // Basic headers for permissions request
         $this->_headers = array(
-            'X-PAYPAL-SECURITY-USERID' => $config['username'],
-            'X-PAYPAL-SECURITY-PASSWORD' => $config['password'],
-            'X-PAYPAL-SECURITY-SIGNATURE' => $config['signature'],
+            'X-PAYPAL-SECURITY-USERID' => $this->_config['username'],
+            'X-PAYPAL-SECURITY-PASSWORD' => $this->_config['password'],
+            'X-PAYPAL-SECURITY-SIGNATURE' => $this->_config['signature'],
             'X-PAYPAL-REQUEST-DATA-FORMAT' => 'NV',
             'X-PAYPAL-RESPONSE-DATA-FORMAT' => 'NV',
-            "X-PAYPAL-APPLICATION-ID" => $config['api_id'],
+            "X-PAYPAL-APPLICATION-ID" => $this->_config['api_id'],
         );
 
         $this->_params = $params + array(
@@ -130,6 +119,17 @@ abstract class PayPal {
         } else {
             $this->_params[$key] = $value;
         }
+    }
+
+    /**
+     * PayPal method name based on the class name.
+     * @var string 
+     */
+    public function method() {
+
+        $method = str_replace("PayPal_", "", get_class($this));
+
+        return implode("/", explode("_", $method));
     }
 
     /**

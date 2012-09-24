@@ -8,7 +8,7 @@ defined('SYSPATH') or die('No direct script access.');
  * @see  https://cms.paypal.com/ca/cgi-bin/?cmd=_render-content&content_ID=developer/e_howto_api_PermissionsRequestPermissionsAPI
  *
  */
-class PayPal_Permissions_RequestPermissions extends PayPal {
+class PayPal_Permissions_RequestPermissions extends PayPal_Permissions {
 
     protected function redirect_param(array $results) {
         return array('request_token' => $results['token']);

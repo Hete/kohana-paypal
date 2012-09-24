@@ -12,7 +12,7 @@ defined('SYSPATH') or die('No direct script access.');
  * @copyright  (c) 2009 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class PayPal_Permissions_CancelPermissions extends PayPal {
+class PayPal_Permissions_CancelPermissions extends PayPal_Permissions {
 
     protected function request_rules() {
         return array('token' => array(

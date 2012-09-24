@@ -12,7 +12,7 @@ defined('SYSPATH') or die('No direct script access.');
  * @copyright  (c) 2009 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class PayPal_SetExpressCheckout extends PayPal {
+class PayPal_ExpressCheckout_SetExpressCheckout extends PayPal {
 
     protected function required() {
         return array(
@@ -22,10 +22,23 @@ class PayPal_SetExpressCheckout extends PayPal {
     }
 
     protected function redirect_command() {
+        return "express-checkout";
         
     }
 
     protected function redirect_param($results) {
+        return array(
+            'token' => $results['token']
+        );
+        
+    }
+
+    protected function request_rules() {
+        return array();
+        
+    }
+
+    protected function response_rules() {
         
     }
 
