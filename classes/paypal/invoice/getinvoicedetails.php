@@ -1,11 +1,11 @@
 <?php
-
-class DoExpressCheckoutPayment extends PayPal_ExpressCheckout {
+/**
+ * 
+ */
+class PayPal_Invoice_GetInvoiceDetails extends PayPal_Invoice {
 
     protected function request_rules() {
-        return array(
-            
-        );
+        
     }
 
     protected function response_rules() {

@@ -15,15 +15,20 @@ defined('SYSPATH') or die('No direct script access.');
  */
 abstract class PayPal_ExpressCheckout extends PayPal {
 
+    public function __construct(array $params = array()) {
+        parent::__construct($params);
+        // Adding METHOD to params
+        $this->param("METHOD", $this->method());
+    }
+
     /**
      * PayPal method name based on the class name.
+     * In express checkout, method is stored in a key from the request.
      * @var string 
      */
     public function method() {
-
-        $method = str_replace("PayPal_", "", get_class($this));
-
-        return implode("/", explode("_", $method));
+        $parts = explode("_", get_class($this));
+        return $parts[count($parts) - 1];
     }
 
     /**
@@ -40,13 +45,9 @@ abstract class PayPal_ExpressCheckout extends PayPal {
             $env = $this->_environment . '.';
         }
 
-        return 'https://api-3t.' . $env . 'paypal.com/nvp?' . $this->method();
+        return 'https://api-3t.' . $env . 'paypal.com/nvp';
     }
 
 }
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 ?>

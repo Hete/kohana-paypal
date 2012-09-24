@@ -10,12 +10,10 @@ defined('SYSPATH') or die('No direct script access.');
  */
 class PayPal_Permissions_RequestPermissions extends PayPal_Permissions {
 
+    protected $_redirect_command = 'grant-permission';
+
     protected function redirect_param(array $results) {
         return array('request_token' => $results['token']);
-    }
-
-    protected function redirect_command() {
-        return 'grant-permission';
     }
 
     protected function request_rules() {

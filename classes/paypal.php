@@ -48,14 +48,7 @@ abstract class PayPal {
      * @var type 
      */
     private $_headers = array();
-
-    /**
-     * Commande de redirection.
-     * @return string
-     */
-    protected function redirect_command() {
-        return "";
-    }
+    protected $_redirect_command = "";
 
     /**
      * Construit les paramètres de redirection avec le résultat de la 
@@ -88,7 +81,7 @@ abstract class PayPal {
 
         $this->_config = Kohana::$config->load('paypal.' . $this->_environment);
 
-        // Basic headers for permissions request
+        // Basic headers for PayPal request
         $this->_headers = array(
             'X-PAYPAL-SECURITY-USERID' => $this->_config['username'],
             'X-PAYPAL-SECURITY-PASSWORD' => $this->_config['password'],
@@ -169,7 +162,7 @@ abstract class PayPal {
         }
 
         // Add the command to the parameters
-        $params = array('cmd' => '_' . $this->redirect_command()) + $this->redirect_param($response_data);
+        $params = array('cmd' => '_' . $this->_redirect_command) + $this->redirect_param($response_data);
 
         return 'https://www.' . $env . 'paypal.com/webscr?' . http_build_query($params, '', '&');
     }

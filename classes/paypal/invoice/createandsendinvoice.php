@@ -1,11 +1,9 @@
 <?php
 
-class DoExpressCheckoutPayment extends PayPal_ExpressCheckout {
+class PayPal_Invoice_CreateAndSendInvoice extends PayPal_Invoice {
 
     protected function request_rules() {
-        return array(
-            
-        );
+        
     }
 
     protected function response_rules() {

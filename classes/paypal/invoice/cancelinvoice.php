@@ -1,11 +1,7 @@
 <?php
-class PayPal_ExpressCheckout_GetExpressCheckoutDetails extends PayPal_ExpressCheckout {
+class PayPal_Invoice_CancelInvoice extends PayPal_Invoice {
     
     protected function request_rules() {
-        return array(
-            'token'
-            
-        );
         
     }
 
