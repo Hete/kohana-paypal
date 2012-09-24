@@ -8,12 +8,45 @@ I need help to build request files to eventually support the whole PayPal NVP AP
 
 Example of request class :
 <pre>
-class PayPal_SetExpressCheckout extends PayPal {
+/**
+ * PayPal ExpressCheckout integration.
+ *
+ * @see  https://cms.paypal.com/ca/cgi-bin/?cmd=_render-content&content_ID=developer/e_howto_api_PermissionsGetAccessTokenAPI
+ *
+ * @package    Kohana
+ * @author     Kohana Team
+ * @copyright  (c) 2009 Kohana Team
+ * @license    http://kohanaphp.com/license.html
+ */
+class PayPal_Permissions_GetAccessToken extends PayPal_Permissions {
 
-    protected function required() {
+    /**
+     * Need a token and the verifier in the request.
+     * @return type
+     */
+    protected function request_rules() {
         return array(
-            'AMT',
-            'PAYMENTACTION'
+            'token' => array(
+                array('not_empty')
+            ),
+            'verifier' => array(
+                array('not_empty')
+            )
+        );
+    }
+
+    /**
+     * A token and a tokenSecret must be providen in the response.
+     *
+     */
+    protected function response_rules() {
+        return array(
+            'token' => array(
+                array('not_empty')
+            ),
+            'tokenSecret' => array(
+                array('not_empty')
+            ),
         );
     }
 
@@ -23,9 +56,12 @@ class PayPal_SetExpressCheckout extends PayPal {
 How to use this class :
 <pre>
 $params = array(
-  'AMT' => 50.5,
-  'PAYMENTACTION' => 'Sale'
+  'token' => 'dsnahuiy8182318edhd'
+  'verifier' => 'asdi2ue89ewioehd'
 );
 $request = PayPal::factory('SetExpressCheckout', $params);
 $result = $request->execute();
+$token = $result['token'];
+$token_secret = $result['tokenSecret'];
+
 </pre>
