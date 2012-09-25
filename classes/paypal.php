@@ -255,7 +255,7 @@ abstract class PayPal {
             // Execute the request and parse the response
             parse_str($request->execute()->body(), $data);
         } catch (Request_Exception $re) {
-            throw new PayPal_Request_Exception($this);
+            throw new PayPal_Request_Exception($this, $re);
         }
 
         // Validate the response

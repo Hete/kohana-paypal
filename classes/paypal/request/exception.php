@@ -12,21 +12,16 @@ class PayPal_Request_Exception extends Request_Exception implements PayPal_Excep
 
     private $_request;
 
-    public function __construct(PayPal $request, $message = "", $code = 0) {
+    public function __construct(PayPal $request, Request_Exception $request_exception, $message = "", $code = 0) {
         $this->_request = $request;
         // Adding query and response
         $values = array(':method' => $this->_request->method(),
             ':query' => print_r($this->_request->param(), true),
         );
 
-
-        $message .= "PayPal request has failed.";
-
-
+        $message .= $request_exception->getMessage();
 
         $message .= " :method :query :response";
-
-
 
         parent::__construct($message, $values, $code);
     }
