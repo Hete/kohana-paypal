@@ -49,8 +49,34 @@ abstract class PayPal {
      * 
      * @var type 
      */
-    private $_headers = array();
+    protected $_headers = array();
+
+    /**
+     *
+     * @var string 
+     */
     protected $_redirect_command = "";
+
+    /**
+     *
+     * @var array 
+     */
+    protected $_basic_request_rules = array(
+        'requestEnvelope_errorLanguage' => array(
+            array('not_empty')
+        )
+    );
+
+    /**
+     *
+     * @var array 
+     */
+    protected $_basic_response_rules = array(
+        'responseEnvelope_ack' => array(
+            array('not_empty'),
+            array('equals', array(":value", "Success"))
+        )
+    );
 
     /**
      * Construit les paramètres de redirection avec le résultat de la 
@@ -94,7 +120,7 @@ abstract class PayPal {
         );
 
         $this->_params = $params + array(
-            'requestEnvelope_errorLanguage' => 'fr_CA',
+            'requestEnvelope_errorLanguage' => Kohana::$config->load("paypal.error_lang"),
         );
     }
 
@@ -113,6 +139,22 @@ abstract class PayPal {
             return $this->_params[$key];
         } else {
             $this->_params[$key] = $value;
+        }
+    }
+
+    /**
+     * 
+     * @param type $key
+     * @param type $value
+     * @return type
+     */
+    public function headers($key = NULL, $value = NULL) {
+        if ($key === NULL) {
+            return $this->_headers;
+        } else if ($value === NULL) {
+            return $this->_headers[$key];
+        } else {
+            $this->_headers[$key] = $value;
         }
     }
 
@@ -183,12 +225,10 @@ abstract class PayPal {
     public final function execute() {
 
         // Validate the request parameters
-        $validation_request = Validation::factory($this->param())
-                // We define basic rules
-                ->rule('requestEnvelope_errorLanguage', 'not_empty');
+        $validation_request = Validation::factory($this->param());
 
-        // We add custom rules proper to the request
-        foreach ($this->request_rules() as $field => $rules) {
+        // We add custom and basic rules proper to the request
+        foreach ($this->_basic_request_rules + $this->request_rules() as $field => $rules) {
             $validation_request->rules($field, $rules);
         }
 
@@ -210,20 +250,18 @@ abstract class PayPal {
                 ->options(CURLOPT_SSL_VERIFYHOST, FALSE);
 
         try {
-        // Execute the request and parse the response
-        parse_str($request->execute()->body(), $data);
-        } catch(Request_Exception $re) {            
+            // Execute the request and parse the response
+            parse_str($request->execute()->body(), $data);
+        } catch (Request_Exception $re) {
             throw new PayPal_Request_Exception($this);
         }
 
         // Validate the response
-        $validation_response = Validation::factory($data)
-                // Basic response validations in response envelope.
-                ->rule('responseEnvelope_ack', 'not_empty')
-                ->rule('responseEnvelope_ack', 'equals', array(":value", "Success"));
+        $validation_response = Validation::factory($data);
 
-        // We add custom response rules proper to the request
-        foreach ($this->response_rules() as $field => $rules) {
+
+        // We add custom and basic response rules proper to the request
+        foreach ($this->_basic_response_rules + $this->response_rules() as $field => $rules) {
             $validation_response->rules($field, $rules);
         }
 

@@ -19,9 +19,23 @@ abstract class PayPal_ExpressCheckout extends PayPal {
 
     public function __construct(array $params = array()) {
         parent::__construct($params);
-        // Adding METHOD to params
+        // SetExpressCheckout require auth data in the POST.
         $this->param("METHOD", $this->method());
+        $this->param("VERSION", 51.0);
+        $this->param("USER", $this->_config['username']);
+        $this->param("PWD", $this->_config['password']);
+        $this->param("SIGNATURE", $this->_config['signature']);
     }
+
+    /**
+     * SetExpressCheckout has different response parameters
+     * @var type 
+     */
+    protected $_basic_response_rules = array('ACK' => array(
+            array('not_empty'),
+            array('equals', array(':value', 'Success'))
+        )
+    );
 
     /**
      * PayPal method name based on the class name.

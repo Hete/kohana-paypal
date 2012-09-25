@@ -5,6 +5,7 @@ defined('SYSPATH') or die('No direct script access.');
 return array(
     // PayPal environment: live, sandbox, beta-sandbox
     'environment' => 'sandbox',
+    'error_lang' => 'en_US',
     'sandbox' => array(
         // PayPal API and username
         'username' => NULL,

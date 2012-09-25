@@ -20,26 +20,41 @@ class PayPal_ExpressCheckout_SetExpressCheckout extends PayPal_ExpressCheckout {
         );
     }
 
-    protected function redirect_command() {
-        return "express-checkout";
-        
-    }
+    protected $_redirect_command = "express-checkout";
 
     protected function redirect_param(array $results) {
         return array(
-            'token' => $results['token']
+            'token' => $results['TOKEN']
         );
-        
     }
 
     protected function request_rules() {
-        return array();
-        
+        return array(
+            'AMT' => array(
+                array('not_empty'),
+            ),
+            'PAYMENTACTION' => array(
+                array('not_empty'),
+            ),
+            'ReturnURL' => array(
+                array('not_empty'),
+                array('url'),
+            ),
+            'CancelURL' => array(
+                array('not_empty'),
+                array('url'),
+            )
+        );
     }
 
     protected function response_rules() {
-          return array();
-        
+        return array(
+            'TOKEN' => array(
+                array('not_empty'),
+            ),
+            
+         
+        );
     }
 
 }
