@@ -14,8 +14,12 @@ I need help to build request files to eventually support the whole PayPal NVP AP
     * CancelPermissions
     * GetBasicPersonalData
     * GetAdvancedPersonalData
+* ExpressCheckout (uses a particular API)
+    * SetExpressCheckout
 
-Example of request class :
+AdaptativePayments is on its way !
+
+### Example of request class :
 <pre>
 /**
  * PayPal ExpressCheckout integration.
