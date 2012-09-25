@@ -10,7 +10,7 @@
  */
 class PayPal_Request_Exception extends Request_Exception implements PayPal_Exception {
 
-    private $_request;
+    private $_paypal_request, $_request;
 
     public function __construct(PayPal $request, Request_Exception $request_exception, $message = "", $code = 0) {
         $this->_request = $request;
@@ -26,6 +26,18 @@ class PayPal_Request_Exception extends Request_Exception implements PayPal_Excep
         parent::__construct($message, $values, $code);
     }
 
+    /**
+     * 
+     * @return PayPal
+     */
+    public function paypal_request() {
+        return $this->_paypal_request;
+    }
+
+    /**
+     * 
+     * @return Request_Exception
+     */
     public function request() {
         return $this->_request;
     }
