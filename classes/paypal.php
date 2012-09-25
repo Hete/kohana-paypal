@@ -26,39 +26,38 @@ abstract class PayPal {
         return new $class($params);
     }
 
-    // Environment type
     /**
-     *
-     * @var type 
+     * Environment type
+     * @var string 
      */
     protected $_environment;
 
     /**
-     *
-     * @var type 
+     * Configuration specific to the environnement
+     * @var array 
      */
     protected $_config;
 
     /**
-     * Basic params values.
-     * @var type 
+     * POST params values.
+     * @var array 
      */
     private $_params = array();
 
     /**
-     * 
-     * @var type 
+     * Headers values.
+     * @var array 
      */
     protected $_headers = array();
 
     /**
-     *
+     * Redirection command (if appliable).
      * @var string 
      */
     protected $_redirect_command = "";
 
     /**
-     *
+     * Basic request rules. Useful to override if targetting a special API.
      * @var array 
      */
     protected $_basic_request_rules = array(
@@ -68,7 +67,7 @@ abstract class PayPal {
     );
 
     /**
-     *
+     * Basic response rules. Useful to override if targetting a special API.
      * @var array 
      */
     protected $_basic_response_rules = array(
@@ -79,10 +78,13 @@ abstract class PayPal {
     );
 
     /**
-     * Construit les paramètres de redirection avec le résultat de la 
-     * requête PayPal en API.
-     * @param array $results
-     * @return type
+     * Build redirect url parameters.
+     * 
+     * The function from PayPal class does nothing, it has to be implemented
+     * if the API method provide data to build a redirect url.
+     * 
+     * @param array $results is the PayPal response.
+     * @return array are the url parameters.
      */
     protected function redirect_param(array $results) {
         return array();
@@ -100,8 +102,9 @@ abstract class PayPal {
     protected abstract function response_rules();
 
     /**
-     * 
-     * @param array $params
+     * Constructor. You may use it directly, but it is suggested to use the
+     * factory, which is more convenient.
+     * @param array $params request parameters.
      */
     public function __construct(array $params = array()) {
 
@@ -128,8 +131,8 @@ abstract class PayPal {
      * param() returns the param array, param($key) returns the value associated
      * to the key $key and param($key, $value) sets the $value at the specified
      * $key.
-     * @param type $key
-     * @param type $value
+     * @param string $key
+     * @param string $value
      * @return type
      */
     public function param($key = NULL, $value = NULL) {
@@ -143,9 +146,9 @@ abstract class PayPal {
     }
 
     /**
-     * 
-     * @param type $key
-     * @param type $value
+     * Headers access method. Same as param.
+     * @param string $key
+     * @param string $value
      * @return type
      */
     public function headers($key = NULL, $value = NULL) {
@@ -160,7 +163,7 @@ abstract class PayPal {
 
     /**
      * PayPal method name based on the class name.
-     * @var string 
+     * @return string 
      */
     public function method() {
 
@@ -172,9 +175,9 @@ abstract class PayPal {
     /**
      * Returns the NVP API URL for the current environment and method.
      *
-     * @return  string
+     * @return string
      */
-    public function api_url() {
+    protected function api_url() {
         if ($this->_environment === 'live') {
             // Live environment does not use a sub-domain
             $env = '';
@@ -191,8 +194,7 @@ abstract class PayPal {
      *
      * @see  https://cms.paypal.com/us/cgi-bin/?cmd=_render-content&content_ID=developer/e_howto_html_Appx_websitestandard_htmlvariables#id08A6HF00TZS
      *
-     * @param   string   PayPal command
-     * @param   array    GET parameters
+     * @param   array   PayPal response data.   
      * @return  string
      */
     private function redirect_url(array $response_data) {
@@ -228,7 +230,7 @@ abstract class PayPal {
         $validation_request = Validation::factory($this->param());
 
         // We add custom and basic rules proper to the request
-        foreach ($this->_basic_request_rules + $this->request_rules() as $field => $rules) {
+        foreach ($this->request_rules() + $this->_basic_request_rules as $field => $rules) {
             $validation_request->rules($field, $rules);
         }
 
@@ -259,9 +261,8 @@ abstract class PayPal {
         // Validate the response
         $validation_response = Validation::factory($data);
 
-
         // We add custom and basic response rules proper to the request
-        foreach ($this->_basic_response_rules + $this->response_rules() as $field => $rules) {
+        foreach ($this->response_rules() + $this->_basic_response_rules as $field => $rules) {
             $validation_response->rules($field, $rules);
         }
 
@@ -270,7 +271,7 @@ abstract class PayPal {
         }
 
         return array(
-            // Response data for multiple purposes
+            // Response data from PayPal
             "response" => $data,
             // Pre-computed redirect url
             "redirect_url" => $this->redirect_url($data)
@@ -278,5 +279,3 @@ abstract class PayPal {
     }
 
 }
-
-// End PayPal
