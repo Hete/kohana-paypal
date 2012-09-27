@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Abstract PayPal integration.
  *
@@ -10,6 +11,12 @@
  */
 class PayPal_Util {
 
+    /**
+     * Encode un array en array valide PayPal.
+     *  
+     * 
+     * @param array $data 
+     */
     public static function paypal_encode(array $data) {
         
     }
@@ -19,6 +26,5 @@ class PayPal_Util {
     }
 
 }
-
 
 ?>

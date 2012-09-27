@@ -1,5 +1,8 @@
 <?php
 
+defined('SYSPATH') or die('No direct script access.');
+
+
 class Valid extends Kohana_Valid {
 
     public static function boolean(string $str) {

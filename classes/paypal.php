@@ -14,8 +14,20 @@ defined('SYSPATH') or die('No direct script access.');
  * @license    http://kohanaphp.com/license.html
  */
 abstract class PayPal {
-    
-    const DATE_FORMAT = "HH:MM:SS Mmm DD, YYYY PST";
+    /**
+     * Short date format supported by PayPal.
+     */
+
+    const SHORT_DATE_FORMAT = "Y-m-d\T";
+
+    /**
+     * Supported date format by PayPal.
+     */
+    const DATE_FORMAT = "Y-m-d\TH:i:s.BP";
+
+    public static $CURRENCIES = array('AUD', 'BRL', 'CAD', 'CZK', 'DKK', 'EUR',
+        'HKD', 'HUF', 'ILS', 'JPY', 'MYR', 'MXN', 'NOK', 'NZD', 'PHP', 'PLN',
+        'GBP', 'SGD', 'SEK', 'CHF', 'TWD', 'THB', 'USD');
 
     /**
      * 
@@ -125,6 +137,7 @@ abstract class PayPal {
         );
 
         $this->_params = $params + array(
+            'requestEnvelope' => '',
             'requestEnvelope_errorLanguage' => Kohana::$config->load("paypal.error_lang"),
         );
     }
@@ -270,6 +283,8 @@ abstract class PayPal {
         if (!$validation_response->check()) {
             throw new PayPal_Validation_Exception($this, $validation_response, $data);
         }
+
+
 
         return array(
             // Response data from PayPal
