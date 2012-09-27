@@ -14,6 +14,8 @@ defined('SYSPATH') or die('No direct script access.');
  * @license    http://kohanaphp.com/license.html
  */
 abstract class PayPal {
+    
+    const DATE_FORMAT = "HH:MM:SS Mmm DD, YYYY PST";
 
     /**
      * 
@@ -177,7 +179,7 @@ abstract class PayPal {
      *
      * @return string
      */
-    protected function api_url() {
+    public function api_url() {
         if ($this->_environment === 'live') {
             // Live environment does not use a sub-domain
             $env = '';
@@ -237,7 +239,6 @@ abstract class PayPal {
         if (!$validation_request->check()) {
             throw new PayPal_Validation_Exception($this, $validation_request);
         }
-
         // Create POST data        
         $request = Request::factory($this->api_url())
                 ->method(Request::POST)

@@ -11,7 +11,7 @@
  * @copyright  Hète.ca Inc.
  * @license    http://kohanaphp.com/license.html
  */
-abstract class PayPal_AdaptativePayments extends PayPal {
+abstract class PayPal_AdaptivePayments extends PayPal {
     
     
 }

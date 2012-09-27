@@ -7,11 +7,21 @@
 class ExecutePayment extends PayPal_AdaptativePayments {
 
     protected function request_rules() {
-        
+        return array(
+            'payKey' => array(
+                array('not_empty')
+            ), 'fundingPlanId' => array(
+                array('not_empty')
+            ),
+        );
     }
 
     protected function response_rules() {
-        
+        return array(
+            'paymentExecStatus' => array(
+                array('not_empty')
+            ),
+        );
     }
 
 }

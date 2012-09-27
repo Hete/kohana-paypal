@@ -18,6 +18,7 @@ class PayPal_Validation_Exception extends Validation_Exception implements PayPal
         $values = array(':method' => $this->_request->method(),
             ':query' => print_r($this->_request->param(), true),
             ':response' => print_r($response, true),
+            ':errors' => print_r($array->errors(), true),
         );
 
 
@@ -32,7 +33,8 @@ class PayPal_Validation_Exception extends Validation_Exception implements PayPal
         }
 
 
-        $message .= " :method :query :response";
+        $message .= " :method :query :response :errors";
+        
 
 
 

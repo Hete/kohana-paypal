@@ -15,13 +15,14 @@ class PayPal_Request_Exception extends Request_Exception implements PayPal_Excep
     public function __construct(PayPal $request, Request_Exception $request_exception, $message = "", $code = 0) {
         $this->_request = $request;
         // Adding query and response
-        $values = array(':method' => $this->_request->method(),
-            ':query' => print_r($this->_request->param(), true),
+        $values = array(
+            ':url' => $request->api_url(),
+            ':query' => print_r($this->_request->param(), true),            
         );
 
         $message .= $request_exception->getMessage();
 
-        $message .= " :method :query :response";
+        $message .= " :url :query";
 
         parent::__construct($message, $values, $code);
     }
