@@ -290,7 +290,15 @@ abstract class PayPal {
             // Response data from PayPal
             "response" => $data,
             // Pre-computed redirect url
-            "redirect_url" => $this->redirect_url($data)
+            "redirect_url" => $this->redirect_url($data),
+            /* Token associated to the session that has initiated the request.
+             * You should validate it when necessary with Security::check($token)
+             * 
+             * It is useful to check if it is still the same session that is 
+             * requesting access when the user has been redirected from
+             * PayPal.
+             */
+            "security_token" => Security::token()
         );
     }
 
