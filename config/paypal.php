@@ -6,6 +6,11 @@ return array(
     // PayPal environment: live, sandbox, beta-sandbox
     'environment' => 'sandbox',
     'error_lang' => 'en_US',
+    'curl_options' => array(
+        CURLOPT_SSL_VERIFYPEER => FALSE,
+        CURLOPT_SSL_VERIFYHOST => FALSE,
+        CURLOPT_USERAGENT => "Kohana",
+    ),
     'sandbox' => array(
         // PayPal API and username
         'username' => NULL,

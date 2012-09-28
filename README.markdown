@@ -7,6 +7,10 @@ If you want to build a class for a request, you have to make a new class extendi
 I need help to build request files to eventually support the whole PayPal NVP API.
 
 ## Supported APIs
+* AdaptivePayments
+    * Preapproval
+* ExpressCheckout (uses a particular API)
+    * SetExpressCheckout
 * Permissions
     * RequestPermissions
     * GetAccessToken
@@ -14,10 +18,17 @@ I need help to build request files to eventually support the whole PayPal NVP AP
     * CancelPermissions
     * GetBasicPersonalData
     * GetAdvancedPersonalData
-* ExpressCheckout (uses a particular API)
-    * SetExpressCheckout
 
-AdaptativePayments is on its way !
+## Features
+
+* Fully configurable cURL client.
+* Validation at request and response.
+* Security token in responses for security.
+* Access to sandbox with a static api id.
+* Configuration for each environnements.
+* Custom exceptions to deal with failure properly.
+* Redirect URL are pre-computed from the class and available in the response.
+* More to come.. !
 
 ### Example of request class :
 <pre>
@@ -74,8 +85,17 @@ $params = array(
 );
 $request = PayPal::factory('SetExpressCheckout', $params);
 $result = $request->execute();
-$token = $result['token'];
-$token_secret = $result['tokenSecret'];
+$token = $result['response']['token'];
+$token_secret = $result['response']['tokenSecret'];
+
+$redirect_uri = $result['redirect_uri'];
+$security_token = $result['security_token'];
+
+// Validate your token when your client is redirected from PayPal
+if(!Security::check($security_token)) {
+    // Handling code...
+}
+
 
 </pre>
 

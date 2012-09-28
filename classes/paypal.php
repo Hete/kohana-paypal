@@ -261,9 +261,11 @@ abstract class PayPal {
             $request->headers($key, $value);
         }
 
-        // Setup the client
-        $request->client()->options(CURLOPT_SSL_VERIFYPEER, FALSE)
-                ->options(CURLOPT_SSL_VERIFYHOST, FALSE);
+        // Custom setup for the cURL client
+        foreach (Kohana::$config->load("paypal.curl_options") as $key => $value) {
+            $request->client()->options($key, $value);
+        }
+
 
         try {
             // Execute the request and parse the response
