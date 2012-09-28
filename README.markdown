@@ -101,3 +101,5 @@ if(!Security::check($security_token)) {
 
 ## Support for this project
 PayPal has around 5 apis, which each have from 5 to 10 methods. If you want to code some APIs, it's pretty simple, you only have to build the rules for request and response !
+
+Yeah, unit testing also. Kohana has a module for that, so it shouldn't be so hard.
