@@ -1,128 +1,124 @@
-<?php defined('SYSPATH') or die('No direct script access.');
+<?php
+
+defined('SYSPATH') or die('No direct script access.');
+
 /**
+
  * Abstract PayPal integration.
  *
  * @link  https://cms.paypal.com/us/cgi-bin/?cmd=_render-content&content_ID=developer/library_documentation
- *
- * @package    Kohana
- * @author     Kohana Team
- * @copyright  (c) 2009 Kohana Team
+ * 
+ * @package PayPal
+ * @author     Guillaume Poirier-Morency
+ * @copyright  Hète.ca Inc.
  * @license    http://kohanaphp.com/license.html
  */
-abstract class Kohana_PayPal {
+abstract class PayPal {
+    /**
+     * Short date format supported by PayPal.
+     */
 
-	const API_VERSION = '51.0';
+    const SHORT_DATE_FORMAT = "Y-m-d\T";
 
-	/**
-	 * @var  array  instances
-	 */
-	public static $instances = array();
-	
-	/**
-	 * @var Request_Client_External
-	 */
-	protected $_http_client;
+    /**
+     * Supported date format by PayPal.
+     */
+    const DATE_FORMAT = "Y-m-d\TH:i:s.BP";
 
-	/**
-	 * Returns a singleton instance of one of the PayPal classes.
-	 *
-	 * @param   string  class type (ExpressCheckout, PaymentsPro, etc)
-	 * @return  object
-	 */
-	public static function instance($type)
-	{
-		if ( ! isset(PayPal::$instances[$type]))
-		{
-			// Set the class name
-			$class = 'PayPal_'.$type;
+    public static $CURRENCIES = array('AUD', 'BRL', 'CAD', 'CZK', 'DKK', 'EUR',
+        'HKD', 'HUF', 'ILS', 'JPY', 'MYR', 'MXN', 'NOK', 'NZD', 'PHP', 'PLN',
+        'GBP', 'SGD', 'SEK', 'CHF', 'TWD', 'THB', 'USD');
 
-			// Load default configuration
-			$config = Kohana::$config->load('paypal');
+    /**
+     * 
+     * @param string $class 
+     * @param array $params
+     * @return \class
+     */
+    public static function factory($class, array $params = array()) {
+        $class = "PayPal_" . $class;
+        return new $class($params);
+    }
 
-			// Create a new PayPal instance with the default configuration
-			PayPal::$instances[$type] = new $class($config['username'], $config['password'], $config['signature'], $config['environment']);
-		}
+    /**
+     * Environment type
+     * @var string 
+     */
+    protected $_environment;
 
-		return PayPal::$instances[$type];
-	}
+    /**
+     * Configuration specific to the environnement
+     * @var array 
+     */
+    protected $_config;
 
-	// API username
-	protected $_username;
+    /**
+     * POST params values.
+     * @var array 
+     */
+    private $_params = array();
 
-	// API password
-	protected $_password;
+    /**
+     * Headers values.
+     * @var array 
+     */
+    protected $_headers = array();
 
-	// API signature
-	protected $_signature;
+    /**
+     * Redirection command (if appliable).
+     * @var string 
+     */
+    protected $_redirect_command = "";
 
-	// Environment type
-	protected $_environment = 'live';
+    /**
+     * Basic request rules. Useful to override if targetting a special API.
+     * @var array 
+     */
+    protected $_basic_request_rules = array(
+        'requestEnvelope_errorLanguage' => array(
+            array('not_empty')
+        )
+    );
 
-	/**
-	 * Creates a new PayPal instance for the given username, password,
-	 * and signature for the given environment.
-	 *
-	 * @param   string  API username
-	 * @param   string  API password
-	 * @param   string  API signature
-	 * @param   string  environment (one of: live, sandbox, sandbox-beta)
-	 * @return  void
-	 */
-	public function __construct($username, $password, $signature, $environment = 'live')
-	{
-		// Set the API username and password
-		$this->_username = $username;
-		$this->_password = $password;
+    /**
+     * Basic response rules. Useful to override if targetting a special API.
+     * @var array 
+     */
+    protected $_basic_response_rules = array(
+        'responseEnvelope_ack' => array(
+            array('not_empty'),
+            array('equals', array(":value", "Success"))
+        )
+    );
 
-		// Set the API signature
-		$this->_signature = $signature;
+    /**
+     * Build redirect url parameters.
+     * 
+     * The function from PayPal class does nothing, it has to be implemented
+     * if the API method provide data to build a redirect url.
+     * 
+     * @param array $results is the PayPal response.
+     * @return array are the url parameters.
+     */
+    protected function redirect_param(array $results) {
+        return array();
+    }
 
-		// Set the environment
-		$this->_environment = $environment;
-	}
-
-	/**
-	 * Returns the NVP API URL for the current environment.
-	 *
-	 * @return  string
-	 */
-	public function api_url()
-	{
-		if ($this->_environment === 'live')
-		{
-			// Live environment does not use a sub-domain
-			$env = '';
-		}
-		else
-		{
-			// Use the environment sub-domain
-			$env = $this->_environment.'.';
-		}
+    /**
+     * Return the validation array for the specified request.
+     * @return type
+     */
+    protected abstract function request_rules();
 
 		return 'https://api-3t.'.$env.'paypal.com/nvp';
 	}
 
-	/**
-	 * Returns the redirect URL for the current environment.
-	 *
-	 * @see  https://cms.paypal.com/us/cgi-bin/?cmd=_render-content&content_ID=developer/e_howto_html_Appx_websitestandard_htmlvariables#id08A6HF00TZS
-	 *
-	 * @param   string   PayPal command
-	 * @param   array    GET parameters
-	 * @return  string
-	 */
-	public function redirect_url($command, array $params)
-	{
-		if ($this->_environment === 'live')
-		{
-			// Live environment does not use a sub-domain
-			$env = '';
-		}
-		else
-		{
-			// Use the environment sub-domain
-			$env = $this->_environment.'.';
-		}
+    /**
+     * Constructor. You may use it directly, but it is suggested to use the
+     * factory, which is more convenient.
+     * @param array $params request parameters.
+     */
+    public function __construct(array $params = array()) {
 
 		// Add the command to the parameters
 		$params = array('cmd' => '_'.$command) + $params;
@@ -130,90 +126,60 @@ abstract class Kohana_PayPal {
 		return 'https://www.'.$env.'paypal.com/webscr?'.http_build_query($params, '', '&');
 	}
 
-	/**
-	 * Makes a POST request to PayPal NVP for the given method and parameters.
-	 *
-	 * @see  https://cms.paypal.com/us/cgi-bin/?cmd=_render-content&content_ID=developer/e_howto_api_nvp_NVPAPIOverview
-	 *
-	 * @throws  Kohana_Exception
-	 * @param   string  method to call
-	 * @param   array   POST parameters
-	 * @return  array
-	 */
-	protected function _post($method, array $params)
-	{
-		// Create POST data
-		$post = array(
-			'METHOD'    => $method,
-			'VERSION'   => PayPal::API_VERSION,
-			'USER'      => $this->_username,
-			'PWD'       => $this->_password,
-			'SIGNATURE' => $this->_signature,
-		) + $params;
-		
-		// Create the Request, using the client
-		$request = Request::factory($this->api_url());
-		$client  = $request->client($this->http_client());
-		
-		try
-		{
-			// Get the Response for this Request
-			$response = $request->method(Request::POST)
-				->post($post)
-				->execute();
-		}
-		catch (Request_Exception $e)
-		{
-			throw new Kohana_Exception('PayPal API request for :method failed: :error (:code)',
-				array(':method' => $method, ':error' => $e->getMessage(), ':code' => $e->getCode()));
-		}
+        // Basic headers for PayPal request
+        $this->_headers = array(
+            'X-PAYPAL-SECURITY-USERID' => $this->_config['username'],
+            'X-PAYPAL-SECURITY-PASSWORD' => $this->_config['password'],
+            'X-PAYPAL-SECURITY-SIGNATURE' => $this->_config['signature'],
+            'X-PAYPAL-REQUEST-DATA-FORMAT' => 'NV',
+            'X-PAYPAL-RESPONSE-DATA-FORMAT' => 'NV',
+            "X-PAYPAL-APPLICATION-ID" => $this->_config['api_id'],
+        );
 
-		// Parse the response
-		parse_str($response->body(), $data);
+        $this->_params = $params + array(
+            'requestEnvelope' => '',
+            'requestEnvelope_errorLanguage' => Kohana::$config->load("paypal.error_lang"),
+        );
+    }
 
-		if ( ! isset($data['ACK']) OR strpos($data['ACK'], 'Success') === FALSE)
-		{
-			throw new Kohana_Exception('PayPal API request for :method failed: :error (:code)',
-				array(':method' => $method, ':error' => $data['L_LONGMESSAGE0'], ':code' => $data['L_ERRORCODE0']));
-		}
+    /**
+     * param() returns the param array, param($key) returns the value associated
+     * to the key $key and param($key, $value) sets the $value at the specified
+     * $key.
+     * @param string $key
+     * @param string $value
+     * @return type
+     */
+    public function param($key = NULL, $value = NULL) {
+        if ($key === NULL) {
+            return $this->_params;
+        } else if ($value === NULL) {
+            return $this->_params[$key];
+        } else {
+            $this->_params[$key] = $value;
+        }
+    }
 
-		return $data;
-	}
-	
-	/**
-	 * @param  Request_Client_External $client
-	 * @return Request_Client_External
-	 */
-	public function http_client(Request_Client_External $client = NULL)
-	{
-		if ($client !== NULL)
-		{
-			$this->_http_client = $client;
-		}
-		elseif ($this->_http_client === NULL)
-		{
-			/**
-			 * Automatically create a HTTP client if none defined yet
-			 */		
-			if (extension_loaded('http'))
-			{
-				$this->_http_client = new Request_Client_HTTP;
-			}
-			elseif (extension_loaded('curl'))
-			{
-				$this->_http_client = new Request_Client_Curl;
-				
-				// Disable SSL checks
-				$this->_http_client->options(CURLOPT_SSL_VERIFYPEER, FALSE)
-					->options(CURLOPT_SSL_VERIFYHOST, FALSE);
-			}
-			else
-			{
-				$this->_http_client = new Request_Client_Stream;
-			}
-		}
-		
-		return $this->_http_client;
-	}
+    /**
+     * Headers access method. Same as param.
+     * @param string $key
+     * @param string $value
+     * @return type
+     */
+    public function headers($key = NULL, $value = NULL) {
+        if ($key === NULL) {
+            return $this->_headers;
+        } else if ($value === NULL) {
+            return $this->_headers[$key];
+        } else {
+            $this->_headers[$key] = $value;
+        }
+    }
+
+    /**
+     * PayPal method name based on the class name.
+     * @return string 
+     */
+    public function method() {
 
 } // End PayPal

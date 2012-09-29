@@ -1,62 +1,69 @@
-<?php defined('SYSPATH') or die('No direct script access.');
+<?php
+
+defined('SYSPATH') or die('No direct script access.');
+
 /**
- * PayPal ExpressCheckout integration.
+ * ExpressCheckout base class.
+ * 
+ * It uses api-3t, so we overload few methods.
  *
- * @see  https://cms.paypal.com/us/cgi-bin/?cmd=_render-content&content_ID=developer/e_howto_api_ECGettingStarted
+ * @link  https://cms.paypal.com/us/cgi-bin/?cmd=_render-content&content_ID=developer/library_documentation
  *
- * @package    Kohana
- * @author     Kohana Team
- * @copyright  (c) 2009 Kohana Team
+ * @package PayPal
+ * @category ExpressCheckout
+ * @author     Guillaume Poirier-Morency
+ * @copyright  Hète.ca Inc.
  * @license    http://kohanaphp.com/license.html
  */
-class Kohana_PayPal_ExpressCheckout extends PayPal {
+abstract class PayPal_ExpressCheckout extends PayPal {
 
-	// Default parameters
-	protected $_default = array('PAYMENTACTION' => 'Sale');
+    public function __construct(array $params = array()) {
+        parent::__construct($params);
+        // SetExpressCheckout require auth data in the POST.
+        $this->param("METHOD", $this->method());
+        $this->param("VERSION", 51.0);
+        $this->param("USER", $this->_config['username']);
+        $this->param("PWD", $this->_config['password']);
+        $this->param("SIGNATURE", $this->_config['signature']);
+    }
 
-	/**
-	 * Make an SetExpressCheckout call.
-	 *
-	 * @param  array   NVP parameters
-	 */
-	public function set(array $params = NULL)
-	{
-		if ($params === NULL)
-		{
-			// Use the default parameters
-			$params = $this->_default;
-		}
-		else
-		{
-			// Add the default parameters
-			$params += $this->_default;
-		}
+    /**
+     * SetExpressCheckout has different response parameters
+     * @var type 
+     */
+    protected $_basic_response_rules = array('ACK' => array(
+            array('not_empty'),
+            array('equals', array(':value', 'Success'))
+        )
+    );
 
-		return $this->_post('SetExpressCheckout', $params);
-	}
-	
-	/**
-	 * Make an GetExpressCheckoutDetails call
-	 * 
-	 * @param  string   Token returned by SetExpressCheckout
-	 * @return array    Checkout details 
-	 */
-	public function get_details($token)
-	{
-		return $this->_post('GetExpressCheckoutDetails', array('TOKEN' => $token));
-	}
-	
-	/**
-	 * Make an DoExpressCheckoutPayment call
-	 * 
-	 * @param  array    $params retrieved from GetExpressCheckoutDetails call
-	 * @return array    Response data
-	 */
-	public function do_payment(array $params)
-	{
-		$params = $params === NULL ? $this->_default : $params + $this->_default;
-	
-		return $this->_post('DoExpressCheckoutPayment', $params);
-	}
+    /**
+     * PayPal method name based on the class name.
+     * In express checkout, method is stored in a key from the request.
+     * @var string 
+     */
+    public function method() {
+        $parts = explode("_", get_class($this));
+        return $parts[count($parts) - 1];
+    }
 
-} // End PayPal_ExpressCheckout
+    /**
+     * Returns the NVP API URL for the current environment and method.
+     *
+     * @return  string
+     */
+    public function api_url() {
+        if ($this->_environment === 'live') {
+            // Live environment does not use a sub-domain
+            $env = '';
+        } else {
+            // Use the environment sub-domain
+            $env = $this->_environment . '.';
+        }
+
+        return 'https://api-3t.' . $env . 'paypal.com/nvp';
+    }
+
+}
+
+?>
