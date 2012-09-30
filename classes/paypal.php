@@ -30,9 +30,9 @@ abstract class PayPal {
         'GBP', 'SGD', 'SEK', 'CHF', 'TWD', 'THB', 'USD');
 
     /**
-     * 
-     * @param string $class 
-     * @param array $params
+     * Factory class for PayPal requests.
+     * @param string $class is the class' name without the PayPal_
+     * @param array $params are the initial parameters.
      * @return \class
      */
     public static function factory($class, array $params = array()) {
