@@ -66,7 +66,9 @@ class PayPal_AdaptivePayments_Preapproval extends PayPal_AdaptivePayments {
             // Optional
             // clientDetails
             'clientDetails_applicationId' => array(),
-            'clientDetails_customerId' => array(),
+            'clientDetails_customerId' => array(
+                array("max_length", array(":value", 127)),
+            ),
             'clientDetails_customerType' => array(),
             'clientDetails_deviceId' => array(),
             'clientDetails_geoLocation' => array(
@@ -75,19 +77,24 @@ class PayPal_AdaptivePayments_Preapproval extends PayPal_AdaptivePayments {
             'clientDetails_ipAddress' => array(
                 array('ip'),
             ),
-            'clientDetails_model' => array(),
+            'clientDetails_model' => array(
+                array("max_length", array(":value", 127)),
+            ),
             'clientDetails_partnerName' => array(),
             'currencyCode' => array(
             ),
             'dateOfMonth' => array(),
             'dayOfWeek' => array(
-            //array('regex', array(":value", implode("|", PayPal_AdaptativePayments_Preapproval::$DAYS_OF_WEEK)))
+            //array('regex', array(":value", implode("|", PayPal_AdaptivePayments_Preapproval::$DAYS_OF_WEEK)))
             ),
             'displayMaxTotalAmount' => array(),
             'feesPayer' => array(
-            //array('regex', array(":value", implode("|", PayPal_AdaptativePayments_Preapproval::$FEES_PAYER)))
+            //array('regex', array(":value", implode("|", PayPal_AdaptivePayments_Preapproval::$FEES_PAYER)))
             ),
-            'ipnNotificationUrl' => array(),
+            'ipnNotificationUrl' => array(
+                array("max_length", array(":value", 1024)),
+                array("url"),
+            ),
             'maxAmountPerPayment' => array(),
             'maxNumberOfPayments' => array(),
             'maxNumberOfPaymentsPerPeriod' => array(),
@@ -98,10 +105,10 @@ class PayPal_AdaptivePayments_Preapproval extends PayPal_AdaptivePayments {
                 array('max_length', array(":value", 1000))
             ),
             'paymentPeriod' => array(
-            //array('regex', array(":value", implode("|", PayPal_AdaptativePayments_Preapproval::$PAYMENT_PERIODS)))
+            //array('regex', array(":value", implode("|", PayPal_AdaptivePayments_Preapproval::$PAYMENT_PERIODS)))
             ),
             'pinType' => array(
-            //array('regex', array(":value", implode("|", PayPal_AdaptativePayments_Preapproval::$REQUIRED_STATES)))
+            //array('regex', array(":value", implode("|", PayPal_AdaptivePayments_Preapproval::$REQUIRED_STATES)))
             ),
             'senderEmail' => array(
                 array('email')
