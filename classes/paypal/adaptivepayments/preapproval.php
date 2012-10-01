@@ -3,7 +3,6 @@
 defined('SYSPATH') or die('No direct script access.');
 
 /**
- * Requête de préapprobation d'un paiement.
  * 
  * @link https://cms.paypal.com/ca/cgi-bin/?cmd=_render-content&content_ID=developer/e_howto_api_APPreapproval
  * @author Guillaume Poirier-Morency
