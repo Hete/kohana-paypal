@@ -39,9 +39,13 @@ class PayPal_AdaptivePayments_Preapproval extends PayPal_AdaptivePayments {
         'EACHRECEIVER',
         'SECONDARYONLY'
     );
+    protected $_redirect_command = "preapproval";
+
+    protected function redirect_param(array $results) {
+        return array("preapprovalKey" => $results['preapprovalKey']);
+    }
 
     protected function request_rules() {
-
         return array(
             // Required
             'startingDate' => array(
