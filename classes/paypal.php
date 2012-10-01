@@ -14,10 +14,10 @@ defined('SYSPATH') or die('No direct script access.');
  * @license    http://kohanaphp.com/license.html
  */
 abstract class PayPal {
+    
     /**
      * Short date format supported by PayPal.
      */
-
     const SHORT_DATE_FORMAT = "Y-m-d\T";
 
     /**
@@ -247,7 +247,7 @@ abstract class PayPal {
      * @param   array   PayPal response data.   
      * @return  string
      */
-    private function redirect_url(array $response_data) {
+    protected function redirect_url(array $response_data) {
 
         if ($this->_environment === 'live') {
             // Live environment does not use a sub-domain
