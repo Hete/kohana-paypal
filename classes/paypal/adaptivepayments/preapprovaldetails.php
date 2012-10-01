@@ -2,12 +2,11 @@
 
 /**
  * 
- * 
  * @link https://cms.paypal.com/ca/cgi-bin/?cmd=_render-content&content_ID=developer/e_howto_api_APPreapprovalDetails
  * 
  * @package PayPal
  * @category AdaptativePayments
- * @author Guillaume Poirier-Morency <guillaumepoiriermorency@gmail.com>
+ * @author Quentin Avedissian <quentin.avedissian@gmail.com>
  * @copyright 
  */
 class PayPal_AdaptativePayments_PreapprovalDetails extends PayPal_AdaptativePayments {

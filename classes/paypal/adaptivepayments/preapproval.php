@@ -10,9 +10,6 @@ defined('SYSPATH') or die('No direct script access.');
  * @copyright Hète.ca
  */
 class PayPal_AdaptivePayments_Preapproval extends PayPal_AdaptivePayments {
-
-   
-
     protected function redirect_param(array $results) {
         return array("preapprovalKey" => $results['preapprovalKey']);
     }
