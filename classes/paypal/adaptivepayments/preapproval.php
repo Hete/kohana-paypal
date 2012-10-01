@@ -11,34 +11,7 @@ defined('SYSPATH') or die('No direct script access.');
  */
 class PayPal_AdaptivePayments_Preapproval extends PayPal_AdaptivePayments {
 
-    public static $DAYS_OF_WEEK = array(
-        'NO_DAY_SPECIFIED',
-        'SUNDAY',
-        'MONDAY',
-        'TUESDAY',
-        'WEDNESDAY',
-        'THURSDAY',
-        'FRIDAY',
-        'SATURDAY',
-    );
-    public static $PAYMENT_PERIODS = array(
-        'NO_PERIOD_SPECIFIED',
-        'DAILY',
-        'WEEKLY',
-        'BIWEEKLY',
-        'SEMIMONTHLY',
-        'MONTHLY',
-        'ANNUALLY',
-    );
-    public static $REQUIRED_STATES = array(
-        'REQUIRED', 'NOT_REQUIRED'
-    );
-    public static $FEES_PAYER = array(
-        'SENDER',
-        'PRIMARYRECEIVER',
-        'EACHRECEIVER',
-        'SECONDARYONLY'
-    );
+   
 
     protected function request_rules() {
 
@@ -85,11 +58,11 @@ class PayPal_AdaptivePayments_Preapproval extends PayPal_AdaptivePayments {
             ),
             'dateOfMonth' => array(),
             'dayOfWeek' => array(
-            //array('regex', array(":value", implode("|", PayPal_AdaptivePayments_Preapproval::$DAYS_OF_WEEK)))
+            //array('regex', array(":value", '^'.implode("|", PayPal::$DAYS_OF_WEEK).'$'))
             ),
             'displayMaxTotalAmount' => array(),
             'feesPayer' => array(
-            //array('regex', array(":value", implode("|", PayPal_AdaptivePayments_Preapproval::$FEES_PAYER)))
+            //array('regex', array(":value", implode("|", '^'.PayPal::$FEES_PAYER).'$'))
             ),
             'ipnNotificationUrl' => array(
                 array("max_length", array(":value", 1024)),
@@ -105,10 +78,10 @@ class PayPal_AdaptivePayments_Preapproval extends PayPal_AdaptivePayments {
                 array('max_length', array(":value", 1000))
             ),
             'paymentPeriod' => array(
-            //array('regex', array(":value", implode("|", PayPal_AdaptivePayments_Preapproval::$PAYMENT_PERIODS)))
+            //array('regex', array(":value", implode("|", '^'.PayPal::$PAYMENT_PERIODS).'$'))
             ),
             'pinType' => array(
-            //array('regex', array(":value", implode("|", PayPal_AdaptivePayments_Preapproval::$REQUIRED_STATES)))
+            //array('regex', array(":value", implode("|", '^'PayPal::$REQUIRED_STATES).'$'))
             ),
             'senderEmail' => array(
                 array('email')
