@@ -3,16 +3,12 @@
 defined('SYSPATH') or die('No direct script access.');
 
 /**
- * Requête de préapprobation d'un paiement.
  * 
  * @link https://cms.paypal.com/ca/cgi-bin/?cmd=_render-content&content_ID=developer/e_howto_api_APPreapproval
  * @author Guillaume Poirier-Morency
  * @copyright Hète.ca
  */
 class PayPal_AdaptivePayments_Preapproval extends PayPal_AdaptivePayments {
-
-   protected $_redirect_command = "preapproval";
-
     protected function redirect_param(array $results) {
         return array("preapprovalKey" => $results['preapprovalKey']);
     }
@@ -21,11 +17,11 @@ class PayPal_AdaptivePayments_Preapproval extends PayPal_AdaptivePayments {
         return array(
             // Required
             'startingDate' => array(
-                array('PayPal_Valid::date', array(":value", PayPal::DATE_FORMAT)),
+                array('date', array(":value", PayPal::DATE_FORMAT)),
                 array('not_empty')
             ),
             'endingDate' => array(
-                array('PayPal_Valid::date', array(":value", PayPal::DATE_FORMAT)),
+                array('date', array(":value", PayPal::DATE_FORMAT)),
                 array('not_empty')
             ),
             'cancelUrl' => array(
