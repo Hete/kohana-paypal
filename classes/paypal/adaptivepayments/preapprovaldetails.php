@@ -13,31 +13,29 @@
 class PayPal_AdaptativePayments_PreapprovalDetails extends PayPal_AdaptativePayments {
 
     protected function request_rules() {
-        
+
         return array(
             //PreapprovalDetailsRequest Fields
             'getBillingAddress' => array(
-                array('boolean')         
+                array('boolean')
             ),
             'preapprovalKey' => array(
                 array('not_empty')
             ),
         );
-        
-        
     }
 
     protected function response_rules() {
         return array(
             //PreapprovalDetailsResponse Fields
             'addresslist' => array(
-                array('not_empty')                
+                array('not_empty')
             ),
             'approved' => array(
                 array('boolean')
             ),
             'cancelUrl' => array(
-                array('not_empty')                
+                array('not_empty')
             ),
             'curPayments' => array(
                 array('not_empty')
@@ -52,21 +50,21 @@ class PayPal_AdaptativePayments_PreapprovalDetails extends PayPal_AdaptativePaym
                 array('not_empty')
             ),
             'currencyCode' => array(
-              array('not_empty'),
-              array('regex', array(':value', '^' .'^'.explode('|', Paypal::$CURRENCIES).'$'))
+                array('not_empty'),
+                array('regex', array(':value', '^' . explode('|', Paypal::$CURRENCIES) . '$'))
             ),
             'dateOfMonth' => array(
-                array('range' , array (':value', array('0', '30'))),
+                array('range', array(':value', array('0', '30'))),
                 array('numeric'),
                 array('not_empty')
             ),
             'dayOfWeek' => array(
                 array('not_empty'),
-                array('regex', ':value', '^'.explode('|', Paypal::$DAYS_OF_WEEK) . '*')
+                array('regex', ':value', '^' . explode('|', Paypal::$DAYS_OF_WEEK) . '$')
             ),
             'endingDate' => array(
                 array('not_empty'),
-                array('date', array(":value", PayPal::DATE_FORMAT)),                
+                array('date', array(":value", PayPal::DATE_FORMAT)),
             ),
             'ipnNotificationUrl' => array(
                 array('not_empty'),
@@ -83,27 +81,25 @@ class PayPal_AdaptativePayments_PreapprovalDetails extends PayPal_AdaptativePaym
             'maxNumberOfPaymentsPerPeriod' => array(
                 array('digit'),
                 array('not_empty'),
-                ),
+            ),
             'maxTotalAmountOfAllPayments' => array(
                 array('not_empty'),
                 array('numeric'),
             ),
             'memo' => array(
                 array('not_empty'),
-                ),
+            ),
             'paymentPeriod' => array(
                 array('not_empty'),
-                array('regex', array(':value', '^' .'^'.explode('|', Paypal::$PAYMENT_PERIODS).'$'))
+                array('regex', array(':value', '^' . explode('|', Paypal::$PAYMENT_PERIODS) . '$'))
             ),
             'pinType' => array(
                 array('not_empty'),
-                array('regex', array(':value', '^' .'^'.explode('|', Paypal::$PERSONAL_IDENTIFICATION_NUMBER).'$'))
+                array('regex', array(':value', '^' . explode('|', Paypal::$PERSONAL_IDENTIFICATION_NUMBER) . '$'))
             ),
-            
         );
     }
 
 }
-
 
 ?>

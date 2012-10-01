@@ -11,7 +11,7 @@ defined('SYSPATH') or die('No direct script access.');
  */
 class PayPal_AdaptivePayments_Preapproval extends PayPal_AdaptivePayments {
 
-   
+   protected $_redirect_command = "preapproval";
 
     protected function redirect_param(array $results) {
         return array("preapprovalKey" => $results['preapprovalKey']);
@@ -21,11 +21,11 @@ class PayPal_AdaptivePayments_Preapproval extends PayPal_AdaptivePayments {
         return array(
             // Required
             'startingDate' => array(
-                array('date', array(":value", PayPal::DATE_FORMAT)),
+                array('PayPal_Valid::date', array(":value", PayPal::DATE_FORMAT)),
                 array('not_empty')
             ),
             'endingDate' => array(
-                array('date', array(":value", PayPal::DATE_FORMAT)),
+                array('PayPal_Valid::date', array(":value", PayPal::DATE_FORMAT)),
                 array('not_empty')
             ),
             'cancelUrl' => array(
