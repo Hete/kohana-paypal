@@ -21,6 +21,7 @@ I need help to build request files to eventually support the whole PayPal NVP AP
 
 ## Features
 
+* Ultraflexible ! 
 * Fully configurable cURL client.
 * Validation at request and response.
 * Security token in responses for security.
@@ -28,6 +29,8 @@ I need help to build request files to eventually support the whole PayPal NVP AP
 * Configuration for each environnements.
 * Custom exceptions to deal with failure properly.
 * Redirect URL are pre-computed from the class and available in the response.
+* PayPal objects for stuff like RequestEnvelope and ResponseEnvelope.
+* Encoding api to easily work with multidimensional arrays.
 * More to come.. !
 
 ### Example of request class :
