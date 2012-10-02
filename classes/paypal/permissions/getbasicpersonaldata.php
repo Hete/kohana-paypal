@@ -6,10 +6,7 @@ class PayPal_Permissions_GetBasicPersonalData extends PayPal_Permissions {
         return array();
     }
 
-    protected function response_rules() {
-                return array();
-
-    }
+   
 }
 
 

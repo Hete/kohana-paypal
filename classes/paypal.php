@@ -15,9 +15,11 @@ defined('SYSPATH') or die('No direct script access.');
  */
 abstract class PayPal {
     
+    
     /**
      * Short date format supported by PayPal.
      */
+
     const SHORT_DATE_FORMAT = "Y-m-d\T";
 
     /**
@@ -28,13 +30,10 @@ abstract class PayPal {
     public static $CURRENCIES = array('AUD', 'BRL', 'CAD', 'CZK', 'DKK', 'EUR',
         'HKD', 'HUF', 'ILS', 'JPY', 'MYR', 'MXN', 'NOK', 'NZD', 'PHP', 'PLN',
         'GBP', 'SGD', 'SEK', 'CHF', 'TWD', 'THB', 'USD');
-    
     public static $PERSONAL_IDENTIFICATION_NUMBER = array(
         'NOT_REQUIRED',
         'REQUIRED'
     );
-
-
     public static $DAYS_OF_WEEK = array(
         'NO_DAY_SPECIFIED',
         'SUNDAY',
@@ -140,15 +139,18 @@ abstract class PayPal {
     }
 
     /**
-     * Return the validation array for the specified request.
-     * @return type
+     * Returns the validation array for the specified request.
+     * @return array
      */
     protected abstract function request_rules();
 
     /**
-     * Return the validation array for the PayPal response.
+     * Returns the validation array for the PayPal response.
+     * @return array
      */
-    protected abstract function response_rules();
+    protected function response_rules() {
+        return array();
+    }
 
     /**
      * Constructor. You may use it directly, but it is suggested to use the

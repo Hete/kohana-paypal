@@ -27,11 +27,6 @@ class PayPal_Permissions_RequestPermissions extends PayPal_Permissions {
         );
     }
 
-    protected function response_rules() {
-        return array(
-        );
-    }
-
 }
 
 // End PayPal_ExpressCheckout

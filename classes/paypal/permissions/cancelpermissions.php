@@ -20,9 +20,6 @@ class PayPal_Permissions_CancelPermissions extends PayPal_Permissions {
         );
     }
 
-    protected function response_rules() {
-        return array();
-    }
 
 }
 

@@ -22,10 +22,7 @@ class PayPal_Permissions_GetPermissions extends PayPal_Permissions {
         );
     }
 
-    protected function response_rules() {
-        return array(
-        );
-    }
+   
 
 }
 
