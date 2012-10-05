@@ -14,8 +14,6 @@ defined('SYSPATH') or die('No direct script access.');
  * @license    http://kohanaphp.com/license.html
  */
 abstract class PayPal {
-    
-    
     /**
      * Short date format supported by PayPal.
      */
@@ -64,6 +62,50 @@ abstract class PayPal {
     );
 
     /**
+     * Encode a multi-dimensional array into a PayPal valid array.
+     *  
+     * An already encoded PayPal array will not be affected.
+     * 
+     * @param array $data is the data to encode.
+     * @param array $result do not specify this parameter, it is used for recursivity.
+     * @param array $base do not specify this parameter, it is used for recursivity.
+     */
+    public static function encode(array $data, array &$result = array(), array $base = array()) {
+
+
+
+        foreach ($data as $key => $value) {
+
+            $local_base = $base + array($key);
+
+            if (is_array($value)) {
+                paypal_encode($value, $result, $local_base);
+            }
+
+            if ($value instanceof PayPal_Object) {
+                // On rajoute les valeurs encodés
+                $result = $result + $value->encode();
+            } elseif (is_object($value)) {
+                throw new Kohana_Exception("Object at key :key must implement PayPal_Encodable to be encoded.", array(":key", $key));
+            }
+
+            // Imploding dots to build hiearchy          
+            $result[implode(".", $local_base)] = $value;
+        }
+
+
+        return $result;
+    }
+
+    /**
+     * Not implemented yet.
+     * @param array $data
+     */
+    public static function decode(array $data) {
+        return $data;
+    }
+
+    /**
      * Factory class for PayPal requests.
      * @param string $class is the class' name without the PayPal_
      * @param array $params are the initial parameters.
@@ -105,14 +147,53 @@ abstract class PayPal {
     protected $_redirect_command = "";
 
     /**
+     * Custom rules
+     * @var type 
+     */
+    private $_rules;
+
+    protected function rules(array $rule = NULL) {
+        if ($rule === NULL) {
+            return $this->_rules + $this->request_rules() + $this->object_rules() + $this->_basic_request_rules;
+        } else {
+            $this->_rules = $rule + $this->_rules;
+        }
+    }
+
+    /**
+     * Scans recursively the param array to get PayPal_Object rules.
+     */
+    private function object_rules(array $base = NULL, array &$out = array()) {
+
+        if ($base === NULL) {
+            $base = $this->param();
+        }
+
+        foreach ($base as $key => $value) {
+            if ($value instanceof PayPal_Object) {
+                $out = $out + $value->rules();
+            } else if (is_array($value)) {
+                $out = $out + object_rules($value, $out);
+            }
+        }
+        return $out;
+    }
+
+    /**
      * Basic request rules. Useful to override if targetting a special API.
      * @var array 
      */
-    protected $_basic_request_rules = array(
+    private $_basic_request_rules = array(
         'requestEnvelope_errorLanguage' => array(
             array('not_empty')
         )
     );
+
+    /**
+     * Returns the validation array for the specified request.
+     * @return array
+     */
+    protected abstract function request_rules();
 
     /**
      * Basic response rules. Useful to override if targetting a special API.
@@ -135,20 +216,6 @@ abstract class PayPal {
      * @return array are the url parameters.
      */
     protected function redirect_param(array $results) {
-        return array();
-    }
-
-    /**
-     * Returns the validation array for the specified request.
-     * @return array
-     */
-    protected abstract function request_rules();
-
-    /**
-     * Returns the validation array for the PayPal response.
-     * @return array
-     */
-    protected function response_rules() {
         return array();
     }
 
@@ -188,12 +255,13 @@ abstract class PayPal {
      * @return type
      */
     public function param($key = NULL, $value = NULL) {
+
         if ($key === NULL) {
             return $this->_params;
         } else if ($value === NULL) {
             return $this->_params[$key];
         } else {
-            $this->_params[$key] = $value;
+            $this->_params[$key] = PayPal::encode($value);
         }
     }
 
@@ -282,7 +350,7 @@ abstract class PayPal {
         $validation_request = Validation::factory($this->param());
 
         // We add custom and basic rules proper to the request
-        foreach ($this->request_rules() + $this->_basic_request_rules as $field => $rules) {
+        foreach ($this->rules() as $field => $rules) {
             $validation_request->rules($field, $rules);
         }
 
@@ -315,7 +383,7 @@ abstract class PayPal {
         $validation_response = Validation::factory($data);
 
         // We add custom and basic response rules proper to the request
-        foreach ($this->response_rules() + $this->_basic_response_rules as $field => $rules) {
+        foreach ($this->_basic_response_rules as $field => $rules) {
             $validation_response->rules($field, $rules);
         }
 
@@ -327,7 +395,7 @@ abstract class PayPal {
 
         return array(
             // Response data from PayPal
-            "response" => $data,
+            "response" => PayPal::decode($data),
             // Pre-computed redirect url
             "redirect_url" => $this->redirect_url($data),
             /* Token associated to the session that has initiated the request.
