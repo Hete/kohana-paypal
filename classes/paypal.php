@@ -70,16 +70,17 @@ abstract class PayPal {
      * @param array $result do not specify this parameter, it is used for recursivity.
      * @param array $base do not specify this parameter, it is used for recursivity.
      */
-    public static function encode(array $data, array &$result = array(), array $base = array()) {
+    public static function encode(array $data,  array $base = array()) {
 
-
+        $result = array();
 
         foreach ($data as $key => $value) {
 
             $local_base = $base + array($key);
 
             if (is_array($value)) {
-                paypal_encode($value, $result, $local_base);
+                // Encoding subarray
+                $result = $result + paypal_encode($value, $result, $local_base);
             }
 
             if ($value instanceof PayPal_Object) {
