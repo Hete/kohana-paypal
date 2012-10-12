@@ -13,8 +13,9 @@ defined('SYSPATH') or die('No direct script access.');
  * @copyright Hète.ca  
  */
 class PayPal_Valid {
+    
 
-    public static function boolean(string $str) {
+    public static function boolean($str) {
         $str = (string) $str;
         return $str === "true" | $str === "false";
     }

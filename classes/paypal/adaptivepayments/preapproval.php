@@ -9,8 +9,11 @@ defined('SYSPATH') or die('No direct script access.');
  * @copyright Hète.ca
  */
 class PayPal_AdaptivePayments_Preapproval extends PayPal_AdaptivePayments {
+    
+    protected $_redirect_command = 'ap-preapproval';
+    
     protected function redirect_param(array $results) {
-        return array("preapprovalKey" => $results['preapprovalKey']);
+        return array("preapprovalkey" => $results['preapprovalKey']);
     }
 
     protected function request_rules() {
@@ -71,7 +74,7 @@ class PayPal_AdaptivePayments_Preapproval extends PayPal_AdaptivePayments {
             'maxNumberOfPayments' => array(),
             'maxNumberOfPaymentsPerPeriod' => array(),
             'maxTotalAmountOfAllPayments' => array(
-                array('decimal')
+                array('numeric')
             ),
             'memo' => array(
                 array('max_length', array(":value", 1000))

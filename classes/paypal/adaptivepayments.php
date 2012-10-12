@@ -14,6 +14,7 @@
 abstract class PayPal_AdaptivePayments extends PayPal {
 
     protected function redirect_url(array $response_data) {
+        return parent::redirect_url($response_data);
 
         if ($this->_environment === 'live') {
             // Live environment does not use a sub-domain

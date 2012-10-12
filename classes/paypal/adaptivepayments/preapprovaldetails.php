@@ -9,14 +9,14 @@
  * @author Quentin Avedissian <quentin.avedissian@gmail.com>
  * @copyright 
  */
-class PayPal_AdaptativePayments_PreapprovalDetails extends PayPal_AdaptativePayments {
+class PayPal_AdaptivePayments_PreapprovalDetails extends PayPal_AdaptivePayments {
 
     protected function request_rules() {
         
         return array(
             //PreapprovalDetailsRequest Fields
             'getBillingAddress' => array(
-                array('boolean')         
+                array('PayPal_Valid::boolean')         
             ),
             'preapprovalKey' => array(
                 array('not_empty')
@@ -27,6 +27,7 @@ class PayPal_AdaptativePayments_PreapprovalDetails extends PayPal_AdaptativePaym
     }
 
     protected function response_rules() {
+        return array();
 //        return array(
 //            //PreapprovalDetailsResponse Fields
 //            //TODO ADDRESS
