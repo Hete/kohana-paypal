@@ -14,8 +14,6 @@ defined('SYSPATH') or die('No direct script access.');
  * @license    http://kohanaphp.com/license.html
  */
 abstract class PayPal {
-    
-    
     /**
      * Short date format supported by PayPal.
      */
@@ -67,7 +65,7 @@ abstract class PayPal {
      * Factory class for PayPal requests.
      * @param string $class is the class' name without the PayPal_
      * @param array $params are the initial parameters.
-     * @return \class
+     * @return PayPal
      */
     public static function factory($class, array $params = array()) {
         $class = "PayPal_" . $class;
@@ -177,6 +175,15 @@ abstract class PayPal {
             'requestEnvelope' => '',
             'requestEnvelope_errorLanguage' => Kohana::$config->load("paypal.error_lang"),
         );
+    }
+
+    /**
+     * Accéder aux configurations pour l'environnement courant.
+     * @param type $path est un path 
+     * @return type
+     */
+    public function config($path) {
+        return Arr::path($this->_config, $path, $default = NULL);
     }
 
     /**
@@ -302,7 +309,6 @@ abstract class PayPal {
         foreach (Kohana::$config->load("paypal.curl_options") as $key => $value) {
             $request->client()->options($key, $value);
         }
-
 
         try {
             // Execute the request and parse the response
