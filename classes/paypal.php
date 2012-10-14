@@ -65,11 +65,56 @@ abstract class PayPal {
      * Factory class for PayPal requests.
      * @param string $class is the class' name without the PayPal_
      * @param array $params are the initial parameters.
-     * @return PayPal
+     * @return \class
      */
     public static function factory($class, array $params = array()) {
         $class = "PayPal_" . $class;
         return new $class($params);
+    }
+
+    /**
+     * Encode a multi-dimensional array into a PayPal valid array.
+     *  
+     * An already encoded PayPal array will not be affected.
+     * 
+     * @param array $data is the data to encode.
+     * @param array $result do not specify this parameter, it is used for recursivity.
+     * @param array $base do not specify this parameter, it is used for recursivity.
+     */
+    public static function encode(array $data, array $base = array()) {
+
+        $result = array();
+
+        foreach ($data as $key => $value) {
+
+            $local_base = $base + array($key);
+
+            if (is_array($value)) {
+                // Encoding subarray
+                $result = $result + paypal_encode($value, $result, $local_base);
+            }
+
+            if ($value instanceof PayPal_Object) {
+                // On rajoute les valeurs encodés
+                $result = $result + $value->encode();
+            } elseif (is_object($value)) {
+                throw new Kohana_Exception("Object at key :key must implement PayPal_Encodable to be encoded.", array(":key", $key));
+            }
+
+            // Imploding dots to build hiearchy          
+            $result[implode(".", $local_base)] = $value;
+        }
+
+
+        return $result;
+    }
+
+    /**
+     * Not implemented yet.
+     * @param array $data
+     */
+    public static function decode(array $data) {
+        return $data;
     }
 
     /**
@@ -103,24 +148,14 @@ abstract class PayPal {
     protected $_redirect_command = "";
 
     /**
-     * Basic request rules. Useful to override if targetting a special API.
-     * @var array 
-     */
-    protected $_basic_request_rules = array(
-        'requestEnvelope_errorLanguage' => array(
-            array('not_empty')
-        )
-    );
-
-    /**
      * Basic response rules. Useful to override if targetting a special API.
      * @var array 
      */
-    protected $_basic_response_rules = array(
+    protected $_response_rules = array(
         'responseEnvelope_ack' => array(
             array('not_empty'),
             array('equals', array(":value", "Success"))
-        )
+        ),
     );
 
     /**
@@ -129,7 +164,7 @@ abstract class PayPal {
      * The function from PayPal class does nothing, it has to be implemented
      * if the API method provide data to build a redirect url.
      * 
-     * @param array $results is the PayPal response.
+     * @param array $results is the PayPal response.     
      * @return array are the url parameters.
      */
     protected function redirect_param(array $results) {
@@ -138,9 +173,18 @@ abstract class PayPal {
 
     /**
      * Returns the validation array for the specified request.
+     * @deprecated overload rules instead
      * @return array
      */
     protected abstract function request_rules();
+
+    /**
+     * 
+     * @return type
+     */
+    public function rules() {
+        return $this->request_rules();
+    }
 
     /**
      * Returns the validation array for the PayPal response.
@@ -175,17 +219,10 @@ abstract class PayPal {
 
         $this->_params = $params + array(
             'requestEnvelope' => '',
-            'requestEnvelope_errorLanguage' => Kohana::$config->load("paypal.error_lang"),
+            'requestEnvelope_detailLevel' => 'ReturnAll',
+            'requestEnvelope_errorLanguage' => Kohana::$config->load("paypal.lang"),
+            'securityToken' => Security::token(),
         );
-    }
-
-    /**
-     * Accéder aux configurations pour l'environnement courant.
-     * @param type $path est un path 
-     * @return type
-     */
-    public function config($path) {
-        return Arr::path($this->_config, $path, $default = NULL);
     }
 
     /**
@@ -269,7 +306,7 @@ abstract class PayPal {
         }
 
         // Add the command to the parameters
-        $params = array('cmd' => '_' . $this->_redirect_command) + $this->redirect_param($response_data);
+        $params = array('cmd' => '_' . $this->_redirect_command) + $this->redirect_params($response_data);
 
         return 'https://www.' . $env . 'paypal.com/webscr?' . http_build_query($params, '', '&');
     }
@@ -279,7 +316,6 @@ abstract class PayPal {
      *
      * @see  https://cms.paypal.com/us/cgi-bin/?cmd=_render-content&content_ID=developer/e_howto_api_nvp_NVPAPIOverview
      *
-     * @param security_token string if supplied, security_token will be checked and throws an exception if it dosen't validate.
      * @throws  Request_Exception if the connection to PayPal API fails.
      * @throws PayPal_Exception if the PayPal request fails. 
      * @return  array an associative array with the following keys :
@@ -288,15 +324,12 @@ abstract class PayPal {
      */
     public final function execute($security_token = NULL) {
 
-        if ($security_token !== NULL && !Security::check($security_token)) {
-            throw new PayPal_Exception("Security token :token does not match.", array(":token" => $security_token));
-        }
-
         // Validate the request parameters
-        $validation_request = Validation::factory($this->param());
+        $validation_request = Validation::factory($this->param())
+                ->rule('requestEnvelope_errorLanguage', 'not_empty');
 
         // We add custom and basic rules proper to the request
-        foreach ($this->request_rules() + $this->_basic_request_rules as $field => $rules) {
+        foreach ($this->rules() + $this->_basic_request_rules as $field => $rules) {
             $validation_request->rules($field, $rules);
         }
 
@@ -317,18 +350,22 @@ abstract class PayPal {
             $request->client()->options($key, $value);
         }
 
+
         try {
             // Execute the request and parse the response
+            $data = NULL;
             parse_str($request->execute()->body(), $data);
         } catch (Request_Exception $re) {
             throw new PayPal_Request_Exception($this, $re);
         }
 
         // Validate the response
-        $validation_response = Validation::factory($data);
+        $validation_response = Validation::factory($data)
+                // If a specific Security token is providen, match against it.
+                ->rule('securityToken', 'Security::check', array($security_token === NULL ? ":value" : $security_token));
 
         // We add custom and basic response rules proper to the request
-        foreach ($this->response_rules() + $this->_basic_response_rules as $field => $rules) {
+        foreach ($this->_response_rules as $field => $rules) {
             $validation_response->rules($field, $rules);
         }
 
@@ -336,9 +373,10 @@ abstract class PayPal {
             throw new PayPal_Validation_Exception($this, $validation_response, $data);
         }
 
-        return $data + array(
+        // Decode data for better reading
+        return PayPal::decode($data) + array(
             // Pre-computed redirect url
-            "redirect_url" => $this->redirect_url($data),
+            "redirect_url" => $this->build_redirect_url($data),
         );
     }
 
