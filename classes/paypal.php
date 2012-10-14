@@ -144,6 +144,8 @@ abstract class PayPal {
 
     /**
      * Returns the validation array for the PayPal response.
+     * @deprecated Totally useless as it assumes PayPal could not validate but
+     * have ack to Success.
      * @return array
      */
     protected function response_rules() {
@@ -277,13 +279,18 @@ abstract class PayPal {
      *
      * @see  https://cms.paypal.com/us/cgi-bin/?cmd=_render-content&content_ID=developer/e_howto_api_nvp_NVPAPIOverview
      *
+     * @param security_token string if supplied, security_token will be checked and throws an exception if it dosen't validate.
      * @throws  Request_Exception if the connection to PayPal API fails.
      * @throws PayPal_Exception if the PayPal request fails. 
      * @return  array an associative array with the following keys :
      *     response : which contains the PayPal NVP response.
      *     redirect_url : which contains the precomputed redirection url.
      */
-    public final function execute() {
+    public final function execute($security_token = NULL) {
+
+        if ($security_token !== NULL && !Security::check($security_token)) {
+            throw new PayPal_Exception("Security token :token does not match.", array(":token" => $security_token));
+        }
 
         // Validate the request parameters
         $validation_request = Validation::factory($this->param());
@@ -329,21 +336,9 @@ abstract class PayPal {
             throw new PayPal_Validation_Exception($this, $validation_response, $data);
         }
 
-
-
-        return array(
-            // Response data from PayPal
-            "response" => $data,
+        return $data + array(
             // Pre-computed redirect url
             "redirect_url" => $this->redirect_url($data),
-            /* Token associated to the session that has initiated the request.
-             * You should validate it when necessary with Security::check($token)
-             * 
-             * It is useful to check if it is still the same session that is 
-             * requesting access when the user has been redirected from
-             * PayPal.
-             */
-            "security_token" => Security::token()
         );
     }
 
