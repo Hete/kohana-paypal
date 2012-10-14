@@ -3,7 +3,6 @@
 defined('SYSPATH') or die('No direct script access.');
 
 /**
-
  * Abstract PayPal integration.
  *
  * @link  https://cms.paypal.com/us/cgi-bin/?cmd=_render-content&content_ID=developer/library_documentation
@@ -13,53 +12,7 @@ defined('SYSPATH') or die('No direct script access.');
  * @copyright  Hète.ca Inc.
  * @license    http://kohanaphp.com/license.html
  */
-abstract class PayPal {
-    /**
-     * Short date format supported by PayPal.
-     */
-
-    const SHORT_DATE_FORMAT = "Y-m-d\T";
-
-    /**
-     * Supported date format by PayPal.
-     */
-    const DATE_FORMAT = "Y-m-d\TH:i:s.BP";
-
-    public static $CURRENCIES = array('AUD', 'BRL', 'CAD', 'CZK', 'DKK', 'EUR',
-        'HKD', 'HUF', 'ILS', 'JPY', 'MYR', 'MXN', 'NOK', 'NZD', 'PHP', 'PLN',
-        'GBP', 'SGD', 'SEK', 'CHF', 'TWD', 'THB', 'USD');
-    public static $PERSONAL_IDENTIFICATION_NUMBER = array(
-        'NOT_REQUIRED',
-        'REQUIRED'
-    );
-    public static $DAYS_OF_WEEK = array(
-        'NO_DAY_SPECIFIED',
-        'SUNDAY',
-        'MONDAY',
-        'TUESDAY',
-        'WEDNESDAY',
-        'THURSDAY',
-        'FRIDAY',
-        'SATURDAY',
-    );
-    public static $PAYMENT_PERIODS = array(
-        'NO_PERIOD_SPECIFIED',
-        'DAILY',
-        'WEEKLY',
-        'BIWEEKLY',
-        'SEMIMONTHLY',
-        'MONTHLY',
-        'ANNUALLY',
-    );
-    public static $REQUIRED_STATES = array(
-        'REQUIRED', 'NOT_REQUIRED'
-    );
-    public static $FEES_PAYER = array(
-        'SENDER',
-        'PRIMARYRECEIVER',
-        'EACHRECEIVER',
-        'SECONDARYONLY'
-    );
+abstract class PayPal extends PayPal_Constants {
 
     /**
      * Factory class for PayPal requests.
@@ -159,44 +112,6 @@ abstract class PayPal {
     );
 
     /**
-     * Build redirect url parameters.
-     * 
-     * The function from PayPal class does nothing, it has to be implemented
-     * if the API method provide data to build a redirect url.
-     * 
-     * @param array $results is the PayPal response.     
-     * @return array are the url parameters.
-     */
-    protected function redirect_param(array $results) {
-        return array();
-    }
-
-    /**
-     * Returns the validation array for the specified request.
-     * @deprecated overload rules instead
-     * @return array
-     */
-    protected abstract function request_rules();
-
-    /**
-     * 
-     * @return type
-     */
-    public function rules() {
-        return $this->request_rules();
-    }
-
-    /**
-     * Returns the validation array for the PayPal response.
-     * @deprecated Totally useless as it assumes PayPal could not validate but
-     * have ack to Success.
-     * @return array
-     */
-    protected function response_rules() {
-        return array();
-    }
-
-    /**
      * Constructor. You may use it directly, but it is suggested to use the
      * factory, which is more convenient.
      * @param array $params request parameters.
@@ -224,6 +139,25 @@ abstract class PayPal {
             'securityToken' => Security::token(),
         );
     }
+
+    /**
+     * Build redirect url parameters.
+     * 
+     * The function from PayPal class does nothing, it has to be implemented
+     * if the API method provide data to build a redirect url.
+     * 
+     * @param array $results is the PayPal response.     
+     * @return array are the url parameters.
+     */
+    protected function redirect_param(array $results) {
+        return array();
+    }
+
+    /**
+     * 
+     * @return type
+     */
+    protected abstract function rules();
 
     /**
      * param() returns the param array, param($key) returns the value associated
@@ -264,10 +198,7 @@ abstract class PayPal {
      * @return string 
      */
     public function method() {
-
-        $method = str_replace("PayPal_", "", get_class($this));
-
-        return implode("/", explode("_", $method));
+        return implode("/", explode("_", str_replace("PayPal_", "", get_class($this))));
     }
 
     /**
@@ -323,7 +254,9 @@ abstract class PayPal {
      *     redirect_url : which contains the precomputed redirection url.
      */
     public final function execute($security_token = NULL) {
-
+        if (Kohana::$profiling) {
+            $benchmark = Profiler::start("PayPal", __FUNCTION__);
+        }
         // Validate the request parameters
         $validation_request = Validation::factory($this->param())
                 ->rule('requestEnvelope_errorLanguage', 'not_empty');
@@ -341,6 +274,7 @@ abstract class PayPal {
                 ->method(Request::POST)
                 ->body(http_build_query($this->param()));
 
+        // Load headers
         foreach ($this->_headers as $key => $value) {
             $request->headers($key, $value);
         }
@@ -373,8 +307,14 @@ abstract class PayPal {
             throw new PayPal_Validation_Exception($this, $validation_response, $data);
         }
 
-        // Decode data for better reading
-        return PayPal::decode($data) + array(
+        // Decode data for better handling
+        $decoded_data = PayPal::decode($data);
+
+        if (isset($benchmark)) {
+            Profiler::stop($benchmark);
+        }
+
+        return $decoded_data + array(
             // Pre-computed redirect url
             "redirect_url" => $this->build_redirect_url($data),
         );
