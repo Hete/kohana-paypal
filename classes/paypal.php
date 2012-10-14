@@ -30,9 +30,12 @@ abstract class PayPal extends PayPal_Constants {
      *  
      * An already encoded PayPal array will not be affected.
      * 
+     * $response['requestEnvelope']['details']
+     * requestEnvelope.details
+     * 
+     * 
      * @param array $data is the data to encode.
-     * @param array $result do not specify this parameter, it is used for recursivity.
-     * @param array $base do not specify this parameter, it is used for recursivity.
+     * @param array $base keeps track of hiearchy. Do not specify it.
      */
     public static function encode(array $data, array $base = array()) {
 
@@ -40,11 +43,22 @@ abstract class PayPal extends PayPal_Constants {
 
         foreach ($data as $key => $value) {
 
-            $local_base = $base + array($key);
+            $local_base = clone $base;
 
+            // In case of assoc, $key is a string
+            if (Arr::is_assoc($data)) {
+                array_push($local_base, $key);
+            } else {
+                // Simple array, we have to specify index is parenthesis of the lase element of $base
+                // blabla.blabla.list => blabla.blabla.list($key)
+                // As we modify a clone for this index, list is not gone for the next element.
+                $base[count($base) - 1] .= "(" . $key . ")";
+            }
+
+            // The only case of recursivity, $value is a sub_array.
             if (is_array($value)) {
                 // Encoding subarray
-                $result = $result + paypal_encode($value, $result, $local_base);
+                $result += paypal_encode($value, $result, $local_base);
             }
 
             if ($value instanceof PayPal_Object) {
@@ -54,10 +68,10 @@ abstract class PayPal extends PayPal_Constants {
                 throw new Kohana_Exception("Object at key :key must implement PayPal_Encodable to be encoded.", array(":key", $key));
             }
 
-            // Imploding dots to build hiearchy          
+            // TODO Imploding underscores and dots
+            // Imploding dots to build hiearchy     
             $result[implode(".", $local_base)] = $value;
         }
-
 
         return $result;
     }
@@ -136,7 +150,6 @@ abstract class PayPal extends PayPal_Constants {
             'requestEnvelope' => '',
             'requestEnvelope_detailLevel' => 'ReturnAll',
             'requestEnvelope_errorLanguage' => Kohana::$config->load("paypal.lang"),
-            'securityToken' => Security::token(),
         );
     }
 
@@ -296,7 +309,7 @@ abstract class PayPal extends PayPal_Constants {
         // Validate the response
         $validation_response = Validation::factory($data)
                 // If a specific Security token is providen, match against it.
-                ->rule('securityToken', 'Security::check', array($security_token === NULL ? ":value" : $security_token));
+                ->rule('securityToken', 'Security::check', array($security_token === NULL ? Security::token() : $security_token));
 
         // We add custom and basic response rules proper to the request
         foreach ($this->_response_rules as $field => $rules) {
