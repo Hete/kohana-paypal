@@ -37,43 +37,36 @@ abstract class PayPal extends PayPal_Constants {
      * @param array $data is the data to encode.
      * @param array $base keeps track of hiearchy. Do not specify it.
      */
-    public static function encode(array $data, array $base = array()) {
+    public static function encode($data, array $base = array()) {
 
-        $result = array();
+        $results = array();
 
-        foreach ($data as $key => $value) {
-
-            $local_base = clone $base;
-
-            // In case of assoc, $key is a string
-            if (Arr::is_assoc($data)) {
-                array_push($local_base, $key);
-            } else {
-                // Simple array, we have to specify index is parenthesis of the lase element of $base
-                // blabla.blabla.list => blabla.blabla.list($key)
-                // As we modify a clone for this index, list is not gone for the next element.
-                $base[count($base) - 1] .= "(" . $key . ")";
+        if (Arr::is_array($data) && Arr::is_assoc($data)) {
+            foreach ($data as $key => $value) {
+                $results += PayPal::encode($value, Arr::merge($base, array($key)));
             }
+        } else if (Arr::is_array($data)) {
+            if (count($base) > 0) {
 
-            // The only case of recursivity, $value is a sub_array.
-            if (is_array($value)) {
-                // Encoding subarray
-                $result += paypal_encode($value, $result, $local_base);
+                $key = $base[count($base) - 1];
+                foreach ($data as $index => $value) {
+                    $local_base = Arr::merge($base, array($key . "($index)"));
+                    $results += PayPal::encode($value, $local_base);
+                }
             }
-
-            if ($value instanceof PayPal_Object) {
-                // On rajoute les valeurs encodés
-                $result = $result + $value->encode();
-            } elseif (is_object($value)) {
-                throw new Kohana_Exception("Object at key :key must implement PayPal_Encodable to be encoded.", array(":key", $key));
-            }
-
-            // TODO Imploding underscores and dots
-            // Imploding dots to build hiearchy     
-            $result[implode(".", $local_base)] = $value;
+        } else if ($data instanceof PayPal_Object) {
+            $results += Arr::merge($base, array($data->encode()));
+        } else {
+            // We assume it's a primitive data
         }
 
-        return $result;
+        // $result is an array of 1-dimensional arrays, let's implode dots in all its elements
+
+        foreach ($results as &$result) {
+            $result = implode(".", $result);
+        }
+
+        return $results;
     }
 
     /**
@@ -81,7 +74,19 @@ abstract class PayPal extends PayPal_Constants {
      * @param array $data
      */
     public static function decode(array $data) {
-        return $data;
+        $output = array();
+        foreach ($data as $key => $value) {
+
+            $struct = array();
+
+            foreach (explode(".", $key) as $key_part) {
+                $struct = $struct[$key];
+            }
+            // At the last key of $struct, we add the value.
+            $struct[0] = $value;
+        }
+
+        return $output;
     }
 
     /**
