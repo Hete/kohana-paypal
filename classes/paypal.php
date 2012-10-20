@@ -201,6 +201,7 @@ abstract class PayPal {
             return $this->_params[$key];
         } else {
             $this->_params[$key] = $value;
+            return $this;
         }
     }
 
@@ -217,6 +218,7 @@ abstract class PayPal {
             return $this->_headers[$key];
         } else {
             $this->_headers[$key] = $value;
+            return $this;
         }
     }
 
