@@ -101,6 +101,7 @@ abstract class PayPal extends PayPal_Constants {
      * @var array 
      */
     private $_params = array();
+    private $_security_token;
 
     /**
      * Headers values.
@@ -119,18 +120,17 @@ abstract class PayPal extends PayPal_Constants {
      * @var array 
      */
     protected $_response_rules = array(
-        'responseEnvelope_ack' => array(
-            array('not_empty'),
-            array('equals', array(":value", "Success"))
-        ),
     );
 
     /**
      * Constructor. You may use it directly, but it is suggested to use the
      * factory, which is more convenient.
+     * @see
      * @param array $params request parameters.
      */
-    public function __construct(array $params = array()) {
+    private function __construct(array $params = array()) {
+
+        $this->_security_token = Security::token();
 
         $this->_environment = Kohana::$config->load("paypal.environment");
 
@@ -167,10 +167,35 @@ abstract class PayPal extends PayPal_Constants {
     }
 
     /**
-     * 
-     * @return type
+     * Return rules array for this request.
+     * @return array
      */
     protected abstract function rules();
+
+    /**
+     * Validates the request.
+     * @return \PayPal for builder syntax.
+     * @throws PayPal_Validation_Exception if the request is invalid
+     */
+    public function check($security_token = NULL) {
+
+        // Validate the request parameters
+        $validation_request = Validation::factory($this->param())
+                ->rule('requestEnvelope_errorLanguage', 'not_empty')
+                ->rule('securityToken', 'Security::check', array($security_token === NULL ? $this->_security_token : $security_token));
+
+
+        // We add custom and basic rules proper to the request
+        foreach ($this->rules() + $this->_basic_request_rules as $field => $rules) {
+            $validation_request->rules($field, $rules);
+        }
+
+        if (!$validation_request->check()) {
+            throw new PayPal_Validation_Exception($this, $validation_request);
+        }
+
+        return $this;
+    }
 
     /**
      * param() returns the param array, param($key) returns the value associated
@@ -268,22 +293,14 @@ abstract class PayPal extends PayPal_Constants {
      *     response : which contains the PayPal NVP response.
      *     redirect_url : which contains the precomputed redirection url.
      */
-    public final function execute($security_token = NULL) {
+    public final function execute($decode = FALSE, $security_token = NULL) {
         if (Kohana::$profiling) {
             $benchmark = Profiler::start("PayPal", __FUNCTION__);
         }
-        // Validate the request parameters
-        $validation_request = Validation::factory($this->param())
-                ->rule('requestEnvelope_errorLanguage', 'not_empty');
 
-        // We add custom and basic rules proper to the request
-        foreach ($this->rules() + $this->_basic_request_rules as $field => $rules) {
-            $validation_request->rules($field, $rules);
-        }
+        // Validate the request
+        $this->check($security_token);
 
-        if (!$validation_request->check()) {
-            throw new PayPal_Validation_Exception($this, $validation_request);
-        }
         // Create POST data        
         $request = Request::factory($this->api_url())
                 ->method(Request::POST)
@@ -310,28 +327,27 @@ abstract class PayPal extends PayPal_Constants {
 
         // Validate the response
         $validation_response = Validation::factory($data)
-                // If a specific Security token is providen, match against it.
-                ->rule('securityToken', 'Security::check', array($security_token === NULL ? Security::token() : $security_token));
-
-        // We add custom and basic response rules proper to the request
-        foreach ($this->_response_rules as $field => $rules) {
-            $validation_response->rules($field, $rules);
-        }
+                ->rule('responseEnvelope_ack', 'not_empty')
+                ->rule('responseEnvelope_ack', 'equals', array(":value", "Success"));
 
         if (!$validation_response->check()) {
             throw new PayPal_Validation_Exception($this, $validation_response, $data);
         }
 
-        // Decode data for better handling
-        $decoded_data = PayPal::decode($data);
+        if ($decode) {
+            // Decode data for better handling
+            $data = PayPal::decode($data);
+        }
+
+        $redirect_url = $this->build_redirect_url($data);
 
         if (isset($benchmark)) {
             Profiler::stop($benchmark);
         }
 
-        return $decoded_data + array(
+        return $data + array(
             // Pre-computed redirect url
-            "redirect_url" => $this->build_redirect_url($data),
+            "redirect_url" => $redirect_url,
         );
     }
 
