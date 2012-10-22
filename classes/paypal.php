@@ -162,7 +162,7 @@ abstract class PayPal extends PayPal_Constants {
      * @param array $results is the PayPal response.     
      * @return array are the url parameters.
      */
-    protected function redirect_param(array $results) {
+    protected function redirect_params(array $results) {
         return array();
     }
 
@@ -186,7 +186,7 @@ abstract class PayPal extends PayPal_Constants {
 
 
         // We add custom and basic rules proper to the request
-        foreach ($this->rules() + $this->_basic_request_rules as $field => $rules) {
+        foreach ($this->rules() as $field => $rules) {
             $validation_request->rules($field, $rules);
         }
 
@@ -205,11 +205,11 @@ abstract class PayPal extends PayPal_Constants {
      * @param string $value
      * @return type
      */
-    public function param($key = NULL, $value = NULL) {
+    public function param($key = NULL, $value = NULL, $default = NULL) {
         if ($key === NULL) {
             return $this->_params;
         } else if ($value === NULL) {
-            return $this->_params[$key];
+            return Arr::get($this->_params, $key, $default);
         } else {
             $this->_params[$key] = $value;
             return $this;
@@ -229,6 +229,24 @@ abstract class PayPal extends PayPal_Constants {
             return $this->_headers[$key];
         } else {
             $this->_headers[$key] = $value;
+            return $this;
+        }
+    }
+
+    /**
+     * Headers access method. Same as param.
+     * @param string $key
+     * @param string $value
+     * @return type
+     */
+    public function config($key = NULL, $value = NULL, $default = NULL) {
+        if ($key === NULL) {
+            return $this->_config;
+        } else if ($value === NULL) {
+
+            return Arr::get($this->_config, $key, $default);
+        } else {
+            $this->_config[$key] = $value;
             return $this;
         }
     }
@@ -339,7 +357,7 @@ abstract class PayPal extends PayPal_Constants {
             $data = PayPal::decode($data);
         }
 
-        $redirect_url = $this->build_redirect_url($data);
+        $redirect_url = $this->redirect_url($data);
 
         if (isset($benchmark)) {
             Profiler::stop($benchmark);

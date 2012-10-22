@@ -7,17 +7,22 @@ class PayPal_AdaptivePayments_Pay extends PayPal_AdaptivePayments {
         'CREATE',
         'PAY_PRIMARY'
     );
-    
-    protected function request_rules() {
+    protected $_redirect_command = 'ap-payment';
+
+    protected function redirect_params(array $results) {
+        return array("preapprovalkey" => $results['preapprovalKey']);
+    }
+
+    protected function rules() {
         return array(
             'actionType' => array(
                 array('not_empty'),
-                //array('regex', array(':value', '^'.implode('|', PayPal_AdaptivePayments_Pay::$ACTION_TYPE).'$')),
+            //array('regex', array(':value', '^'.implode('|', PayPal_AdaptivePayments_Pay::$ACTION_TYPE).'$')),
             ),
             'currencyCode' => array(
                 array('not_empty'),
-                //array('regex', array(':value', '^'.implode('|', PayPal_AdaptivePayments::$CURRENCIES).'$')),
-            ),            
+            //array('regex', array(':value', '^'.implode('|', PayPal_AdaptivePayments::$CURRENCIES).'$')),
+            ),
             'cancelUrl' => array(
                 array('not_empty'),
                 array('url'),
@@ -25,12 +30,8 @@ class PayPal_AdaptivePayments_Pay extends PayPal_AdaptivePayments {
             'returnUrl' => array(
                 array('not_empty'),
                 array('url'),
-            ),            
+            ),
         );
-    }
-
-    protected function response_rules() {
-        return array();
     }
 
 }

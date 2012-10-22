@@ -26,7 +26,7 @@ class PayPal_AdaptivePayments_PreapprovalDetails extends PayPal_AdaptivePayments
         
     }
 
-    protected function response_rules() {
+    protected function rules() {
         return array();
 //        return array(
 //            //PreapprovalDetailsResponse Fields

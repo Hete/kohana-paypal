@@ -12,11 +12,11 @@ class PayPal_AdaptivePayments_Preapproval extends PayPal_AdaptivePayments {
     
     protected $_redirect_command = 'ap-preapproval';
     
-    protected function redirect_param(array $results) {
+    protected function redirect_params(array $results) {
         return array("preapprovalkey" => $results['preapprovalKey']);
     }
 
-    protected function request_rules() {
+    protected function rules() {
         return array(
             // Required
             'startingDate' => array(
