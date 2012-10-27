@@ -1,25 +1,9 @@
 <?php
 
-class PayPal_RequestEnvelope extends PayPal_Object {
+defined('SYSPATH') or die('No direct script access.');
 
-    public $errorLanguage;
-    public $detailLevel;
-
-    public function encode() {
-        return array(
-            "errorLanguage" => $this->errorLanguage,
-            "detailLevel" => $this->detailLevel,
-        );
-    }
-
-    public function rules() {
-        return array(
-            'requestEnvelope_errorLanguage' => array(
-                array('not_empty')
-            )
-        );
-    }
-
+class PayPal_RequestEnvelope extends Kohana_PayPal_RequestEnvelope {
+    
 }
 
 ?>
