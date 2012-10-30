@@ -1,5 +1,8 @@
 <?php
 
+defined('SYSPATH') or die('No direct script access.');
+
+
 /**
  * Base class for Permissions api.
  *
