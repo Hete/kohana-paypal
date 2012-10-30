@@ -33,6 +33,14 @@ I need help to build request files to eventually support the whole PayPal NVP AP
 * Encoding api to easily work with multidimensional arrays.
 * More to come.. !
 
+## Latest changes in development trunk
+
+* Single method for rules, it's useless to validate PayPal response, only the acknowledgment.
+* Starting builder syntax for param(), headers(), config() and check().
+* Security token in a more convenient way (specify an expected token at request execution and it will be validated in the request)
+* Benchmarking.
+* Encoding and decoding methods with PayPal object are on their way !
+
 ### Example of request class :
 <pre>
 /**
@@ -51,7 +59,7 @@ class PayPal_Permissions_GetAccessToken extends PayPal_Permissions {
      * Need a token and the verifier in the request.
      * @return type
      */
-    protected function request_rules() {
+    protected function rules() {
         return array(
             'token' => array(
                 array('not_empty')
@@ -60,22 +68,7 @@ class PayPal_Permissions_GetAccessToken extends PayPal_Permissions {
                 array('not_empty')
             )
         );
-    }
-
-    /**
-     * A token and a tokenSecret must be providen in the response.
-     *
-     */
-    protected function response_rules() {
-        return array(
-            'token' => array(
-                array('not_empty')
-            ),
-            'tokenSecret' => array(
-                array('not_empty')
-            ),
-        );
-    }
+    }   
 
 }
 </pre>
@@ -87,20 +80,13 @@ $params = array(
   'verifier' => 'asdi2ue89ewioehd'
 );
 $request = PayPal::factory('SetExpressCheckout', $params);
-$result = $request->execute();
-$token = $result['response']['token'];
-$token_secret = $result['response']['tokenSecret'];
-
-$redirect_uri = $result['redirect_uri'];
-$security_token = $result['security_token'];
-
-// Validate your token when your client is redirected from PayPal
-if(!Security::check($security_token)) {
-    // Handling code...
-}
-
-
+$result = $request->execute($this->request->post("security_token"));
+$token = $result['token'];
+$token_secret = $result['tokenSecret'];
+$redirect_uri = $result['redirect_url'];
 </pre>
+
+As suggested by Kohana, keep a security token in a hidden field of your form and test it conviniently within the validation of your PayPal request.
 
 ## Support for this project
 PayPal has around 5 apis, which each have from 5 to 10 methods. If you want to code some APIs, it's pretty simple, you only have to build the rules for request and response !

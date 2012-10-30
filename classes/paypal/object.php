@@ -1,19 +1,9 @@
 <?php
 
-/**
- * Base class to represents PayPal objects such as ResponseEnvelope and RequestEnvelope.
- */
-abstract class PayPal_Object {
+defined('SYSPATH') or die('No direct script access.');
 
-    /**
-     * Returns the validation rules for this object.
-     */
-    public abstract function rules();
-
-    /**
-     * Returns an valid PayPal encoded version of this object.
-     */
-    public abstract function encode();
+abstract class PayPal_Object extends Kohana_PayPal_Object {
+    
 }
 
 ?>
