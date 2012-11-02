@@ -9,8 +9,8 @@ class PayPal_AdaptivePayments_Pay extends PayPal_AdaptivePayments {
     );
     protected $_redirect_command = 'ap-payment';
 
-    protected function redirect_params(array $results) {
-        return array("preapprovalkey" => $results['preapprovalKey']);
+    protected function redirect_params(array $results) {        
+        return array("paykey" => $results['payKey']);
     }
 
     protected function rules() {
