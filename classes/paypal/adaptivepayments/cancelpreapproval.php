@@ -9,17 +9,16 @@
  * @author Quentin Avedissian <quentin.avedissian@gmail.com>
  * @copyright 
  */
-class PayPal_AdaptativePayments_CancelPreapproval extends PayPal_AdaptivePayments{
-    
-protected function request_rules() {
+class PayPal_AdaptivePayments_CancelPreapproval extends PayPal_AdaptivePayments {
+
+    protected function rules() {
         return array(
             'preapprovalKey' => array(
                 array('not_empty')
             )
         );
     }
-protected function response_rules() {
-        
-    }
+
 }
+
 ?>

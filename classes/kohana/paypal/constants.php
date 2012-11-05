@@ -11,10 +11,11 @@
  * @license    http://kohanaphp.com/license.html
  */
 class Kohana_PayPal_Constants {
+    // Booleans
+    const TRUE = 'true', FALSE = 'false';
     /**
      * Short date format supported by PayPal.
      */
-
     const SHORT_DATE_FORMAT = "Y-m-d\T";
 
     /**
