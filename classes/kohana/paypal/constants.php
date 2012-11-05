@@ -12,7 +12,11 @@
  */
 class Kohana_PayPal_Constants {
     // Booleans
+
     const TRUE = 'true', FALSE = 'false';
+    // Preapproval status
+    const ACTIVE = 'ACTIVE', CANCELED = 'CANCELED', DEACTIVED = 'DEACTIVED';
+
     /**
      * Short date format supported by PayPal.
      */
