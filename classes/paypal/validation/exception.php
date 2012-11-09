@@ -8,41 +8,25 @@
  * @copyright  Hète.ca Inc.
  * @license    http://kohanaphp.com/license.html
  */
-class PayPal_Validation_Exception extends Validation_Exception implements PayPal_Exception {
+class PayPal_Validation_Exception extends PayPal_Exception {
 
-    private $_request;
+    /**
+     *
+     * @var Validation 
+     */
+    private $validation;
 
-    public function __construct(PayPal $request, Validation $array, array $response = array(), $message = "", $code = 0) {
-        $this->_request = $request;
-        // Adding query and response
-        $values = array(':method' => $this->_request->method(),
-            ':query' => print_r($this->_request->param(), true),
-            ':response' => print_r($response, true),
-            ':errors' => print_r($array->errors(), true),
+    public function __construct(Validation $validation, PayPal $request, array $response = array(), $message = "", array $variables = array(), $code = 0) {
+
+        $message .= " :errors";
+
+        $variables += array(
+            ":errors" => print_r($validation->errors(), true)
         );
-
-
-        if (isset($response['error(0)_errorId'])) {
-            $values += array(
-                ':error' => $response['error(0)_message'],
-                ':code' => $response['error(0)_errorId'],
-            );
-            $message .= "PayPal request failed.";
-        } else {
-            $message .= "PayPal request has failed to validate.";
-        }
-
-
-        $message .= " :method :query :response :errors";
         
+        parent::__construct($request, $response, $message, $code);
 
-
-
-        parent::__construct($array, $message, $values, $code);
-    }
-
-    public function request() {
-        return $this->_request;
+        $this->validation = $validation;
     }
 
 }

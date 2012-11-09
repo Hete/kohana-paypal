@@ -340,7 +340,7 @@ abstract class Kohana_PayPal extends PayPal_Constants {
             $data = NULL;
             parse_str($request->execute()->body(), $data);
         } catch (Request_Exception $re) {
-            throw new PayPal_Request_Exception($this, $re);
+            throw new PayPal_Request_Exception($re, $this, $data);
         }
 
         // Validate the response
@@ -349,7 +349,7 @@ abstract class Kohana_PayPal extends PayPal_Constants {
                 ->rule('responseEnvelope_ack', 'equals', array(":value", "Success"));
 
         if (!$validation_response->check()) {
-            throw new PayPal_Validation_Exception($this, $validation_response, $data);
+            throw new PayPal_Request_Exception($validation_response, $this, $data);
         }
 
         if ($decode) {

@@ -13,12 +13,46 @@ defined('SYSPATH') or die('No direct script access.');
  * @copyright  Hète.ca Inc.
  * @license    http://kohanaphp.com/license.html
  */
-interface Kohana_PayPal_Exception {
+class Kohana_PayPal_Exception extends Kohana_Exception {
 
     /**
-     * @return PayPal
+     *
+     * @var PayPal
      */
-    public function request();
+    public $request;
+
+    /**
+     *
+     * @var array 
+     */
+    public $response;
+
+    /**
+     * 
+     * @param PayPal $request
+     * @param array $response
+     * @param type $message
+     * @param array $variables
+     * @param type $code
+     */
+    public function __construct(PayPal $request, array $response, $message = "", array $variables = array(), $code = 0) {
+
+        // Message d'erreur
+
+        $message = "PayPal request failed with code :code : :error. " + $message;
+
+        $variables += array(
+            ':error' => $response['error(0)_message'],
+            ':code' => $response['error(0)_errorId'],
+        );
+
+        parent::__construct($message, $variables, $code);
+        $this->request = $request;
+        $this->response = $response;
+
+      
+    }
+
 }
 
 ?>

@@ -1,30 +1,33 @@
 <?php
 
 /**
- * Exception thrown in PayPay module.
+ * Exception PayPal pour gérer les Request_Exception.
  *
  * @package PayPal
  * @author     Guillaume Poirier-Morency
  * @copyright  Hète.ca Inc.
  * @license    http://kohanaphp.com/license.html
  */
-class PayPal_Request_Exception extends Request_Exception implements PayPal_Exception {
+class PayPal_Request_Exception extends PayPal_Exception {
 
-    private $_paypal_request, $_request;
+    /**
+     *
+     * @var type 
+     */
+    public $request_exception;
 
-    public function __construct(PayPal $request, Request_Exception $request_exception, $message = "", $code = 0) {
-        $this->_request = $request;
-        // Adding query and response
-        $values = array(
+    public function __construct(Request_Exception $request_exception, PayPal $request, array $response = array(), $message = "", array $variables = NULL, $code = 0) {
+
+        $variables += array(
+            ':message' => $request_exception->getMessage(),
             ':url' => $request->api_url(),
-            ':query' => print_r($this->_request->param(), true),            
+            ':query' => print_r($this->_request->param(), true),
         );
 
-        $message .= $request_exception->getMessage();
+        $message .= " :message :url :query";
 
-        $message .= " :url :query";
-
-        parent::__construct($message, $values, $code);
+        parent::__construct($request, $response, $message, $variables, $code);
+        $this->request_exception = $request_exception;
     }
 
     /**
