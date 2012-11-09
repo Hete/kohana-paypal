@@ -349,7 +349,7 @@ abstract class Kohana_PayPal extends PayPal_Constants {
                 ->rule('responseEnvelope_ack', 'equals', array(":value", "Success"));
 
         if (!$validation_response->check()) {
-            throw new PayPal_Request_Exception($validation_response, $this, $data);
+            throw new PayPal_Validation_Exception($validation_response, $this, $data);
         }
 
         if ($decode) {

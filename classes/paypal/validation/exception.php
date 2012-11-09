@@ -24,7 +24,7 @@ class PayPal_Validation_Exception extends PayPal_Exception {
             ":errors" => print_r($validation->errors(), true)
         );
         
-        parent::__construct($request, $response, $message, $code);
+        parent::__construct($request, $response, $message,$variables, $code);
 
         $this->validation = $validation;
     }
