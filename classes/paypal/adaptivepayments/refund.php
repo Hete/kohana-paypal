@@ -1,9 +1,7 @@
 <?php
 
+class PayPal_AdaptivePayments_Refund extends Kohana_PayPal_AdaptivePayments_Refund {
+    
+}
 
-
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 ?>

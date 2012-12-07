@@ -1,7 +1,7 @@
 <?php
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+class PayPal_AdaptivePayments_GetFundingPlans extends Kohana_PayPal_AdaptivePayments_GetFundingPlans {
+    
+}
+
 ?>
