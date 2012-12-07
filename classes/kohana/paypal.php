@@ -101,7 +101,6 @@ abstract class Kohana_PayPal extends PayPal_Constants {
      * @var array 
      */
     private $_params = array();
-    private $_security_token;
 
     /**
      * Headers values.
@@ -130,10 +129,10 @@ abstract class Kohana_PayPal extends PayPal_Constants {
      */
     private function __construct(array $params = array()) {
 
-        $this->_security_token = Security::token();
-
+        // Loading current environment
         $this->_environment = Kohana::$config->load("paypal.environment");
 
+        // Config for current environment
         $this->_config = Kohana::$config->load('paypal.' . $this->_environment);
 
         // Basic headers for PayPal request
@@ -146,6 +145,7 @@ abstract class Kohana_PayPal extends PayPal_Constants {
             "X-PAYPAL-APPLICATION-ID" => $this->_config['api_id'],
         );
 
+        // Basic parameters for PayPal request
         $this->_params = $params + array(
             'requestEnvelope' => '',
             'requestEnvelope_detailLevel' => 'ReturnAll',
@@ -174,16 +174,21 @@ abstract class Kohana_PayPal extends PayPal_Constants {
 
     /**
      * Validates the request.
+     * @param string $security_token You may set a custom security token to
+     * make sure the request is handled by the same client.
      * @return \PayPal for builder syntax.
      * @throws PayPal_Validation_Exception if the request is invalid
      */
     public function check($security_token = NULL) {
 
+        if ($security_token === NULL) {
+            $security_token = Security::token();
+        }
+
         // Validate the request parameters
         $validation_request = Validation::factory($this->param())
                 ->rule('requestEnvelope_errorLanguage', 'not_empty')
-                ->rule('securityToken', 'Security::check', array($security_token === NULL ? $this->_security_token : $security_token));
-
+                ->rule('securityToken', 'Security::check', array($security_token));
 
         // We add custom and basic rules proper to the request
         foreach ($this->rules() as $field => $rules) {
@@ -206,14 +211,19 @@ abstract class Kohana_PayPal extends PayPal_Constants {
      * @return type
      */
     public function param($key = NULL, $value = NULL, $default = NULL) {
+
         if ($key === NULL) {
             return $this->_params;
-        } else if ($value === NULL) {
-            return Arr::get($this->_params, $key, $default);
-        } else {
-            $this->_params[$key] = $value;
-            return $this;
         }
+
+        if ($value === NULL) {
+            return Arr::get($this->_params, $key, $default);
+        }
+
+        // Simple setter
+        $this->_params[$key] = $value;
+
+        return $this;
     }
 
     /**
@@ -222,15 +232,20 @@ abstract class Kohana_PayPal extends PayPal_Constants {
      * @param string $value
      * @return type
      */
-    public function headers($key = NULL, $value = NULL) {
+    public function headers($key = NULL, $value = NULL, $default = NULL) {
+
         if ($key === NULL) {
             return $this->_headers;
-        } else if ($value === NULL) {
-            return $this->_headers[$key];
-        } else {
-            $this->_headers[$key] = $value;
-            return $this;
         }
+
+        if ($value === NULL) {
+            return Arr::get($this->_headers, $key, $default);
+        }
+
+        // Simple setter
+        $this->_headers[$key] = $value;
+
+        return $this;
     }
 
     /**
@@ -239,16 +254,8 @@ abstract class Kohana_PayPal extends PayPal_Constants {
      * @param string $value
      * @return type
      */
-    public function config($key = NULL, $value = NULL, $default = NULL) {
-        if ($key === NULL) {
-            return $this->_config;
-        } else if ($value === NULL) {
-
-            return Arr::get($this->_config, $key, $default);
-        } else {
-            $this->_config[$key] = $value;
-            return $this;
-        }
+    public function config($path = NULL, $default = NULL, $delimiter = NULL) {
+        return Arr::path($this->_config, $path, $default, $delimiter);
     }
 
     /**
