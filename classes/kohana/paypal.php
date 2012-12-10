@@ -127,7 +127,7 @@ abstract class Kohana_PayPal extends PayPal_Constants {
      * @see
      * @param array $params request parameters.
      */
-    private function __construct(array $params = array()) {
+    protected function __construct(array $params = array()) {
 
         // Loading current environment
         $this->_environment = Kohana::$config->load("paypal.environment");
@@ -172,6 +172,15 @@ abstract class Kohana_PayPal extends PayPal_Constants {
      */
     protected abstract function rules();
 
+    protected function response_rules() {
+        return array(
+            'responseEnvelope_ack' => array(
+                array('not_empty'),
+                array('equals', array(":value", "Success"))
+            ),
+        );
+    }
+
     /**
      * Validates the request.
      * @param string $security_token You may set a custom security token to
@@ -196,7 +205,7 @@ abstract class Kohana_PayPal extends PayPal_Constants {
         }
 
         if (!$validation_request->check()) {
-            throw new PayPal_Validation_Exception($this, $validation_request);
+            throw new PayPal_Validation_Exception($validation_request, $this);
         }
 
         return $this;
@@ -349,11 +358,16 @@ abstract class Kohana_PayPal extends PayPal_Constants {
         } catch (Request_Exception $re) {
             throw new PayPal_Request_Exception($re, $this, $data);
         }
+        
 
         // Validate the response
-        $validation_response = Validation::factory($data)
-                ->rule('responseEnvelope_ack', 'not_empty')
-                ->rule('responseEnvelope_ack', 'equals', array(":value", "Success"));
+        $validation_response = Validation::factory($data);
+
+        foreach ($this->response_rules() as $field => $rules) {
+            $validation_response->rules($field, $rules);
+        }
+
+
 
         if (!$validation_response->check()) {
             throw new PayPal_Validation_Exception($validation_response, $this, $data);

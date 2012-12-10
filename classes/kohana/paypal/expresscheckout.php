@@ -17,7 +17,7 @@ defined('SYSPATH') or die('No direct script access.');
  */
 abstract class Kohana_PayPal_ExpressCheckout extends PayPal {
 
-    public function __construct(array $params = array()) {
+    protected function __construct(array $params = array()) {
         parent::__construct($params);
         // SetExpressCheckout require auth data in the POST.
         $this->param("METHOD", $this->method());
@@ -27,15 +27,15 @@ abstract class Kohana_PayPal_ExpressCheckout extends PayPal {
         $this->param("SIGNATURE", $this->_config['signature']);
     }
 
-    /**
-     * SetExpressCheckout has different response parameters
-     * @var type 
-     */
-    protected $_basic_response_rules = array('ACK' => array(
-            array('not_empty'),
-            array('equals', array(':value', 'Success'))
-        )
-    );
+    protected function response_rules() {
+
+        return array(
+            'ACK' => array(
+                array('not_empty'),
+                array('equals', array(':value', 'Success'))
+            )
+        );
+    }
 
     /**
      * PayPal method name based on the class name.
