@@ -35,7 +35,7 @@ class Kohana_PayPal_Exception extends Kohana_Exception {
      * @param array $variables
      * @param type $code
      */
-    public function __construct(PayPal $request, array $response, $message = "", array $variables = array(), $code = 0) {
+    public function __construct(PayPal $request, PayPal_Response $response, $message = "", array $variables = array(), $code = 0) {
         // Message d'erreur
 
 

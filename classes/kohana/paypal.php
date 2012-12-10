@@ -167,11 +167,9 @@ abstract class Kohana_PayPal extends PayPal_Constants {
     }
 
     /**
-     * Return rules array for this request.
+     * Rules to validate the PayPal response.
      * @return array
      */
-    protected abstract function rules();
-
     protected function response_rules() {
         return array(
             'responseEnvelope_ack' => array(
@@ -180,6 +178,12 @@ abstract class Kohana_PayPal extends PayPal_Constants {
             ),
         );
     }
+
+    /**
+     * Return rules array for this request.
+     * @return array
+     */
+    protected abstract function rules();
 
     /**
      * Validates the request.
@@ -212,27 +216,32 @@ abstract class Kohana_PayPal extends PayPal_Constants {
     }
 
     /**
-     * param() returns the param array, param($key) returns the value associated
-     * to the key $key and param($key, $value) sets the $value at the specified
-     * $key.
+     * No arguments, it returs the parameters array.
+     * Key only, it returns the matching value.
+     * Key and value act as a setter.
+     * 
+     * If key is not found, it will attempt a multi-dimentional search using the
+     * dot (.) delimiter.
+     * 
      * @param string $key
      * @param string $value
+     * @param string $default default value when retreiving.
      * @return type
      */
-    public function param($key = NULL, $value = NULL, $default = NULL) {
+    public function param($key = NULL, $value = NULL, $default = NULL, $delimiter = ".") {
 
         if ($key === NULL) {
             return $this->_params;
         }
 
         if ($value === NULL) {
-            return Arr::get($this->_params, $key, $default);
+            return Arr::get($this->_params, $key, Arr::path($this->_params, $key, $default, $delimiter));
         }
 
         // Simple setter
         $this->_params[$key] = $value;
 
-        return $this;
+        return static::encode($this);
     }
 
     /**
@@ -327,7 +336,7 @@ abstract class Kohana_PayPal extends PayPal_Constants {
      *     response : which contains the PayPal NVP response.
      *     redirect_url : which contains the precomputed redirection url.
      */
-    public final function execute($decode = FALSE, $security_token = NULL) {
+    public final function execute($security_token = NULL) {
         if (Kohana::$profiling) {
             $benchmark = Profiler::start("PayPal", __FUNCTION__);
         }
@@ -350,15 +359,13 @@ abstract class Kohana_PayPal extends PayPal_Constants {
             $request->client()->options($key, $value);
         }
 
-
         try {
             // Execute the request and parse the response
             $data = NULL;
             parse_str($request->execute()->body(), $data);
         } catch (Request_Exception $re) {
-            throw new PayPal_Request_Exception($re, $this, $data);
+            throw new PayPal_Exception($this, $data);
         }
-        
 
         // Validate the response
         $validation_response = Validation::factory($data);
@@ -367,27 +374,19 @@ abstract class Kohana_PayPal extends PayPal_Constants {
             $validation_response->rules($field, $rules);
         }
 
-
-
         if (!$validation_response->check()) {
             throw new PayPal_Validation_Exception($validation_response, $this, $data);
         }
 
-        if ($decode) {
-            // Decode data for better handling
-            $data = PayPal::decode($data);
-        }
-
         $redirect_url = $this->redirect_url($data);
+
+        $response = PayPal_Response::factory($data, $redirect_url);
 
         if (isset($benchmark)) {
             Profiler::stop($benchmark);
         }
 
-        return $data + array(
-            // Pre-computed redirect url
-            "redirect_url" => $redirect_url,
-        );
+        return $response;
     }
 
 }

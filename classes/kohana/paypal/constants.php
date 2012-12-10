@@ -56,12 +56,18 @@ class Kohana_PayPal_Constants {
     public static $REQUIRED_STATES = array(
         'REQUIRED', 'NOT_REQUIRED'
     );
+    public static $PREAPPROVAL_STATES = array(
+        'ACTIVE',
+        'DEACTIVED',
+        'CANCELED'
+    );
     public static $FEES_PAYER = array(
         'SENDER',
         'PRIMARYRECEIVER',
         'EACHRECEIVER',
         'SECONDARYONLY'
     );
+    public static $PIN_TYPES = array();
 
 }
 
