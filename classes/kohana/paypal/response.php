@@ -10,22 +10,28 @@ class Kohana_PayPal_Response extends Validation {
      * @param array $data
      * @return \PayPal_Response
      */
-    public static function factory(array $data, $redirect_url = NULL) {
-        return new PayPal_Response($data, $redirect_url);
+    public static function factory(PayPal $request, array $data) {
+        return new PayPal_Response($request, $data);
     }
 
     /**
      *
-     * @var type 
+     * @var \PayPal
      */
-    public $redirect_url;
+    public $request;
 
-    public function __construct(array $data, $redirect_url = NULL) {
+    /**
+     * 
+     * @param \PayPal $request request that originated the response.
+     * @param array $data response datas.
+     */
+    public function __construct(PayPal $request, array $data) {
+
 
         // Sanitize data with dots
         array_walk_recursive($data, array($this, "sanitize"));
-        
-        $this->_redirect_url = $redirect_url;
+
+        $this->request = $request;
 
         // Building validation object
         parent::_construct($data);

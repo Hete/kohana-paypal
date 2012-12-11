@@ -172,6 +172,9 @@ abstract class Kohana_PayPal extends PayPal_Constants {
      */
     protected function response_rules() {
         return array(
+            'redirect_url' => array(
+                array('url')
+            ),
             'responseEnvelope_ack' => array(
                 array('not_empty'),
                 array('equals', array(":value", "Success"))
@@ -332,7 +335,7 @@ abstract class Kohana_PayPal extends PayPal_Constants {
      *
      * @throws  Request_Exception if the connection to PayPal API fails.
      * @throws PayPal_Exception if the PayPal request fails. 
-     * @return  array an associative array with the following keys :
+     * @return PayPal_Response an associative array with the following keys :
      *     response : which contains the PayPal NVP response.
      *     redirect_url : which contains the precomputed redirection url.
      */
@@ -364,23 +367,21 @@ abstract class Kohana_PayPal extends PayPal_Constants {
             $data = NULL;
             parse_str($request->execute()->body(), $data);
         } catch (Request_Exception $re) {
-            throw new PayPal_Exception($this, $data);
+            throw new PayPal_Exception($this, NULL, $re->getMessage(), array(), $re->getCode());
         }
 
-        // Validate the response
-        $validation_response = Validation::factory($data);
+        // Adding the redirect url to the datas
+        $data['redirect_url'] = $this->redirect_url($data);
+
+        $response = PayPal_Response::factory($this, $data);
 
         foreach ($this->response_rules() as $field => $rules) {
-            $validation_response->rules($field, $rules);
+            $response->rules($field, $rules);
         }
 
-        if (!$validation_response->check()) {
-            throw new PayPal_Validation_Exception($validation_response, $this, $data);
+        if (!$response->check()) {
+            throw new PayPal_Exception($this, $data, "Response failed to validate :errors", array(":errors" => print_r($response->errors(), TRUE)));
         }
-
-        $redirect_url = $this->redirect_url($data);
-
-        $response = PayPal_Response::factory($data, $redirect_url);
 
         if (isset($benchmark)) {
             Profiler::stop($benchmark);
