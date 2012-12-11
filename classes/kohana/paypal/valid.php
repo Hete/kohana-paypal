@@ -58,7 +58,7 @@ class Kohana_PayPal_Valid {
     public static function currency($str) {
         return static::contained($str, PayPal::$CURRENCIES);
     }
-    
+
     public static function currency_code($str) {
         return static::currency($str);
     }
@@ -87,6 +87,10 @@ class Kohana_PayPal_Valid {
 
     public static function fee_payer($str) {
         return static::contained($str, PayPal::$FEES_PAYER);
+    }
+
+    public static function pin_type($str) {
+        return static::contained($str, PayPal::$REQUIRED_STATES);
     }
 
 }

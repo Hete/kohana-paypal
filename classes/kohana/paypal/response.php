@@ -19,6 +19,16 @@ class Kohana_PayPal_Response extends Validation {
      * @var \PayPal
      */
     public $request;
+    
+    
+    /**
+     * Sanitize keys.
+     * @param string $input
+     * @return string
+     */
+    public function sanitize($input) {
+        return str_replace("_", ".", $input);
+    }
 
     /**
      * 
@@ -35,15 +45,6 @@ class Kohana_PayPal_Response extends Validation {
 
         // Building validation object
         parent::_construct($data);
-    }
-
-    /**
-     * 
-     * @param string $input
-     * @return string
-     */
-    public function sanitize($input) {
-        return str_replace("_", ".", $input);
     }
 
 }

@@ -61,7 +61,9 @@ class Kohana_PayPal_AdaptivePayments_Preapproval extends PayPal_AdaptivePayments
             'dayOfWeek' => array(
                 array('PayPal_Valid::day_of_week')
             ),
-            'displayMaxTotalAmount' => array(),
+            'displayMaxTotalAmount' => array(
+                array('PayPal_Valid::boolean'),
+            ),
             'feesPayer' => array(
                 array('PayPal_Valid::fee_payer')
             ),
@@ -69,10 +71,15 @@ class Kohana_PayPal_AdaptivePayments_Preapproval extends PayPal_AdaptivePayments
                 array("max_length", array(":value", 1024)),
                 array("url"),
             ),
-            'maxAmountPerPayment' => array(),
-            'maxNumberOfPayments' => array(
+            'maxAmountPerPayment' => array(
+                array('numeric')
             ),
-            'maxNumberOfPaymentsPerPeriod' => array(),
+            'maxNumberOfPayments' => array(
+                array('numeric')
+            ),
+            'maxNumberOfPaymentsPerPeriod' => array(
+                array('numeric')
+            ),
             'maxTotalAmountOfAllPayments' => array(
                 array('numeric')
             ),
@@ -83,11 +90,12 @@ class Kohana_PayPal_AdaptivePayments_Preapproval extends PayPal_AdaptivePayments
                 array('PayPal_Valid::payment_period')
             ),
             'pinType' => array(
-            //array('regex', array(":value", implode("|", '^'PayPal::$REQUIRED_STATES).'$'))
+                array("PayPal_Valid::pin_type")
             ),
             'senderEmail' => array(
                 array('email')
             ),
+            
                 //
         );
     }
