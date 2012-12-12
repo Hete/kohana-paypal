@@ -16,7 +16,7 @@ defined('SYSPATH') or die('No direct script access.');
 class Kohana_PayPal_Exception extends Kohana_Exception {
 
     /**
-     *
+     * 
      * @var PayPal
      */
     public $request;
@@ -36,11 +36,10 @@ class Kohana_PayPal_Exception extends Kohana_Exception {
      * @param type $code
      */
     public function __construct(PayPal $request, PayPal_Response $response, $message, array $variables = NULL, $code = 0) {
+        parent::__construct($message, $variables, $code);
         // Message d'erreur
         $this->request = $request;
         $this->response = $response;
-
-        parent::__construct($message, $variables, $code);
     }
 
 }
