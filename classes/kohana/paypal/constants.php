@@ -26,7 +26,25 @@ class Kohana_PayPal_Constants {
      * Supported date format by PayPal.
      */
     const DATE_FORMAT = "Y-m-d\TH:i:s.BP";
+    /**
+     * Acknowledgement for success request containing a warning.
+     */
+    const SUCCESS_WITH_WARNING = "SuccessWithWarning";
 
+    public static $ACKNOWLEDGEMENTS = array(
+        "Success",
+        "Failure",
+        "SuccessWithWarning",
+        "FailureWithWarning",
+    );
+    public static $SUCCESS_ACKNOWLEDGEMENTS = array(
+        "Success",
+        "SuccessWithWarning",
+    );
+    public static $FAILURE_ACKNOWLEDGEMENTS = array(
+        "Failure",
+        "FailureWithWarning",
+    );
     public static $CURRENCIES = array('AUD', 'BRL', 'CAD', 'CZK', 'DKK', 'EUR',
         'HKD', 'HUF', 'ILS', 'JPY', 'MYR', 'MXN', 'NOK', 'NZD', 'PHP', 'PLN',
         'GBP', 'SGD', 'SEK', 'CHF', 'TWD', 'THB', 'USD');
@@ -55,6 +73,11 @@ class Kohana_PayPal_Constants {
     );
     public static $REQUIRED_STATES = array(
         'REQUIRED', 'NOT_REQUIRED'
+    );
+    public static $PREAPPROVAL_STATES = array(
+        'ACTIVE',
+        'DEACTIVED',
+        'CANCELED'
     );
     public static $FEES_PAYER = array(
         'SENDER',

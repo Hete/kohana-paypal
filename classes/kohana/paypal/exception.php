@@ -23,7 +23,7 @@ class Kohana_PayPal_Exception extends Kohana_Exception {
 
     /**
      *
-     * @var array 
+     * @var PayPal_Response 
      */
     public $response;
 
@@ -35,21 +35,12 @@ class Kohana_PayPal_Exception extends Kohana_Exception {
      * @param array $variables
      * @param type $code
      */
-    public function __construct(PayPal $request, array $response, $message = "", array $variables = array(), $code = 0) {
+    public function __construct(PayPal $request, PayPal_Response $response, $message, array $variables = NULL, $code = 0) {
         // Message d'erreur
-
-
-        $variables += array(
-            ':error' => print_r($response, TRUE)
-           // ':error' => $response['error_message'],
-            //':code' => $response['error_errorId'],
-        );
-
-        parent::__construct($message, $variables, $code);
         $this->request = $request;
         $this->response = $response;
 
-      
+        parent::__construct($message, $variables, $code);
     }
 
 }

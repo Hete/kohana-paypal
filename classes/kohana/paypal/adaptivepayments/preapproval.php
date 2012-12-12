@@ -9,9 +9,9 @@ defined('SYSPATH') or die('No direct script access.');
  * @copyright Hète.ca
  */
 class Kohana_PayPal_AdaptivePayments_Preapproval extends PayPal_AdaptivePayments {
-    
+
     protected $_redirect_command = 'ap-preapproval';
-    
+
     protected function redirect_params(array $results) {
         return array("preapprovalkey" => $results['preapprovalKey']);
     }
@@ -36,6 +36,7 @@ class Kohana_PayPal_AdaptivePayments_Preapproval extends PayPal_AdaptivePayments
                 array('not_empty'),
             ),
             'currencyCode' => array(
+                array('PayPal_Valid::currency_code'),
                 array('not_empty'),
             ),
             // Optional
@@ -56,23 +57,29 @@ class Kohana_PayPal_AdaptivePayments_Preapproval extends PayPal_AdaptivePayments
                 array("max_length", array(":value", 127)),
             ),
             'clientDetails_partnerName' => array(),
-            'currencyCode' => array(
-            ),
             'dateOfMonth' => array(),
             'dayOfWeek' => array(
-            //array('regex', array(":value", '^'.implode("|", PayPal::$DAYS_OF_WEEK).'$'))
+                array('PayPal_Valid::day_of_week')
             ),
-            'displayMaxTotalAmount' => array(),
+            'displayMaxTotalAmount' => array(
+                array('PayPal_Valid::boolean'),
+            ),
             'feesPayer' => array(
-            //array('regex', array(":value", implode("|", '^'.PayPal::$FEES_PAYER).'$'))
+                array('PayPal_Valid::fee_payer')
             ),
             'ipnNotificationUrl' => array(
                 array("max_length", array(":value", 1024)),
                 array("url"),
             ),
-            'maxAmountPerPayment' => array(),
-            'maxNumberOfPayments' => array(),
-            'maxNumberOfPaymentsPerPeriod' => array(),
+            'maxAmountPerPayment' => array(
+                array('numeric')
+            ),
+            'maxNumberOfPayments' => array(
+                array('numeric')
+            ),
+            'maxNumberOfPaymentsPerPeriod' => array(
+                array('numeric')
+            ),
             'maxTotalAmountOfAllPayments' => array(
                 array('numeric')
             ),
@@ -80,14 +87,15 @@ class Kohana_PayPal_AdaptivePayments_Preapproval extends PayPal_AdaptivePayments
                 array('max_length', array(":value", 1000))
             ),
             'paymentPeriod' => array(
-            //array('regex', array(":value", implode("|", '^'.PayPal::$PAYMENT_PERIODS).'$'))
+                array('PayPal_Valid::payment_period')
             ),
             'pinType' => array(
-            //array('regex', array(":value", implode("|", '^'PayPal::$REQUIRED_STATES).'$'))
+                array("PayPal_Valid::pin_type")
             ),
             'senderEmail' => array(
                 array('email')
             ),
+            
                 //
         );
     }
