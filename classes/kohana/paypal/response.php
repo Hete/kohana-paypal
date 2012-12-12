@@ -1,26 +1,29 @@
 <?php
 
 /**
- * 
+ * PayPal response.
  */
-class Kohana_PayPal_Response extends Validation {
+class Kohana_PayPal_Response extends Response implements ArrayAccess {
+
+    private $_validation;
 
     /**
      * 
-     * @param array $data
-     * @return \PayPal_Response
+     * @param \PayPal $request request that originated the response.
+     * @param array $data response datas.
      */
-    public static function factory(PayPal $request, array $data) {
-        return new PayPal_Response($request, $data);
+    public function __construct(array $config = array()) {
+
+        parent::_construct($config);
+
+        $data = parse_str($this->body());
+
+        // Sanitize data with dots
+        array_walk_recursive($data, array($this, "sanitize"));
+
+        $this->_validation = Validation::factory($data);
     }
 
-    /**
-     *
-     * @var \PayPal
-     */
-    public $request;
-    
-    
     /**
      * Sanitize keys.
      * @param string $input
@@ -30,21 +33,33 @@ class Kohana_PayPal_Response extends Validation {
         return str_replace("_", ".", $input);
     }
 
+    // Bindings for validation object
+
     /**
      * 
-     * @param \PayPal $request request that originated the response.
-     * @param array $data response datas.
+     * @param type $field
+     * @param array $rules
+     * @return Validation
      */
-    public function __construct(PayPal $request, array $data) {
+    public function rules($field, array $rules) {
+        $this->_validation->rules($field, $rules);
+        return $this;
+    }
 
+    public function offsetExists($offset) {
+        return $this->_validation->offsetExists($offset);
+    }
 
-        // Sanitize data with dots
-        array_walk_recursive($data, array($this, "sanitize"));
+    public function offsetGet($offset) {
+        return $this->_validation->offsetGet($offset);
+    }
 
-        $this->request = $request;
+    public function offsetSet($offset, $value) {
+        return $this->_validation->offsetSet($offset, $value);
+    }
 
-        // Building validation object
-        parent::_construct($data);
+    public function offsetUnset($offset) {
+        return $this->_validation->offsetUnset($offset);
     }
 
 }

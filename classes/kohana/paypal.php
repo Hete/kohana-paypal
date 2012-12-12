@@ -309,10 +309,7 @@ abstract class Kohana_PayPal extends PayPal_Constants {
         // Adding the redirect url to the datas
         $data['redirectUrl'] = $this->redirect_url($data);
 
-
         $response = PayPal_Response::factory($this, $data);
-
-        $response->label("redirectUrl", "redirect_url");
 
         foreach ($this->response_rules() as $field => $rules) {
             $response->rules($field, $rules);
