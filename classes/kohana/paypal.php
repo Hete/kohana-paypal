@@ -355,8 +355,8 @@ abstract class Kohana_PayPal extends PayPal_Constants {
             // Execute the request and parse the response
             $data = NULL;
             parse_str($request->execute()->body(), $data);
-        } catch (Request_Exception $re) {
-            throw new PayPal_Request_Exception($re, $this, $data);
+        } catch (Request_Exception $re) {            
+            throw new PayPal_Exception($this, $data);
         }
         
 
