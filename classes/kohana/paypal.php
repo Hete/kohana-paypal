@@ -26,65 +26,6 @@ abstract class Kohana_PayPal extends PayPal_Constants {
     }
 
     /**
-     * Encode a multi-dimensional array into a PayPal valid array.
-     *  
-     * An already encoded PayPal array will not be affected.
-     * 
-     * $response['requestEnvelope']['details']
-     * requestEnvelope.details
-     * 
-     * 
-     * @param array $data is the data to encode.
-     * @param array $base keeps track of hiearchy. Do not specify it.
-     */
-    public static function encode(array $data, array $base = array()) {
-
-        $result = array();
-
-        foreach ($data as $key => $value) {
-
-            $local_base = clone $base;
-
-            // In case of assoc, $key is a string
-            if (Arr::is_assoc($data)) {
-                array_push($local_base, $key);
-            } else {
-                // Simple array, we have to specify index is parenthesis of the lase element of $base
-                // blabla.blabla.list => blabla.blabla.list($key)
-                // As we modify a clone for this index, list is not gone for the next element.
-                $base[count($base) - 1] .= "(" . $key . ")";
-            }
-
-            // The only case of recursivity, $value is a sub_array.
-            if (is_array($value)) {
-                // Encoding subarray
-                $result += paypal_encode($value, $result, $local_base);
-            }
-
-            if ($value instanceof PayPal_Object) {
-                // On rajoute les valeurs encodés
-                $result = $result + $value->encode();
-            } elseif (is_object($value)) {
-                throw new Kohana_Exception("Object at key :key must implement PayPal_Encodable to be encoded.", array(":key", $key));
-            }
-
-            // TODO Imploding underscores and dots
-            // Imploding dots to build hiearchy     
-            $result[implode(".", $local_base)] = $value;
-        }
-
-        return $result;
-    }
-
-    /**
-     * Not implemented yet.
-     * @param array $data
-     */
-    public static function decode(array $data) {
-        return $data;
-    }
-
-    /**
      * Environment type
      * @var string 
      */
@@ -115,19 +56,12 @@ abstract class Kohana_PayPal extends PayPal_Constants {
     protected $_redirect_command = "";
 
     /**
-     * Basic response rules. Useful to override if targetting a special API.
-     * @var array 
-     */
-    protected $_response_rules = array(
-    );
-
-    /**
      * Constructor. You may use it directly, but it is suggested to use the
      * factory, which is more convenient.
      * @see
      * @param array $params request parameters.
      */
-    private function __construct(array $params = array()) {
+    protected function __construct(array $params = array()) {
 
         // Loading current environment
         $this->_environment = Kohana::$config->load("paypal.environment");
@@ -167,6 +101,22 @@ abstract class Kohana_PayPal extends PayPal_Constants {
     }
 
     /**
+     * Rules to validate the PayPal response.
+     * @return array
+     */
+    protected function response_rules() {
+        return array(
+            'redirectUrl' => array(
+                array('url')
+            ),
+            'responseEnvelope.ack' => array(
+                array('not_empty'),
+                array('contained', array(":value", static::$SUCCESS_ACKNOWLEDGEMENTS))
+            ),
+        );
+    }
+
+    /**
      * Return rules array for this request.
      * @return array
      */
@@ -187,7 +137,7 @@ abstract class Kohana_PayPal extends PayPal_Constants {
 
         // Validate the request parameters
         $validation_request = Validation::factory($this->param())
-                ->rule('requestEnvelope_errorLanguage', 'not_empty')
+                ->rule('requestEnvelope.errorLanguage', 'not_empty')
                 ->rule('securityToken', 'Security::check', array($security_token));
 
         // We add custom and basic rules proper to the request
@@ -196,28 +146,29 @@ abstract class Kohana_PayPal extends PayPal_Constants {
         }
 
         if (!$validation_request->check()) {
-            throw new PayPal_Validation_Exception($this, $validation_request);
+            throw new PayPal_Exception($this, NULL, "Paypal request failed to validate :errors", array(":errors" => print_r($validation_request->errors(), TRUE)));
         }
 
         return $this;
     }
 
     /**
-     * param() returns the param array, param($key) returns the value associated
-     * to the key $key and param($key, $value) sets the $value at the specified
-     * $key.
+     * No arguments, it returs the parameters array.
+     * Key only, it returns the matching value.
+     * Key and value act as a setter.
+     * 
      * @param string $key
      * @param string $value
      * @return type
      */
-    public function param($key = NULL, $value = NULL, $default = NULL) {
+    public function param($key = NULL, $value = NULL) {
 
         if ($key === NULL) {
             return $this->_params;
         }
 
         if ($value === NULL) {
-            return Arr::get($this->_params, $key, $default);
+            return Arr::get($this->_params, $key);
         }
 
         // Simple setter
@@ -232,14 +183,14 @@ abstract class Kohana_PayPal extends PayPal_Constants {
      * @param string $value
      * @return type
      */
-    public function headers($key = NULL, $value = NULL, $default = NULL) {
+    public function headers($key = NULL, $value = NULL) {
 
         if ($key === NULL) {
             return $this->_headers;
         }
 
         if ($value === NULL) {
-            return Arr::get($this->_headers, $key, $default);
+            return Arr::get($this->_headers, $key);
         }
 
         // Simple setter
@@ -249,7 +200,7 @@ abstract class Kohana_PayPal extends PayPal_Constants {
     }
 
     /**
-     * Headers access method. Same as param.
+     * Config access method. Uses Arr::path.
      * @param string $key
      * @param string $value
      * @return type
@@ -259,11 +210,16 @@ abstract class Kohana_PayPal extends PayPal_Constants {
     }
 
     /**
-     * PayPal method name based on the class name.
+     * PayPal method name based on the class name.   
      * @return string 
      */
     public function method() {
-        return implode("/", explode("_", str_replace("PayPal_", "", get_class($this))));
+
+        // Remove prefix to the class
+        $method = preg_replace("(Kohana_)?PayPal_", "", get_class($this));
+
+        // _ => / and capitalized
+        return ucfirst(str_replace("_", "/", $method));
     }
 
     /**
@@ -312,13 +268,14 @@ abstract class Kohana_PayPal extends PayPal_Constants {
      *
      * @see  https://cms.paypal.com/us/cgi-bin/?cmd=_render-content&content_ID=developer/e_howto_api_nvp_NVPAPIOverview
      *
-     * @throws  Request_Exception if the connection to PayPal API fails.
-     * @throws PayPal_Exception if the PayPal request fails. 
-     * @return  array an associative array with the following keys :
-     *     response : which contains the PayPal NVP response.
-     *     redirect_url : which contains the precomputed redirection url.
+     * @throws PayPal_Exception if the PayPal request fails at any point.
+     * @return PayPal_Response an associative array with the following keys :
+     *     data response : which contains the PayPal NVP response.
+     *     redirectUrl : which contains the precomputed redirection url.
+     * All the responses are sanitized with dots.
+     * client_number will become client.number.
      */
-    public final function execute($decode = FALSE, $security_token = NULL) {
+    public final function execute($security_token = NULL) {
         if (Kohana::$profiling) {
             $benchmark = Profiler::start("PayPal", __FUNCTION__);
         }
@@ -341,39 +298,65 @@ abstract class Kohana_PayPal extends PayPal_Constants {
             $request->client()->options($key, $value);
         }
 
-
         try {
             // Execute the request and parse the response
             $data = NULL;
             parse_str($request->execute()->body(), $data);
         } catch (Request_Exception $re) {
-            throw new PayPal_Request_Exception($re, $this, $data);
+            throw new PayPal_Exception($this, NULL, $re->getMessage(), array(), $re->getCode());
+        }
+
+        // Adding the redirect url to the datas
+        $data['redirectUrl'] = $this->redirect_url($data);
+
+
+        $response = PayPal_Response::factory($this, $data);
+
+        $response->label("redirectUrl", "redirect_url");
+
+        foreach ($this->response_rules() as $field => $rules) {
+            $response->rules($field, $rules);
         }
 
         // Validate the response
-        $validation_response = Validation::factory($data)
-                ->rule('responseEnvelope_ack', 'not_empty')
-                ->rule('responseEnvelope_ack', 'equals', array(":value", "Success"));
-
-        if (!$validation_response->check()) {
-            throw new PayPal_Validation_Exception($validation_response, $this, $data);
+        if (!$response->check()) {
+            // Logging the data in case of..
+            $message = "PayPal response failed with id :id at :category level. :message";
+            $variables = array(
+                ":category" => $response["error.category"],
+                ":message" => $response["error.message"],
+                ":id" => $response["error.errorId"],
+            );
+            Log::instance()->add(Log::ERROR, $message, $variables);
+            throw new PayPal_Exception($this, $data, $message, $variables);
         }
 
-        if ($decode) {
-            // Decode data for better handling
-            $data = PayPal::decode($data);
+        // Was successful, we store the correlation id and stuff in logs
+        $variables = array(
+            ":ack" => $response["responseEnvelope.ack"],
+            ":build" => $response["responseEnvelope.build"],
+            ":correlation_id" => $response["responseEnvelope.correlationId"],
+            ":timestamp" => $response["responseEnvelope.timestamp"],
+        );
+
+        Log::instance()->add(Log::INFO, "PayPal request was completed with :ack :build :correlation_id at :timestamp", $variables);
+
+        if ($response["responseEnvelope.ack"] === static::SUCCESS_WITH_WARNING) {
+            $variables += array(
+                ":error_id" => $response["error.error_id"],
+                ":category" => $response["error.category"],
+                ":message" => $response["error.message"],
+            );
+            // In case of SuccessWithWarning, print the warning
+            Log::instance()->add(Log::WARNING, "PayPal request was completed with :ack :build :correlation_id at :timestamp but a warning with id :error_id was raised :message at :category level", $variables);
         }
 
-        $redirect_url = $this->redirect_url($data);
 
         if (isset($benchmark)) {
             Profiler::stop($benchmark);
         }
 
-        return $data + array(
-            // Pre-computed redirect url
-            "redirect_url" => $redirect_url,
-        );
+        return $response;
     }
 
 }

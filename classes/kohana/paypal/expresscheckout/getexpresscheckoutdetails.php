@@ -15,10 +15,8 @@ defined('SYSPATH') or die('No direct script access.');
  */
 class Kohana_PayPal_ExpressCheckout_GetExpressCheckoutDetails extends PayPal_ExpressCheckout {
 
-    protected function rules() {
-        return array(
-            'token'
-        );
+      public function rules() {
+        return array();
     }
 
 }
