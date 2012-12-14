@@ -5,7 +5,7 @@ defined('SYSPATH') or die('No direct script access.');
 /**
  * RequestPermissions API Operation.
  *
- * @link  https://cms.paypal.com/ca/cgi-bin/?cmd=_render-content&content_ID=developer/e_howto_api_PermissionsRequestPermissionsAPI
+ * @link  https://www.x.com/developers/paypal/documentation-tools/api/setexpresscheckout-api-operation-soap
  *
  * @package PayPal
  * @category ExpressCheckout
@@ -19,26 +19,13 @@ class Kohana_PayPal_ExpressCheckout_SetExpressCheckout extends PayPal_ExpressChe
 
     protected function redirect_params(array $results) {
         return array(
-            'token' => $results['TOKEN']
+            'token' => $results['Token']
         );
     }
 
     protected function rules() {
         return array(
-            'AMT' => array(
-                array('not_empty'),
-            ),
-            'PAYMENTACTION' => array(
-                array('not_empty'),
-            ),
-            'ReturnURL' => array(
-                array('not_empty'),
-                array('url'),
-            ),
-            'CancelURL' => array(
-                array('not_empty'),
-                array('url'),
-            )
+           
         );
     }
 
