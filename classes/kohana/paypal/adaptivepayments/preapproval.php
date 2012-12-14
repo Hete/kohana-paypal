@@ -20,11 +20,11 @@ class Kohana_PayPal_AdaptivePayments_Preapproval extends PayPal_AdaptivePayments
         return array(
             // Required
             'startingDate' => array(
-                array('date', array(":value", PayPal::DATE_FORMAT)),
+                array('date', array(":value", static::DATE_FORMAT)),
                 array('not_empty')
             ),
             'endingDate' => array(
-                array('date', array(":value", PayPal::DATE_FORMAT)),
+                array('date', array(":value", static::DATE_FORMAT)),
                 array('not_empty')
             ),
             'cancelUrl' => array(

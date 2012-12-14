@@ -8,9 +8,8 @@
 	Any options you specify when calling phpunit will override the ones in here
 -->
 <phpunit colors="true" bootstrap="../../unittest/bootstrap.php">
-	<testsuites>
-		<testsuite name="kohana-paypal tests">
-			<file>./</file>
+    <testsuite name="PayPalTest">
+        <directory>.</directory>
 		</testsuite>
-	</testsuites>
+	
 </phpunit>

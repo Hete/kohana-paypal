@@ -19,7 +19,7 @@ class PayPal_Permissions_RequestPermissions extends PayPal_Permissions {
         return array('request_token' => $results['token']);
     }
 
-    protected function request_rules() {
+    protected function rules() {
         return array(
             'callback' => array(
                 array('not_empty', array(':value'))

@@ -35,11 +35,12 @@ class Kohana_PayPal_Exception extends Kohana_Exception {
      * @param array $variables
      * @param type $code
      */
-    public function __construct(Request_PayPal $request, Response_PayPal $response, $message, array $variables = NULL, $code = 0) {
+    public function __construct(Request_PayPal $request, Response_PayPal $response = NULL, $message = "PayPal request failed.", array $variables = NULL, $code = 0) {
         // Message d'erreur
         $this->request = $request;
         $this->response = $response;
-
+        
+       
         parent::__construct($message, $variables, $code);
     }
 

@@ -13,6 +13,7 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
      */
 
     const SANDBOX = 'sandbox', LIVE = '';
+    const REQUEST_CLIENT = "Request_Client_Curl";
 
     /**
      * Current version.
@@ -33,19 +34,46 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
         "Failure",
         "FailureWithWarning",
     );
-
-    /**
-     * 
-     * @param type $name name of the PayPal request such as AdaptivePayments_Preapproval.
-     * @param array $params basic parameters to put in the post.
-     * @param HTTP_Cache $cache
-     * @param array $injected_routes
-     * @return \Request_PayPal
-     */
-    public static function factory($name, array $params = array(), HTTP_Cache $cache = NULL, $injected_routes = array()) {
-        $class = "PayPal_$name";
-        return new $class($params, $cache, $injected_routes);
-    }
+    public static $CURRENCIES = array('AUD', 'BRL', 'CAD', 'CZK', 'DKK', 'EUR',
+        'HKD', 'HUF', 'ILS', 'JPY', 'MYR', 'MXN', 'NOK', 'NZD', 'PHP', 'PLN',
+        'GBP', 'SGD', 'SEK', 'CHF', 'TWD', 'THB', 'USD');
+    public static $PERSONAL_IDENTIFICATION_NUMBER = array(
+        'NOT_REQUIRED',
+        'REQUIRED'
+    );
+    public static $DAYS_OF_WEEK = array(
+        'NO_DAY_SPECIFIED',
+        'SUNDAY',
+        'MONDAY',
+        'TUESDAY',
+        'WEDNESDAY',
+        'THURSDAY',
+        'FRIDAY',
+        'SATURDAY',
+    );
+    public static $PAYMENT_PERIODS = array(
+        'NO_PERIOD_SPECIFIED',
+        'DAILY',
+        'WEEKLY',
+        'BIWEEKLY',
+        'SEMIMONTHLY',
+        'MONTHLY',
+        'ANNUALLY',
+    );
+    public static $REQUIRED_STATES = array(
+        'REQUIRED', 'NOT_REQUIRED'
+    );
+    public static $PREAPPROVAL_STATES = array(
+        'ACTIVE',
+        'DEACTIVED',
+        'CANCELED'
+    );
+    public static $FEES_PAYER = array(
+        'SENDER',
+        'PRIMARYRECEIVER',
+        'EACHRECEIVER',
+        'SECONDARYONLY'
+    );
 
     /**
      * Redirection command (if appliable).
@@ -86,7 +114,7 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
      * @param HTTP_Cache $cache
      * @param array $injected_routes
      */
-    public function __construct(array $params = array(), HTTP_Cache $cache = NULL, $injected_routes = array()) {
+    public function __construct($uri = TRUE, HTTP_Cache $cache = NULL, $injected_routes = array(), array $params = array()) {
 
         // Loading current environment
         $this->_environment = Kohana::$config->load("paypal.environment");
@@ -94,7 +122,13 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
         // Config for current environment
         $this->_config = Kohana::$config->load('paypal.' . $this->_environment);
 
-        parent::__construct($this->api_url(), $cache, $injected_routes);
+        // uri is defined by the api url.a
+        $uri = $this->api_url();
+
+        parent::__construct($uri, $cache, $injected_routes);
+
+        // Setting client to curl
+        $this->client(Request_Client_External::factory($this->config("curl.options"), static::REQUEST_CLIENT));
 
         // Custom setup for the cURL client
         foreach ($this->config("curl.options") as $key => $value) {
@@ -161,7 +195,7 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
 
         // Validate the request parameters
         $this->_validation = Validation::factory($this->post())
-                ->rule('requestEnvelope.errorLanguage', 'not_empty')
+                ->rule('requestEnvelope_errorLanguage', 'not_empty')
                 ->rule('securityToken', 'Security::check', array($this->_security_token));
 
         // We add custom and basic rules proper to the request
@@ -170,7 +204,7 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
         }
 
         if (!$this->_validation->check()) {
-            throw new PayPal_Exception($this, NULL, "Paypal request failed to validate :errors", array(":errors" => print_r($validation_request->errors(), TRUE)));
+            throw new PayPal_Exception($this, NULL, "Paypal request failed to validate :errors", array(":errors" => print_r($this->_validation->errors(), TRUE)));
         }
 
         return $this;
@@ -188,9 +222,9 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
             // Use the environment sub-domain
             $env = $this->_environment . '.';
         }
-
+        $unappended = preg_replace("/(Kohana_)?PayPal_/", "", get_class($this));
         // Remove prefix to the class, _ => / and capitalized
-        $method = ucfirst(str_replace("_", "/", preg_replace("(Kohana_)?PayPal_", "", get_class($this))));
+        $method = ucfirst(str_replace("_", "/", $unappended));
 
         return 'https://svcs.' . $env . 'paypal.com/' . $method;
     }

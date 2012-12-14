@@ -12,24 +12,6 @@
  * @license    http://kohanaphp.com/license.html
  */
 abstract class Kohana_PayPal_AdaptivePayments extends Request_PayPal {
-
-    protected function redirect_url(array $response_data) {
-        return parent::redirect_url($response_data);
-
-        if ($this->_environment === 'live') {
-            // Live environment does not use a sub-domain
-            $env = '';
-        } else {
-            // Use the environment sub-domain
-            $env = $this->_environment . '.';
-        }
-
-        // Add the command to the parameters
-        $params = $this->redirect_param($response_data);
-
-        return 'https://www.' . $env . 'paypal.com/webapps/adaptivepayment/flow/' . $this->_redirect_command . '?' . http_build_query($params, '', '&');
-    }
-
 }
 
 ?>
