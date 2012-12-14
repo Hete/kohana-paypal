@@ -11,7 +11,7 @@
  * @copyright  Hète.ca Inc.
  * @license    http://kohanaphp.com/license.html
  */
-abstract class Kohana_PayPal_AdaptivePayments extends PayPal {
+abstract class Kohana_PayPal_AdaptivePayments extends Request_PayPal {
 
     protected function redirect_url(array $response_data) {
         return parent::redirect_url($response_data);

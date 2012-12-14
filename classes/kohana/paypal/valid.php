@@ -12,7 +12,7 @@ defined('SYSPATH') or die('No direct script access.');
  * @author Guillaume Poirier-Morency
  * @copyright Hète.ca  
  */
-class Kohana_PayPal_Valid {
+class Kohana_PayPal_Valid extends Valid {
 
     /**
      * Tells if the value is a valid PayPal boolean.

@@ -14,7 +14,7 @@ defined('SYSPATH') or die('No direct script access.');
  * @copyright  Hète.ca Inc.
  * @license    http://kohanaphp.com/license.html
  */
-abstract class Kohana_PayPal_Invoice extends PayPal {
+abstract class Kohana_PayPal_Invoice extends Request_PayPal {
     
 }
 
