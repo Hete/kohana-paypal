@@ -12,7 +12,7 @@ class Kohana_PayPal_AdaptivePayments_Preapproval extends PayPal_AdaptivePayments
 
     protected $_redirect_command = 'ap-preapproval';
 
-    protected function redirect_params(array $results) {
+    protected function redirect_params(Response_PayPal $results) {
         return array("preapprovalkey" => $results['preapprovalKey']);
     }
 

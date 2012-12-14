@@ -127,6 +127,7 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
 
         parent::__construct($uri, $cache, $injected_routes);
 
+
         // Setting client to curl
         $this->client(Request_Client_External::factory($this->config("curl.options"), static::REQUEST_CLIENT));
 
@@ -137,26 +138,23 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
 
         // Setting default headers
         $this->headers('X-PAYPAL-SECURITY-USERID', $this->_config['username']);
-        $this->headers('X-PAYPAL-SECURITY-USERID', $this->_config['password']);
-        $this->headers('X-PAYPAL-SECURITY-USERID', $this->_config['signature']);
-        $this->headers('X-PAYPAL-REQUEST-DATA-FORMA', 'NV');
+        $this->headers('X-PAYPAL-SECURITY-PASSWORD', $this->_config['password']);
+        $this->headers('X-PAYPAL-SECURITY-SIGNATURE', $this->_config['signature']);
+        $this->headers('X-PAYPAL-REQUEST-DATA-FORMAT', 'NV');
         $this->headers('X-PAYPAL-RESPONSE-DATA-FORMAT', 'NV');
         $this->headers("X-PAYPAL-APPLICATION-ID", $this->_config['api_id']);
+
+        // It's a post request
+        $this->method(static::POST);
+
+        $this->post($params);
 
         // Setting default post
         $this->post('requestEnvelope', '');
         $this->post('requestEnvelope_detailLevel', 'ReturnAll');
         $this->post('requestEnvelope_errorLanguage', Kohana::$config->load("paypal.lang"));
 
-        // It's a post request
-        $this->method(static::POST);
-
         $this->_security_token = Security::token();
-
-        // Basic post values
-        foreach ($params as $key => $value) {
-            $this->post($key, $value);
-        }
     }
 
     /**
@@ -276,42 +274,43 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
 
         // Execute the request
         $response = parent::execute();
+        
+        echo($this->uri());
 
         // Parse the response
         $paypal_response = Response_PayPal::factory($response);
-
-
-        // Adding the redirect url to the datas
-        $paypal_response['redirectUrl'] = $this->redirect_url($paypal_response);
 
         // Validate the response
         if (!$paypal_response->check()) {
             // Logging the data in case of..
             $message = "PayPal response failed with id :id at :category level. :message";
             $variables = array(
-                ":category" => $paypal_response["error.category"],
-                ":message" => $paypal_response["error.message"],
-                ":id" => $paypal_response["error.errorId"],
+                ":category" => $paypal_response["error(0)_category"],
+                ":message" => $paypal_response["error(0)_message"],
+                ":id" => $paypal_response["error(0)_errorId"],
             );
             Log::instance()->add(Log::ERROR, $message, $variables);
             throw new PayPal_Exception($this, $paypal_response, $message, $variables);
         }
 
+        // Adding the redirect url to the datas
+        $paypal_response['redirectUrl'] = $this->redirect_url($paypal_response);
+
         // Was successful, we store the correlation id and stuff in logs
         $variables = array(
-            ":ack" => $paypal_response["responseEnvelope.ack"],
-            ":build" => $paypal_response["responseEnvelope.build"],
-            ":correlation_id" => $paypal_response["responseEnvelope.correlationId"],
-            ":timestamp" => $paypal_response["responseEnvelope.timestamp"],
+            ":ack" => $paypal_response["responseEnvelope_ack"],
+            ":build" => $paypal_response["responseEnvelope_build"],
+            ":correlation_id" => $paypal_response["responseEnvelope_correlationId"],
+            ":timestamp" => $paypal_response["responseEnvelope_timestamp"],
         );
 
         Log::instance()->add(Log::INFO, "PayPal request was completed with :ack :build :correlation_id at :timestamp", $variables);
 
-        if ($paypal_response["responseEnvelope.ack"] === static::SUCCESS_WITH_WARNING) {
+        if ($paypal_response["responseEnvelope_ack"] === static::SUCCESS_WITH_WARNING) {
             $variables += array(
-                ":error_id" => $paypal_response["error.error_id"],
-                ":category" => $paypal_response["error.category"],
-                ":message" => $paypal_response["error.message"],
+                ":error_id" => $paypal_response["error(0)_error_id"],
+                ":category" => $paypal_response["error(0)_category"],
+                ":message" => $paypal_response["error(0)_message"],
             );
             // In case of SuccessWithWarning, print the warning
             Log::instance()->add(Log::WARNING, "PayPal request was completed with :ack :build :correlation_id at :timestamp but a warning with id :error_id was raised :message at :category level", $variables);

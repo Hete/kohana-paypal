@@ -2,11 +2,10 @@
 
 defined('SYSPATH') or die('No direct script access.');
 
-
 /**
  * PayPal response.
  */
-class Kohana_Response_PayPal extends Response implements ArrayAccess {
+class Kohana_Response_PayPal implements ArrayAccess {
 
     /**
      *
@@ -25,14 +24,16 @@ class Kohana_Response_PayPal extends Response implements ArrayAccess {
      */
     public function __construct(Response $response) {
 
-        parent::__construct();
+        parse_str($response->body(), $data);
 
-        $data = parse_str($response->body());
+        foreach ($data as $key => $value) {
+            unset($data[$key]);
+            $data[$this->sanitize($key)] = $value;
+        }
 
-        // Sanitize data with dots
-        array_walk_recursive($data, array($this, "sanitize"));
-
-        $this->_validation = Validation::factory($data);
+        $this->_validation = Validation::factory($data)
+                ->rule("responseEnvelope_ack", "not_empty")
+                ->rule("responseEnvelope_ack", "PayPal_Valid::contained", array(":value", Request_PayPal::$SUCCESS_ACKNOWLEDGEMENTS));
     }
 
     /**
@@ -40,11 +41,19 @@ class Kohana_Response_PayPal extends Response implements ArrayAccess {
      * @param string $input
      * @return string
      */
-    public function sanitize($input) {
-        return str_replace("_", ".", $input);
+    public function sanitize($value) {
+        return str_replace(".", "_", $value);
+    }
+
+    public function data() {
+        return $this->_validation->data();
     }
 
     // Bindings for validation object
+
+    public function check() {
+        return $this->_validation->check();
+    }
 
     /**
      * 

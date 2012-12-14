@@ -3,6 +3,9 @@
 class PayPalTest extends Unittest_TestCase {
 
     public function testCompleteRequest() {
+        
+        // 
+        Request::$initial = '';
 
         $data = array(
             "startingDate" => Date::formatted_time(),
