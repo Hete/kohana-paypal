@@ -254,6 +254,15 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
     }
 
     /**
+     * Paramètres de redirection générés à partir de la réponse de PayPal.
+     * @param Response_PayPal $response_data
+     * @return array
+     */
+    protected function redirect_params(Response_PayPal $response_data) {
+        return array();
+    }
+
+    /**
      * Validate and send the request. It also logs non-sensitive data for 
      * statistical and legal purpose.
      * 
@@ -273,7 +282,7 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
         $this->check();
 
         // Execute the request
-        $response = parent::execute();        
+        $response = parent::execute();
 
         // Parse the response
         $paypal_response = Response_PayPal::factory($response);
