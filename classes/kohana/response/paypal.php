@@ -12,7 +12,6 @@ class Kohana_Response_PayPal implements ArrayAccess {
      * @var Validation 
      */
     private $_validation;
-    
     public $redirect_url;
 
     public static function factory(Response $response) {
@@ -28,24 +27,9 @@ class Kohana_Response_PayPal implements ArrayAccess {
 
         parse_str($response->body(), $data);
 
-        foreach ($data as $key => $value) {
-            unset($data[$key]);
-            $data[$this->sanitize($key)] = $value;
-        }
-
         $this->_validation = Validation::factory($data)
                 ->rule("responseEnvelope_ack", "not_empty")
                 ->rule("responseEnvelope_ack", "PayPal_Valid::contained", array(":value", Request_PayPal::$SUCCESS_ACKNOWLEDGEMENTS));
-    }    
-    
-
-    /**
-     * Sanitize keys.
-     * @param string $input
-     * @return string
-     */
-    public function sanitize($value) {
-        return str_replace(".", "_", $value);
     }
 
     public function data() {
@@ -53,7 +37,6 @@ class Kohana_Response_PayPal implements ArrayAccess {
     }
 
     // Bindings for validation object
-
     public function check() {
         return $this->_validation->check();
     }
