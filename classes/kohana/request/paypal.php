@@ -273,9 +273,7 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
         $this->check();
 
         // Execute the request
-        $response = parent::execute();
-        
-        echo($this->uri());
+        $response = parent::execute();        
 
         // Parse the response
         $paypal_response = Response_PayPal::factory($response);
@@ -294,7 +292,7 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
         }
 
         // Adding the redirect url to the datas
-        $paypal_response['redirectUrl'] = $this->redirect_url($paypal_response);
+        $paypal_response->redirect_url = $this->redirect_url($paypal_response);
 
         // Was successful, we store the correlation id and stuff in logs
         $variables = array(

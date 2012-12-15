@@ -1,6 +1,6 @@
 <?php
 
-class Kohana_PayPal {
+class Kohana_PayPal implements PayPal_Constants {
 
     /**
      * 

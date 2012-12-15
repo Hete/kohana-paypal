@@ -12,6 +12,8 @@ class Kohana_Response_PayPal implements ArrayAccess {
      * @var Validation 
      */
     private $_validation;
+    
+    public $redirect_url;
 
     public static function factory(Response $response) {
         return new Response_PayPal($response);
@@ -34,7 +36,8 @@ class Kohana_Response_PayPal implements ArrayAccess {
         $this->_validation = Validation::factory($data)
                 ->rule("responseEnvelope_ack", "not_empty")
                 ->rule("responseEnvelope_ack", "PayPal_Valid::contained", array(":value", Request_PayPal::$SUCCESS_ACKNOWLEDGEMENTS));
-    }
+    }    
+    
 
     /**
      * Sanitize keys.
