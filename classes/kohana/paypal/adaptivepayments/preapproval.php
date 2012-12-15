@@ -3,10 +3,13 @@
 defined('SYSPATH') or die('No direct script access.');
 
 /**
+ * PayPal Preapproval request.
  * 
+ * @package PayPal
+ * @category AdaptivePayments
  * @link https://cms.paypal.com/ca/cgi-bin/?cmd=_render-content&content_ID=developer/e_howto_api_APPreapproval
  * @author Guillaume Poirier-Morency
- * @copyright Hète.ca
+ * @copyright (c) 2012, Hète.ca Inc.
  */
 class Kohana_PayPal_AdaptivePayments_Preapproval extends PayPal_AdaptivePayments {
 

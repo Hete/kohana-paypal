@@ -1,5 +1,7 @@
 <?php
 
+defined('SYSPATH') or die('No direct script access.');
+
 /**
  * Base class for AdaptativePayments api.
  *
@@ -12,6 +14,7 @@
  * @license    http://kohanaphp.com/license.html
  */
 abstract class Kohana_PayPal_AdaptivePayments extends Request_PayPal {
+    
 }
 
 ?>

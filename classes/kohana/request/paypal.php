@@ -3,8 +3,11 @@
 defined('SYSPATH') or die('No direct script access.');
 
 /**
- * PayPal request. To 
- * @author Guillaume Poirier-Morency <guillaumepoiriermorency@gmail.com>
+ * PayPal request.
+ * 
+ * @package PayPal
+ * @category Request
+ * @author Guillaume Poirier-Morency <guillaumepoiriermorency@gmail.com> * 
  * @copyright (c) 2012, Hète.ca Inc.
  */
 abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants {
