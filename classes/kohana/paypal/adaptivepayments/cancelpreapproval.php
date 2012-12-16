@@ -7,7 +7,7 @@
  * @package PayPal
  * @category AdaptativePayments
  * @author Quentin Avedissian <quentin.avedissian@gmail.com>
- * @copyright 
+ * @copyright Hète.ca Inc.
  */
 class Kohana_PayPal_AdaptivePayments_CancelPreapproval extends PayPal_AdaptivePayments {
 

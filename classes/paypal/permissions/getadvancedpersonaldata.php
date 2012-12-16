@@ -1,11 +1,9 @@
 <?php
 
-class PayPal_Permissions_GetAdvancedPersonalData extends PayPal_Permissions {
+defined('SYSPATH') or die('No direct script access.');
 
-    protected function request_rules() {
-        
-    }
-
+class PayPal_Permissions_GetAdvancedPersonalData extends Kohana_PayPal_Permissions_GetAdvancedPersonalData {
+    
 }
 
 ?>

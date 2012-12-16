@@ -3,69 +3,52 @@
 defined('SYSPATH') or die('No direct script access.');
 
 /**
- * PayPal response.
+ * PayPal response. It has all the flexibility of Validation.
+ * 
+ * @see Validation
+ * 
+ * @package PayPal
+ * @category Response
+ * @author Guillaume Poirier-Morency <guillaumepoiriermorency@gmail.com>
+ * @copyright (c) 2012, Hète.ca Inc.
  */
-class Kohana_Response_PayPal implements ArrayAccess {
+class Kohana_Response_PayPal extends Validation {
 
     /**
-     *
-     * @var Validation 
+     * Redirection url for this request.
+     * @var string 
      */
-    private $_validation;
     public $redirect_url;
 
-    public static function factory(Response $response) {
-        return new Response_PayPal($response);
+    /**
+     * Original response.
+     * @var Response 
+     */
+    public $response;
+    
+    /**
+     * 
+     * @param Response $response
+     * @return Response_PayPal
+     */
+    public static function factory(array $data, Response $response = NULL, $redirect_url = NULL) {
+        return new Response_PayPal($data, $response, $redirect_url);
     }
 
     /**
      * 
-     * @param \PayPal $request request that originated the response.
-     * @param array $data response datas.
+     * @param Response $response from a PayPal request.
      */
-    public function __construct(Response $response) {
+    public function __construct(array $data, Response $response = NULL, $redirect_url = NULL) {
 
-        parse_str($response->body(), $data);
 
-        $this->_validation = Validation::factory($data)
-                ->rule("responseEnvelope_ack", "not_empty")
-                ->rule("responseEnvelope_ack", "PayPal_Valid::contained", array(":value", Request_PayPal::$SUCCESS_ACKNOWLEDGEMENTS));
-    }
+        parent::__construct($data);
 
-    public function data() {
-        return $this->_validation->data();
-    }
-
-    // Bindings for validation object
-    public function check() {
-        return $this->_validation->check();
-    }
-
-    /**
-     * 
-     * @param type $field
-     * @param array $rules
-     * @return Validation
-     */
-    public function rules($field, array $rules) {
-        $this->_validation->rules($field, $rules);
-        return $this;
-    }
-
-    public function offsetExists($offset) {
-        return $this->_validation->offsetExists($offset);
-    }
-
-    public function offsetGet($offset) {
-        return $this->_validation->offsetGet($offset);
-    }
-
-    public function offsetSet($offset, $value) {
-        return $this->_validation->offsetSet($offset, $value);
-    }
-
-    public function offsetUnset($offset) {
-        return $this->_validation->offsetUnset($offset);
+        $this->redirect_url = $redirect_url;
+        $this->response = $response;
+        // Adding default rules
+        $this->rule("responseEnvelope_ack", "not_empty");
+        $this->rule("responseEnvelope_ack", "PayPal_Valid::contained", array(":value", Request_PayPal::$SUCCESS_ACKNOWLEDGEMENTS));
     }
 
 }

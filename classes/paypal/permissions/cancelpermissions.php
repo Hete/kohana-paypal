@@ -11,14 +11,9 @@ defined('SYSPATH') or die('No direct script access.');
  * @copyright  Hète.ca Inc.
  * @license    http://kohanaphp.com/license.html
  */
-class PayPal_Permissions_CancelPermissions extends PayPal_Permissions {
+class PayPal_Permissions_CancelPermissions extends Kohana_PayPal_Permissions_CancelPermissions {
 
-    protected function request_rules() {
-        return array('token' => array(
-                array('not_empty')
-            )
-        );
-    }
+    
 
 
 }

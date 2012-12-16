@@ -2,8 +2,8 @@
 
 defined('SYSPATH') or die('No direct script access.');
 
-
 /**
+ * General PayPal constants are defined here.
  * 
  * @link  https://cms.paypal.com/us/cgi-bin/?cmd=_render-content&content_ID=developer/library_documentation
  *
@@ -14,8 +14,22 @@ defined('SYSPATH') or die('No direct script access.');
  * @license    http://kohanaphp.com/license.html
  */
 interface Kohana_PayPal_Constants {
-    // Booleans
+    /**
+     * Environment types.
+     */
 
+    const SANDBOX = 'sandbox', LIVE = '';
+
+    /**
+     * Request client class
+     */
+    const REQUEST_CLIENT = "Request_Client_Curl";
+
+    /**
+     * Current version.
+     */
+    const VERSION = '2.0.0';
+    // Booleans
     const TRUE = 'true', FALSE = 'false';
     // Preapproval status
     const ACTIVE = 'ACTIVE', CANCELED = 'CANCELED', DEACTIVED = 'DEACTIVED';

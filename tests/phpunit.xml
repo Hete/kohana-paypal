@@ -1,20 +1,13 @@
-<!--
-	This is an example phpunit.xml file to get you started
-	Copy it to a directory, update the relative paths and rename to phpunit.xml
-	Then to run tests cd into it's directory and just run
-		phpunit
-	(it'll automatically use any phpunit.xml file in the current directory)
-
-        Any options you specify when calling phpunit will override the ones in here
--->
 <phpunit colors="true" bootstrap="../../unittest/bootstrap.php">
-    <testsuite name="PayPal tests">
-        <directory>./paypal/</directory>
+    <testsuite name="PayPal general tests">
+        <file>./paypal.php</file>
+        <file>./paypal/request.php</file>
+        <file>./paypal/response.php</file>
+        <file>./paypal/valid.php</file>
     </testsuite>
     <testsuite name="AdaptivePayments tests">
         <file>./paypal/adaptivepayments/pay.php</file>
         <file>./paypal/adaptivepayments/preapproval.php</file>
-
     </testsuite>
     <testsuite name="ExpressCheckout tests">
         <directory>./paypal/expresscheckout/setexpresscheckout.php</directory>

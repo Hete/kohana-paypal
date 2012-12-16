@@ -11,17 +11,6 @@ defined('SYSPATH') or die('No direct script access.');
  * @copyright (c) 2012, Hète.ca Inc.
  */
 abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants {
-    /**
-     * Environment types.
-     */
-
-    const SANDBOX = 'sandbox', LIVE = '';
-    const REQUEST_CLIENT = "Request_Client_Curl";
-
-    /**
-     * Current version.
-     */
-    const VERSION = '2.0.0';
 
     public static $ACKNOWLEDGEMENTS = array(
         "Success",
@@ -203,7 +192,7 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
         foreach ($this->rules() as $field => $rules) {
             $this->_validation->rules($field, $rules);
         }
-        
+
         if (!$this->_validation->check()) {
             throw new PayPal_Exception($this, NULL, "Paypal request failed to validate :errors", array(":errors" => print_r($this->_validation->errors(), TRUE)));
         }
@@ -212,7 +201,7 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
     }
 
     /**
-     * Returns the SOAP API URL for the current environment and method.
+     * Returns the API URL for the current environment and method.
      * @return string
      */
     public function api_url() {
@@ -272,13 +261,13 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
      * @see Response_PayPal
      * 
      * @return Response_PayPal 
-     * @throws PayPal_Exception if anything went wrong. Always assume it's never
-     * the case.
+     * @throws PayPal_Exception if anything went wrong. Always set a try-catch
+     * for it.
      */
     public function execute() {
 
         if (Kohana::$profiling) {
-            $benchmark = Profiler::start("PayPal_Request", __FUNCTION__);
+            $benchmark = Profiler::start("Request_PayPal", __FUNCTION__);
         }
 
         // Validate the request
@@ -287,8 +276,11 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
         // Execute the request
         $response = parent::execute();
 
+        // Data must be parsed before the constructor call
+        parse_str($response->body(), $data);
+
         // Parse the response
-        $paypal_response = Response_PayPal::factory($response);
+        $paypal_response = Response_PayPal::factory($data, $response);
 
         // Validate the response
         if (!$paypal_response->check()) {

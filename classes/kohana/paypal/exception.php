@@ -3,12 +3,9 @@
 defined('SYSPATH') or die('No direct script access.');
 
 /**
- * Interface to catch all kind of PayPal_Exception
- *
- * @link  https://cms.paypal.com/us/cgi-bin/?cmd=_render-content&content_ID=developer/library_documentation
+ * PayPal exception.
  *
  * @package PayPal
- * @category ExpressCheckout
  * @author     Guillaume Poirier-Morency
  * @copyright  Hète.ca Inc.
  * @license    http://kohanaphp.com/license.html
@@ -28,20 +25,17 @@ class Kohana_PayPal_Exception extends Kohana_Exception {
     public $response;
 
     /**
-     * 
-     * @param PayPal $request
-     * @param array $response
-     * @param type $message
+     * Constructor for PayPal exception.
+     * @param Request_PayPal $request is the request that originated the exception.
+     * @param Response_PayPal $response if available, the response gived by PayPal.
+     * @param string $message 
      * @param array $variables
-     * @param type $code
+     * @param integer $code
      */
     public function __construct(Request_PayPal $request, Response_PayPal $response = NULL, $message = "PayPal request failed.", array $variables = NULL, $code = 0) {
-        // Message d'erreur
+        parent::__construct($message, $variables, $code);
         $this->request = $request;
         $this->response = $response;
-        
-       
-        parent::__construct($message, $variables, $code);
     }
 
 }

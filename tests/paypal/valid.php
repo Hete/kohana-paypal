@@ -1,5 +1,10 @@
 <?php
 
+defined('SYSPATH') or die('No direct script access.');
+
+/**
+ * Tests for PayPal validations.
+ */
 class PayPal_Valid_Test extends Unittest_TestCase {
 
     public function test_date() {
@@ -16,8 +21,4 @@ class PayPal_Valid_Test extends Unittest_TestCase {
 
 }
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 ?>

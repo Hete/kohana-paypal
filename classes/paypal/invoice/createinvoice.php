@@ -1,7 +1,8 @@
 <?php
+defined('SYSPATH') or die('No direct script access.');
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+class PayPal_Invoice_CreateInvoice extends Kohana_PayPal_Invoice_CreateInvoice {
+    
+}
+
 ?>

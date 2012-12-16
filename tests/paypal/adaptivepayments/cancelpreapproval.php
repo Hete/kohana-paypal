@@ -1,6 +1,6 @@
 <?php
 
-class Paypal_ExpressCheckout_SetExpressCheckout_Test extends Unittest_TestCase {
+class PayPal_AdaptivePayments_CancelPreapproval_Test extends Unittest_TestCase {
 
     public function setUp() {
         parent::setUp();
@@ -17,14 +17,14 @@ class Paypal_ExpressCheckout_SetExpressCheckout_Test extends Unittest_TestCase {
             "returnUrl" => "http://www.x.com",
             "currencyCode" => "CAD",
         );
-
-        // PayPal::factory("ExpressCheckout_SetExpressCheckout", $data)->execute();
+        
+        $result = PayPal::factory("AdaptivePayments_CancelPreapproval", $data)->execute();
+        
+        $this->assertInstanceOf("Response_Paypal", $result);
+        
     }
 
 }
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 ?>

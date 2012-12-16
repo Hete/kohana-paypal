@@ -1,17 +1,9 @@
 <?php
-/**
- * 
- */
-class PayPal_Invoice_GetInvoiceDetails extends PayPal_Invoice {
 
-    protected function request_rules() {
-        
-    }
+defined('SYSPATH') or die('No direct script access.');
 
-    protected function response_rules() {
-        
-    }
-
+class PayPal_Invoice_GetInvoiceDetails extends Kohana_PayPal_Invoice_GetInvoiceDetails {
+    
 }
 
 ?>

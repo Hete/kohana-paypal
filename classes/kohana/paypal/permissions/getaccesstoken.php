@@ -3,13 +3,12 @@
 defined('SYSPATH') or die('No direct script access.');
 
 /**
- * PayPal ExpressCheckout integration.
  *
- * @see  https://cms.paypal.com/ca/cgi-bin/?cmd=_render-content&content_ID=developer/e_howto_api_PermissionsGetAccessTokenAPI
+ * @see  https://cms.paypal.com/us/cgi-bin/?cmd=_render-content&content_ID=developer/e_howto_api_ECGettingStarted
  *
- * @package    Kohana
- * @author     Kohana Team
- * @copyright  (c) 2009 Kohana Team
+ * @package PayPal
+ * @author Permissions
+ * @copyright (c) 2012, Hète.ca Inc.
  * @license    http://kohanaphp.com/license.html
  */
 class Kohana_PayPal_Permissions_GetAccessToken extends PayPal_Permissions {

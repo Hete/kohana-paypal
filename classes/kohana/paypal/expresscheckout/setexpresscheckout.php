@@ -3,7 +3,7 @@
 defined('SYSPATH') or die('No direct script access.');
 
 /**
- * RequestPermissions API Operation.
+ * SetExpressCheckout API Operation.
  *
  * @link  https://www.x.com/developers/paypal/documentation-tools/api/setexpresscheckout-api-operation-soap
  *

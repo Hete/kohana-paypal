@@ -1,5 +1,6 @@
 <?php
 
+defined('SYSPATH') or die('No direct script access.');
 
 /**
  * @todo Finish rules for this request

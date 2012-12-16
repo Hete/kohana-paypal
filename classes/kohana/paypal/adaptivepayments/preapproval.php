@@ -60,7 +60,10 @@ class Kohana_PayPal_AdaptivePayments_Preapproval extends PayPal_AdaptivePayments
                 array("max_length", array(":value", 127)),
             ),
             'clientDetails_partnerName' => array(),
-            'dateOfMonth' => array(),
+            'dateOfMonth' => array(
+                // 0 means all days are valid
+                array('range', array(':value', 0, 31))
+            ),
             'dayOfWeek' => array(
                 array('PayPal_Valid::day_of_week')
             ),
