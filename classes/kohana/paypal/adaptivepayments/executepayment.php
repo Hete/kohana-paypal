@@ -1,4 +1,5 @@
 <?php
+
 defined('SYSPATH') or die('No direct script access.');
 
 /**
@@ -6,8 +7,8 @@ defined('SYSPATH') or die('No direct script access.');
  * @author Guillaume Poirier-Morency <guillaumepoiriermorency@gmail.com> 
  */
 class Kohana_PayPal_AdaptativePayments_ExecutePayment extends PayPal_AdaptativePayments {
-    
-    protected function request_rules() {
+
+    protected function rules() {
         return array(
             'payKey' => array(
                 array('not_empty')

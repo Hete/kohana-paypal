@@ -43,7 +43,9 @@ class Kohana_PayPal_Valid extends Valid {
 
         $time = strtotime($str);
 
-        return parent::date($str) && (Date::formatted_time($time, PayPal::DATE_FORMAT) === $str | Date::formatted_time($time, PayPal::SHORT_DATE_FORMAT) === $str);
+
+
+        return parent::date($str) && (date(PayPal::DATE_FORMAT, $time) === $str | date(PayPal::SHORT_DATE_FORMAT, $time) === $str);
     }
 
     /**

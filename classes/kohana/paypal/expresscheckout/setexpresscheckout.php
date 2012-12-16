@@ -17,7 +17,7 @@ class Kohana_PayPal_ExpressCheckout_SetExpressCheckout extends PayPal_ExpressChe
 
     protected $_redirect_command = "express-checkout";
 
-    protected function redirect_params(array $results) {
+    protected function redirect_params(Response_PayPal $results) {
         return array(
             'token' => $results['Token']
         );

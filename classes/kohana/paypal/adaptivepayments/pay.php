@@ -61,7 +61,7 @@ class Kohana_PayPal_AdaptivePayments_Pay extends PayPal_AdaptivePayments {
     );
     protected $_redirect_command = 'ap-payment';
 
-    protected function redirect_params(array $results) {
+    protected function redirect_params(Response_PayPal $results) {
         return array("paykey" => $results['payKey']);
     }
 
@@ -69,11 +69,11 @@ class Kohana_PayPal_AdaptivePayments_Pay extends PayPal_AdaptivePayments {
         return array(
             'actionType' => array(
                 array('not_empty'),
-            //array('regex', array(':value', '^'.implode('|', PayPal_AdaptivePayments_Pay::$ACTION_TYPE).'$')),
+                array('PayPal_Valid::contained', array(':value', static::$ACTION_TYPE)),
             ),
             'currencyCode' => array(
                 array('not_empty'),
-            //array('regex', array(':value', '^'.implode('|', PayPal_AdaptivePayments::$CURRENCIES).'$')),
+                array('PayPal_Valid::contained', array(':value', static::$CURRENCIES)),
             ),
             'cancelUrl' => array(
                 array('not_empty'),
@@ -82,6 +82,14 @@ class Kohana_PayPal_AdaptivePayments_Pay extends PayPal_AdaptivePayments {
             'returnUrl' => array(
                 array('not_empty'),
                 array('url'),
+            ),
+            'receiverList.receiver(0).email' => array(
+                array('not_empty'),
+                array('email'),
+            ),
+            'receiverList.receiver(0).amount' => array(
+                array('not_empty'),
+                array('numeric'),
             ),
         );
     }
