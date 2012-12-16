@@ -19,7 +19,7 @@ class PayPal_AdaptivePayments_Preapproval_Test extends Unittest_TestCase {
 
         $request = PayPal::factory("AdaptivePayments_Preapproval", $data);
 
-        $this->assertInstanceOf("PayPal_AdaptivePayments_Preapproval", $response);
+        $this->assertInstanceOf("PayPal_AdaptivePayments_Preapproval", $request);
 
         $response = $request->execute();
 

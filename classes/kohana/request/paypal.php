@@ -100,8 +100,8 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
     private $_validation;
 
     /**
-     * Constructor for the PayPal request. Using the factory method is a much
-     * better approach.
+     * Constructor for the PayPal request. Using the factory method in the 
+     * PayPal class is a much better approach.
      * @param array $params
      * @param HTTP_Cache $cache
      * @param array $injected_routes
@@ -129,12 +129,12 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
         }
 
         // Setting default headers
-        $this->headers('X-PAYPAL-SECURITY-USERID', $this->_config['username']);
-        $this->headers('X-PAYPAL-SECURITY-PASSWORD', $this->_config['password']);
-        $this->headers('X-PAYPAL-SECURITY-SIGNATURE', $this->_config['signature']);
+        $this->headers('X-PAYPAL-SECURITY-USERID', $this->config("username"));
+        $this->headers('X-PAYPAL-SECURITY-PASSWORD', $this->config("password"));
+        $this->headers('X-PAYPAL-SECURITY-SIGNATURE', $this->config("signature"));
         $this->headers('X-PAYPAL-REQUEST-DATA-FORMAT', 'NV');
         $this->headers('X-PAYPAL-RESPONSE-DATA-FORMAT', 'NV');
-        $this->headers("X-PAYPAL-APPLICATION-ID", $this->_config['api_id']);
+        $this->headers("X-PAYPAL-APPLICATION-ID", $this->config("api_id"));
 
         // It's a post request
         $this->method(static::POST);
@@ -144,7 +144,7 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
         // Setting default post
         $this->post('requestEnvelope', '');
         $this->post('requestEnvelope_detailLevel', 'ReturnAll');
-        $this->post('requestEnvelope_errorLanguage', Kohana::$config->load("paypal.lang"));
+        $this->post('requestEnvelope_errorLanguage', $this->config("lang"));
 
         $this->_security_token = Security::token();
     }
@@ -155,7 +155,7 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
      * @param string $value
      * @return type
      */
-    public function config($path = NULL, $default = NULL, $delimiter = NULL) {
+    public function config($path, $default = NULL, $delimiter = NULL) {
         return Arr::path($this->_config, $path, $default, $delimiter);
     }
 
@@ -165,7 +165,7 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
      * @param type $value
      */
     public function param($key = NULL, $value = NULL) {
-        $this->post($key, $value);
+        return $this->post($key, $value);
     }
 
     /**

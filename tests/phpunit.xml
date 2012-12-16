@@ -1,8 +1,6 @@
 <phpunit colors="true" bootstrap="../../unittest/bootstrap.php">
     <testsuite name="PayPal general tests">
-        <file>./paypal.php</file>
-        <file>./paypal/request.php</file>
-        <file>./paypal/response.php</file>
+        <file>./paypal.php</file>  
         <file>./paypal/valid.php</file>
     </testsuite>
     <testsuite name="AdaptivePayments tests">

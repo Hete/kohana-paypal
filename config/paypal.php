@@ -5,8 +5,6 @@ defined('SYSPATH') or die('No direct script access.');
 return array(
 // PayPal environment: live, sandbox, beta-sandbox
     'environment' => 'sandbox',
-    // Language for responses
-    'lang' => 'en_US',
     'sandbox' => array(
 // PayPal API and username
         'username' => NULL,
@@ -22,6 +20,8 @@ return array(
                 CURLOPT_USERAGENT => "Kohana",
             )
         ),
+        // Language for responses
+        'lang' => 'en_US',
     ),
     'live' => array(
 // PayPal API and username
@@ -37,5 +37,7 @@ return array(
                 CURLOPT_USERAGENT => "Kohana",
             )
         ),
+        // Language for responses
+        'lang' => 'en_US',
     )
 );
