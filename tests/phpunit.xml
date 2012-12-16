@@ -1,4 +1,4 @@
-<phpunit colors="true" bootstrap="../../unittest/bootstrap.php">
+<phpunit colors="true" verbose="true" bootstrap="../../unittest/bootstrap.php">
     <testsuite name="PayPal general tests">
         <file>./paypal.php</file>  
         <file>./paypal/valid.php</file>
