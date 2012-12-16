@@ -17,11 +17,11 @@ class Kohana_PayPal_Valid extends Valid {
     /**
      * Tells if the value is a valid PayPal boolean.
      * @param string $str
-     * @return type
+     * @return boolean
      */
     public static function boolean($str) {
         $str = (string) $str;
-        return $str === Request_PayPal::TRUE | $str === Request_PayPal::FALSE;
+        return (boolean) ($str === Request_PayPal::TRUE | $str === Request_PayPal::FALSE);
     }
 
     /**
@@ -30,7 +30,7 @@ class Kohana_PayPal_Valid extends Valid {
      * @param type $array
      * @return type
      */
-    public static function contained($str, $array) {
+    public static function contained($str, array $array) {
         return array_search($str, $array) !== FALSE;
     }
 
@@ -43,8 +43,6 @@ class Kohana_PayPal_Valid extends Valid {
 
         $time = strtotime($str);
 
-
-
         return parent::date($str) && (date(PayPal::DATE_FORMAT, $time) === $str | date(PayPal::SHORT_DATE_FORMAT, $time) === $str);
     }
 
@@ -54,7 +52,7 @@ class Kohana_PayPal_Valid extends Valid {
      * @return boolean
      */
     public static function currency($str) {
-        return static::contained($str, Request_PayPal::$CURRENCIES);
+        return static::contained($str, PayPal::$CURRENCIES);
     }
 
     public static function currency_code($str) {
@@ -67,7 +65,7 @@ class Kohana_PayPal_Valid extends Valid {
      * @return boolean
      */
     public static function day_of_week($str) {
-        return static::contained($str, Request_PayPal::$DAYS_OF_WEEK);
+        return static::contained($str, PayPal::$DAYS_OF_WEEK);
     }
 
     /**
@@ -76,19 +74,19 @@ class Kohana_PayPal_Valid extends Valid {
      * @return boolean
      */
     public static function payment_period($str) {
-        return static::contained($str, Request_PayPal::$PAYMENT_PERIODS);
+        return static::contained($str, PayPal::$PAYMENT_PERIODS);
     }
 
     public static function preapproval_status($str) {
-        return static::contained($str, Request_PayPal::$PREAPPROVAL_STATES);
+        return static::contained($str, PayPal::$PREAPPROVAL_STATES);
     }
 
     public static function fee_payer($str) {
-        return static::contained($str, Request_PayPal::$FEES_PAYER);
+        return static::contained($str, PayPal::$FEES_PAYER);
     }
 
     public static function pin_type($str) {
-        return static::contained($str, Request_PayPal::$REQUIRED_STATES);
+        return static::contained($str, PayPal::$REQUIRED_STATES);
     }
 
 }

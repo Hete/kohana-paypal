@@ -1,0 +1,13 @@
+<phpunit colors="true" verbose="true" bootstrap="../unittest/bootstrap.php">
+    <testsuite name="PayPal general tests">
+        <file>tests/paypal.php</file>  
+        <file>tests/paypal/valid.php</file>
+    </testsuite>
+    <testsuite name="AdaptivePayments tests">
+        <file>tests/paypal/adaptivepayments/pay.php</file>
+        <file>tests/paypal/adaptivepayments/preapproval.php</file>
+    </testsuite>
+    <testsuite name="ExpressCheckout tests">
+        <directory>tests/paypal/expresscheckout/setexpresscheckout.php</directory>
+    </testsuite>	
+</phpunit>
