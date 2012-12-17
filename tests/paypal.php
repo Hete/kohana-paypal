@@ -55,7 +55,10 @@ class PayPal_Test extends Unittest_TestCase {
 
         $this->assertInstanceOf("Response_PayPal", $response);
 
-        $this->assertInstanceOf("Validation", $response);
+        $this->assertInstanceOf("Validation", $response);        
+        
+        // Testing the data() function
+        $this->assertEquals($response["payKey"], $response->data("payKey"));
 
         // Redirect url, if not empty, must be a valid url
         if (Valid::not_empty($response->redirect_url)) {

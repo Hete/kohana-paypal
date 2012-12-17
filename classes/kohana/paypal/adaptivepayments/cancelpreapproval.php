@@ -1,5 +1,7 @@
 <?php
 
+defined('SYSPATH') or die('No direct script access.');
+
 /**
  * 
  * @link https://www.x.com/developers/paypal/documentation-tools/api/cancelpreapproval-api-operation

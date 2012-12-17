@@ -1,29 +1,17 @@
 <phpunit colors="true" verbose="true" bootstrap="../unittest/bootstrap.php">
     <testsuite name="PayPal general tests">
-        <file>tests/paypal.php</file>  
-        <file>tests/paypal/valid.php</file>
+        <directory suffix='.php'>tests/</directory>  
     </testsuite>
     <testsuite name="AdaptivePayments tests">
-        <file>tests/paypal/adaptivepayments/getshippingaddresses.php</file>
-        <file>tests/paypal/adaptivepayments/setpaymentoptions.php</file>
-        <file>tests/paypal/adaptivepayments/preapprovaldetails.php</file>
-        <file>tests/paypal/adaptivepayments/getpaymentoptions.php</file>
-        <file>tests/paypal/adaptivepayments/cancelpreapproval.php</file>
-        <file>tests/paypal/adaptivepayments/convertcurrency</file>
-        <file>tests/paypal/adaptivepayments/pay.php</file>
-        <file>tests/paypal/adaptivepayments/getfundingplans.php</file>
-        <file>tests/paypal/adaptivepayments/preapproval.php</file>
-        <file>tests/paypal/adaptivepayments/refund.php</file>
-        <file>tests/paypal/adaptivepayments/paymentdetails.php</file>
-        <file>tests/paypal/adaptivepayments/executepayment.php</file>
+        <directory suffix='.php'>tests/paypal/adaptivepayments/</directory>    
     </testsuite>
     <testsuite name="AdaptiveAccounts tests">
-        <directory>tests/paypal/expresscheckout/setexpresscheckout.php</directory>
+        <directory suffix='.php'>tests/paypal/adaptiveaccounts/</directory>
     </testsuite>
     <testsuite name="Invoicing tests">
-        <directory>tests/paypal/expresscheckout/setexpresscheckout.php</directory>
+        <directory suffix='.php'>tests/paypal/invoicing/</directory>
     </testsuite>	
     <testsuite name="Permissions tests">
-        <directory>tests/paypal/expresscheckout/setexpresscheckout.php</directory>
+        <directory suffix='.php'>tests/paypal/permissions/</directory>
     </testsuite>
 </phpunit>

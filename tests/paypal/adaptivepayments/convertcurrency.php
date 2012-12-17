@@ -7,12 +7,16 @@ class PayPal_AdaptivePayments_ConvertCurrency_Test extends Unittest_TestCase {
         Request::$initial = '';
     }
 
+    /**
+     * @expectedException PayPal_Exception
+     * @expectedExceptionCode 580027
+     */
     public function test_complete_request() {
 
         $data = array(
-            "baseAmountList.currency(0).code" => "CAD",
+            "baseAmountList.currency(0).code" => "EUR",
             "baseAmountList.currency(0).amount" => 55.25,
-            "convertToCurrencyList.currency(0).code" => "USD",
+            "convertToCurrencyList.currencyCode(0).currencyCode" => "USD",
         );
 
         $result = PayPal::factory("AdaptivePayments_ConvertCurrency", $data)->execute();
