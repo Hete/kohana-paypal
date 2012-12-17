@@ -7,7 +7,7 @@ defined('SYSPATH') or die('No direct script access.');
  * @link https://cms.paypal.com/ca/cgi-bin/?cmd=_render-content&content_ID=developer/e_howto_api_APPreapprovalDetails
  * 
  * @package PayPal
- * @category AdaptativePayments
+ * @category Tests
  * @author Quentin Avedissian <quentin.avedissian@gmail.com>
  * @copyright 
  */

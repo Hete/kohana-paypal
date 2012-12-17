@@ -3,7 +3,12 @@
 defined('SYSPATH') or die('No direct script access.');
 
 /**
- * @todo Finish rules for this request
+ * Tests for AdaptivePayment Refund API.
+ * 
+ * @package Paypal
+ * @category Tests
+ * @author Guillaume Poirier-Morency <guillaumepoiriermorency@gmail.com>
+ * @copyright (c) 2012, Hète.ca Inc.
  */
 class PayPal_AdaptivePayments_Refund_Test extends Unittest_TestCase {
 

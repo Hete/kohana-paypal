@@ -3,10 +3,10 @@
 defined('SYSPATH') or die('No direct script access.');
 
 return array(
-// PayPal environment: live, sandbox, beta-sandbox
+    // PayPal environment: live, sandbox, beta-sandbox
     'environment' => 'sandbox',
     'sandbox' => array(
-// PayPal API and username
+        // PayPal API and username
         'username' => NULL,
         'password' => NULL,
         // PayPal API signature
@@ -24,7 +24,7 @@ return array(
         'lang' => 'en_US',
     ),
     'live' => array(
-// PayPal API and username
+        // PayPal API and username
         'username' => NULL,
         'password' => NULL,
         // PayPal API signature

@@ -10,12 +10,14 @@ I need help to build request files to eventually support the whole PayPal NVP AP
 
 Checkout support for this project (the last header of this document)!
 
+It supports new PayPal APIs.
+
 ## Supported APIs
 
-* AdaptivePayments
-* ExpressCheckout (still in development)
-* Permissions
-* Invoice
+* AdaptivePayments (nearly finished)
+* Permissions (in development)
+* Invoicing (under heavy development)
+* AdaptiveAccounts (coming soon!)
 
 You may implement custom api by defining the appropriate classes in your project
 or in the module itself and pull request me your work!

@@ -1,5 +1,10 @@
 <?php
 
+defined('SYSPATH') or die('No direct script access.');
+
+/**
+ * 
+ */
 class PayPal_AdaptivePayments_Preapproval_Test extends Unittest_TestCase {
 
     public function setUp() {
