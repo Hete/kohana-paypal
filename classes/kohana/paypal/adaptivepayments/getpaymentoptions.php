@@ -11,13 +11,17 @@ defined('SYSPATH') or die('No direct script access.');
  * @author Guillaume Poirier-Morency <guillaumepoiriermorency@gmail.com> 
  * @copyright Hète.ca Inc.
  */
-class Kohana_PayPal_AdaptivePayments_PaymentOptions extends PayPal_AdaptivePayments {
+class Kohana_PayPal_AdaptivePayments_GetPaymentOptions extends PayPal_AdaptivePayments {
 
     /**
      * @todo Finish rules for this request
      */
     protected function rules() {
-        return array();
+        return array(
+            "payKey" => array(
+                array("not_empty")
+            )
+        );
     }
 
 }

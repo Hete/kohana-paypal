@@ -14,7 +14,31 @@ defined('SYSPATH') or die('No direct script access.');
  * @license    http://kohanaphp.com/license.html
  */
 abstract class Kohana_PayPal_AdaptivePayments extends Request_PayPal {
-    
+    // Action types
+    const PAY = "PAY", CREATE = "CREATE", PAY_PRIMARY = "PAY_PRIMARY";
+
+    /**
+     * Action types.
+     * @var array 
+     */
+    public static $ACTION_TYPES = array(
+        "PAY", "CREATE", "PAY_PRIMARY"
+    );
+
+    /**
+     * Supported payment periods.
+     * @var array 
+     */
+    public static $PAYMENT_PERIODS = array(
+        'NO_PERIOD_SPECIFIED',
+        'DAILY',
+        'WEEKLY',
+        'BIWEEKLY',
+        'SEMIMONTHLY',
+        'MONTHLY',
+        'ANNUALLY',
+    );
+
 }
 
 ?>

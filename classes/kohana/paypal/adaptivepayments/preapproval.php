@@ -23,11 +23,11 @@ class Kohana_PayPal_AdaptivePayments_Preapproval extends PayPal_AdaptivePayments
         return array(
             // Required
             'startingDate' => array(
-                array('date', array(":value", static::DATE_FORMAT)),
+                array('PayPal_Valid::date'),
                 array('not_empty')
             ),
             'endingDate' => array(
-                array('date', array(":value", static::DATE_FORMAT)),
+                array('PayPal_Valid::date'),
                 array('not_empty')
             ),
             'cancelUrl' => array(
@@ -71,7 +71,7 @@ class Kohana_PayPal_AdaptivePayments_Preapproval extends PayPal_AdaptivePayments
                 array('PayPal_Valid::boolean'),
             ),
             'feesPayer' => array(
-                array('PayPal_Valid::fee_payer')
+                array('PayPal_Valid::contained', array(":value", static::$FEES_PAYER))
             ),
             'ipnNotificationUrl' => array(
                 array("max_length", array(":value", 1024)),
@@ -93,15 +93,14 @@ class Kohana_PayPal_AdaptivePayments_Preapproval extends PayPal_AdaptivePayments
                 array('max_length', array(":value", 1000))
             ),
             'paymentPeriod' => array(
-                array('PayPal_Valid::payment_period')
+                array('PayPal_Valid::contained', array(":value", static::$PAYMENT_PERIODS))
             ),
             'pinType' => array(
-                array("PayPal_Valid::pin_type")
+                array("PayPal_Valid::contained", array(":value", static::$REQUIRED_STATES))
             ),
             'senderEmail' => array(
                 array('email')
             ),
-            
                 //
         );
     }

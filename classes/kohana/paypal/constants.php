@@ -31,8 +31,17 @@ interface Kohana_PayPal_Constants {
     const VERSION = '2.0.0';
     // Booleans
     const TRUE = 'true', FALSE = 'false';
-    // Preapproval status
-    const ACTIVE = 'ACTIVE', CANCELED = 'CANCELED', DEACTIVED = 'DEACTIVED';
+
+    /**
+     * Acknowledgements
+     */
+    const SUCCESS = "Success",
+            FAILURE = "Failure",
+            SUCCESS_WITH_WARNING = "SuccessWithWarning",
+            FAILURE_WITH_WARNING = "FailureWithWarning";    
+
+    // Required states
+    const REQUIRED = "REQUIRED", NOT_REQUIRED = "NOT_REQUIRED";
 
     /**
      * Short date format supported by PayPal.
@@ -43,10 +52,6 @@ interface Kohana_PayPal_Constants {
      * Supported date format by PayPal.
      */
     const DATE_FORMAT = "Y-m-d\TH:i:s.BP";
-    /**
-     * Acknowledgement for success request containing a warning.
-     */
-    const SUCCESS_WITH_WARNING = "SuccessWithWarning";
 
 }
 

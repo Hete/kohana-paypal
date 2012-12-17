@@ -8,15 +8,22 @@ defined('SYSPATH') or die('No direct script access.');
 class Kohana_PayPal_AdaptivePayments_Refund extends PayPal_AdaptivePayments {
 
     protected function rules() {
-        return array();
+        return array(
+            // payKey, transactionId or trackingId
+            "currencyCode" => array(
+                array("not_empty")
+            ),
+            "receiverList.receiver(0).email" => array(
+                array("not_empty"),
+                array("email")
+            ),
+            "receiverList.receiver(0).amount" => array(
+                array("not_empty"),
+                array("numeric")
+            ),
+        );
     }
 
 }
 
-
-
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 ?>

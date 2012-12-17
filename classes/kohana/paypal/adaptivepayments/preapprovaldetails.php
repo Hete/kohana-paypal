@@ -12,6 +12,15 @@ defined('SYSPATH') or die('No direct script access.');
  * @copyright 
  */
 class Kohana_PayPal_AdaptivePayments_PreapprovalDetails extends PayPal_AdaptivePayments {
+    
+    // Preapproval status
+    const ACTIVE = 'ACTIVE', CANCELED = 'CANCELED', DEACTIVED = 'DEACTIVED';
+
+    public static $PREAPPROVAL_STATES = array(
+        'ACTIVE',
+        'DEACTIVED',
+        'CANCELED'
+    );
 
     protected function rules() {
 

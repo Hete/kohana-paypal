@@ -12,7 +12,22 @@ defined('SYSPATH') or die('No direct script access.');
  * @author Guillaume Poirier-Morency <guillaumepoiriermorency@gmail.com>
  * @copyright (c) 2012, Hète.ca Inc.
  */
-class Kohana_Response_PayPal extends Validation {
+class Kohana_Response_PayPal extends Validation implements PayPal_Constants {
+
+    public static $ACKNOWLEDGEMENTS = array(
+        "Success",
+        "Failure",
+        "SuccessWithWarning",
+        "FailureWithWarning",
+    );
+    public static $SUCCESS_ACKNOWLEDGEMENTS = array(
+        "Success",
+        "SuccessWithWarning",
+    );
+    public static $FAILURE_ACKNOWLEDGEMENTS = array(
+        "Failure",
+        "FailureWithWarning",
+    );
 
     /**
      * Redirection url for this request.
@@ -25,7 +40,7 @@ class Kohana_Response_PayPal extends Validation {
      * @var Response 
      */
     public $response;
-    
+
     /**
      * 
      * @param Response $response
@@ -42,13 +57,18 @@ class Kohana_Response_PayPal extends Validation {
     public function __construct(array $data, Response $response = NULL, $redirect_url = NULL) {
 
 
-        parent::__construct($data);
+        parent::__construct($data);       
+        
 
         $this->redirect_url = $redirect_url;
         $this->response = $response;
         // Adding default rules
         $this->rule("responseEnvelope_ack", "not_empty");
-        $this->rule("responseEnvelope_ack", "PayPal_Valid::contained", array(":value", Request_PayPal::$SUCCESS_ACKNOWLEDGEMENTS));
+        $this->rule("responseEnvelope_ack", "PayPal_Valid::contained", array(":value", static::$SUCCESS_ACKNOWLEDGEMENTS));
+    }
+    
+    public function data($key = NULL) {
+        return $key === NULL ? parent::data() : $this[$key];
     }
 
 }

@@ -12,15 +12,13 @@ defined('SYSPATH') or die('No direct script access.');
  * @copyright (c) 2012, Hète.ca
  */
 class Kohana_PayPal_AdaptivePayments_Pay extends PayPal_AdaptivePayments {
-
-    const PAY = "PAY", CREATE = "CREATE", PAY_PRIMARY = "PAY_PRIMARY";
-
     /**
      * Possible values for paymentExecStatus in response.
      */
     /**
      * The payment request was received; funds will be transferred once the payment is approved
      */
+
     const CREATED = "CREATED",
             /**
              * The payment was successful
@@ -47,11 +45,6 @@ class Kohana_PayPal_AdaptivePayments_Pay extends PayPal_AdaptivePayments {
              */
             PENDING = "PENDING";
 
-    public static $ACTION_TYPE = array(
-        'PAY',
-        'CREATE',
-        'PAY_PRIMARY'
-    );
     public static $PAYMENT_EXEC_STATUS = array(
         "CREATED",
         "COMPLETED",
@@ -71,7 +64,7 @@ class Kohana_PayPal_AdaptivePayments_Pay extends PayPal_AdaptivePayments {
         return array(
             'actionType' => array(
                 array('not_empty'),
-                array('PayPal_Valid::contained', array(':value', static::$ACTION_TYPE)),
+                array('PayPal_Valid::contained', array(':value', static::$ACTION_TYPES)),
             ),
             'currencyCode' => array(
                 array('not_empty'),

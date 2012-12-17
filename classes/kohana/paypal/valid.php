@@ -52,11 +52,11 @@ class Kohana_PayPal_Valid extends Valid {
      * @return boolean
      */
     public static function currency($str) {
-        return static::contained($str, PayPal::$CURRENCIES);
+        return static::contained($str, Request_PayPal::$CURRENCIES);
     }
 
     public static function currency_code($str) {
-        return static::currency($str);
+        return static::contained($str, Request_PayPal::$CURRENCY_CODES);
     }
 
     /**
@@ -65,7 +65,7 @@ class Kohana_PayPal_Valid extends Valid {
      * @return boolean
      */
     public static function day_of_week($str) {
-        return static::contained($str, PayPal::$DAYS_OF_WEEK);
+        return static::contained($str, Request_PayPal::$DAYS_OF_WEEK);
     }
 
     /**
@@ -74,19 +74,19 @@ class Kohana_PayPal_Valid extends Valid {
      * @return boolean
      */
     public static function payment_period($str) {
-        return static::contained($str, PayPal::$PAYMENT_PERIODS);
+        return static::contained($str, PayPal_AdaptivePayments::$PAYMENT_PERIODS);
     }
 
     public static function preapproval_status($str) {
-        return static::contained($str, PayPal::$PREAPPROVAL_STATES);
+        return static::contained($str, PayPal_AdaptivePayments_PreapprovalDetails::$PREAPPROVAL_STATES);
     }
 
     public static function fee_payer($str) {
-        return static::contained($str, PayPal::$FEES_PAYER);
+        return static::contained($str, Request_PayPal::$FEES_PAYER);
     }
 
     public static function pin_type($str) {
-        return static::contained($str, PayPal::$REQUIRED_STATES);
+        return static::contained($str, Request_PayPal::$REQUIRED_STATES);
     }
 
 }

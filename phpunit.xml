@@ -4,8 +4,18 @@
         <file>tests/paypal/valid.php</file>
     </testsuite>
     <testsuite name="AdaptivePayments tests">
+        <file>tests/paypal/adaptivepayments/getshippingaddresses.php</file>
+        <file>tests/paypal/adaptivepayments/setpaymentoptions.php</file>
+        <file>tests/paypal/adaptivepayments/preapprovaldetails.php</file>
+        <file>tests/paypal/adaptivepayments/getpaymentoptions.php</file>
+        <file>tests/paypal/adaptivepayments/cancelpreapproval.php</file>
         <file>tests/paypal/adaptivepayments/pay.php</file>
+        <file>tests/paypal/adaptivepayments/getfundingplans.php</file>
         <file>tests/paypal/adaptivepayments/preapproval.php</file>
+        <file>tests/paypal/adaptivepayments/refund.php</file>
+        <file>tests/paypal/adaptivepayments/paymentdetails.php</file>
+        <file>tests/paypal/adaptivepayments/executepayment.php</file>
+
     </testsuite>
     <testsuite name="ExpressCheckout tests">
         <directory>tests/paypal/expresscheckout/setexpresscheckout.php</directory>

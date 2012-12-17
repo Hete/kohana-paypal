@@ -12,27 +12,26 @@ defined('SYSPATH') or die('No direct script access.');
  */
 abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants {
 
-    public static $ACKNOWLEDGEMENTS = array(
-        "Success",
-        "Failure",
-        "SuccessWithWarning",
-        "FailureWithWarning",
-    );
-    public static $SUCCESS_ACKNOWLEDGEMENTS = array(
-        "Success",
-        "SuccessWithWarning",
-    );
-    public static $FAILURE_ACKNOWLEDGEMENTS = array(
-        "Failure",
-        "FailureWithWarning",
-    );
+    /**
+     * @deprecated use $CURRENCY_CODES
+     * @var type 
+     */
     public static $CURRENCIES = array('AUD', 'BRL', 'CAD', 'CZK', 'DKK', 'EUR',
         'HKD', 'HUF', 'ILS', 'JPY', 'MYR', 'MXN', 'NOK', 'NZD', 'PHP', 'PLN',
         'GBP', 'SGD', 'SEK', 'CHF', 'TWD', 'THB', 'USD');
-    public static $PERSONAL_IDENTIFICATION_NUMBER = array(
-        'NOT_REQUIRED',
-        'REQUIRED'
-    );
+
+    /**
+     * Supported currencies.
+     * @var array
+     */
+    public static $CURRENCY_CODES = array('AUD', 'BRL', 'CAD', 'CZK', 'DKK', 'EUR',
+        'HKD', 'HUF', 'ILS', 'JPY', 'MYR', 'MXN', 'NOK', 'NZD', 'PHP', 'PLN',
+        'GBP', 'SGD', 'SEK', 'CHF', 'TWD', 'THB', 'USD');
+
+    /**
+     * Supported days of week.
+     * @var array
+     */
     public static $DAYS_OF_WEEK = array(
         'NO_DAY_SPECIFIED',
         'SUNDAY',
@@ -43,28 +42,8 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
         'FRIDAY',
         'SATURDAY',
     );
-    public static $PAYMENT_PERIODS = array(
-        'NO_PERIOD_SPECIFIED',
-        'DAILY',
-        'WEEKLY',
-        'BIWEEKLY',
-        'SEMIMONTHLY',
-        'MONTHLY',
-        'ANNUALLY',
-    );
     public static $REQUIRED_STATES = array(
         'REQUIRED', 'NOT_REQUIRED'
-    );
-    public static $PREAPPROVAL_STATES = array(
-        'ACTIVE',
-        'DEACTIVED',
-        'CANCELED'
-    );
-    public static $FEES_PAYER = array(
-        'SENDER',
-        'PRIMARYRECEIVER',
-        'EACHRECEIVER',
-        'SECONDARYONLY'
     );
 
     /**
@@ -292,7 +271,7 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
                 ":id" => $paypal_response["error(0)_errorId"],
             );
             Log::instance()->add(Log::ERROR, $message, $variables);
-            throw new PayPal_Exception($this, $paypal_response, $message, $variables);
+            throw new PayPal_Exception($this, $paypal_response, $message, $variables, (int)$paypal_response["error(0)_errorId"]);
         }
 
         // Adding the redirect url to the datas

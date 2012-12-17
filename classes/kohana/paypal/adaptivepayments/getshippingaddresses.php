@@ -18,7 +18,11 @@ class Kohana_PayPal_AdaptivePayments_GetShippingAddresses extends PayPal_Adaptiv
      * @return type
      */
     protected function rules() {
-        return array();
+        return array(
+            "key" => array(
+                array("not_empty")
+            )
+        );
     }
 
 }
