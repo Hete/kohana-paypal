@@ -9,18 +9,9 @@ defined('SYSPATH') or die('No direct script access.');
  * @package PayPal
  * @category AdaptativePayments
  * @author Quentin Avedissian <quentin.avedissian@gmail.com>
- * @copyright 
+ * @copyright (c) 2012, Hète.ca Inc.
  */
 class Kohana_PayPal_AdaptivePayments_PreapprovalDetails extends PayPal_AdaptivePayments {
-    
-    // Preapproval status
-    const ACTIVE = 'ACTIVE', CANCELED = 'CANCELED', DEACTIVED = 'DEACTIVED';
-
-    public static $PREAPPROVAL_STATES = array(
-        'ACTIVE',
-        'DEACTIVED',
-        'CANCELED'
-    );
 
     protected function rules() {
 

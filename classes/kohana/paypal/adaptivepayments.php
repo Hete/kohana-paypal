@@ -14,7 +14,18 @@ defined('SYSPATH') or die('No direct script access.');
  * @license    http://kohanaphp.com/license.html
  */
 abstract class Kohana_PayPal_AdaptivePayments extends Request_PayPal {
+    // Preapproval status
+
+    const ACTIVE = 'ACTIVE', CANCELED = 'CANCELED', DEACTIVED = 'DEACTIVED';
+
+    public static $PREAPPROVAL_STATES = array(
+        'ACTIVE',
+        'DEACTIVED',
+        'CANCELED'
+    );
+
     // Action types
+
     const PAY = "PAY", CREATE = "CREATE", PAY_PRIMARY = "PAY_PRIMARY";
 
     /**
