@@ -30,7 +30,7 @@ interface Kohana_PayPal_Constants {
      */
     const VERSION = '2.1.0';
     // Booleans
-    const TRUE = 'TRUE', FALSE = 'FALSE';
+    const TRUE = 'true', FALSE = 'false';
 
     /**
      * Acknowledgements
@@ -38,7 +38,7 @@ interface Kohana_PayPal_Constants {
     const SUCCESS = "Success",
             FAILURE = "Failure",
             SUCCESS_WITH_WARNING = "SuccessWithWarning",
-            FAILURE_WITH_WARNING = "FailureWithWarning";    
+            FAILURE_WITH_WARNING = "FailureWithWarning";
 
     // Required states
     const REQUIRED = "REQUIRED", NOT_REQUIRED = "NOT_REQUIRED";
