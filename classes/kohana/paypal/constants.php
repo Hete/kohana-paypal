@@ -30,7 +30,7 @@ interface Kohana_PayPal_Constants {
      */
     const VERSION = '2.0.0';
     // Booleans
-    const TRUE = 'true', FALSE = 'false';
+    const TRUE = 'TRUE', FALSE = 'FALSE';
 
     /**
      * Acknowledgements
