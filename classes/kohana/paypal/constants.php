@@ -28,7 +28,7 @@ interface Kohana_PayPal_Constants {
     /**
      * Current version.
      */
-    const VERSION = '2.0.0';
+    const VERSION = '2.1.0';
     // Booleans
     const TRUE = 'TRUE', FALSE = 'FALSE';
 
