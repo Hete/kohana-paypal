@@ -29,7 +29,7 @@ class Kohana_PayPal implements PayPal_Constants {
     }
 
     public static function number_format($number) {
-        return number_format($number, 2, ".", ",");
+        return number_format($number, 2, ".", "");
     }
 
 }
