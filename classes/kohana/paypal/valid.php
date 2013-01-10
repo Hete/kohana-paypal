@@ -27,11 +27,20 @@ class Kohana_PayPal_Valid extends Valid {
     /**
      * Tells if a value is container in the specified array.
      * @param type $str
-     * @param type $array
+     * @param array $array
      * @return type
      */
     public static function contained($str, array $array) {
         return array_search($str, $array) !== FALSE;
+    }
+
+    /**
+     * Validate a float number for PayPal
+     * @param type $str
+     * @return boolean
+     */
+    public static function numeric($str) {
+        return (bool) preg_match('/^-?+(?=.*[0-9])[0-9]*+' . preg_quote(".") . '?+[0-9]*+$/D', (string) $str);
     }
 
     /**

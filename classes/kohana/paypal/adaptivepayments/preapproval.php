@@ -78,16 +78,16 @@ class Kohana_PayPal_AdaptivePayments_Preapproval extends PayPal_AdaptivePayments
                 array("url"),
             ),
             'maxAmountPerPayment' => array(
-                array('numeric')
+                array('PayPal_Valid::numeric')
             ),
             'maxNumberOfPayments' => array(
-                array('numeric')
+                array('PayPal_Valid::numeric')
             ),
             'maxNumberOfPaymentsPerPeriod' => array(
-                array('numeric')
+                array('PayPal_Valid::numeric')
             ),
             'maxTotalAmountOfAllPayments' => array(
-                array('numeric')
+                array('PayPal_Valid::numeric')
             ),
             'memo' => array(
                 array('max_length', array(":value", 1000))

@@ -24,8 +24,12 @@ class Kohana_PayPal implements PayPal_Constants {
      * @return Request_PayPal
      */
     public static function factory($name, array $params = array(), HTTP_Cache $cache = NULL, $injected_routes = array()) {
-        $class = "PayPal_$name";        
+        $class = "PayPal_$name";
         return new $class(TRUE, $cache, $injected_routes, $params);
+    }
+
+    public static function number_format($number) {
+        return number_format($number, 2, ".", ",");
     }
 
 }

@@ -84,7 +84,7 @@ class Kohana_PayPal_AdaptivePayments_Pay extends PayPal_AdaptivePayments {
             ),
             'receiverList.receiver(0).amount' => array(
                 array('not_empty'),
-                array('numeric'),
+                array('PayPal_Valid::numeric'),
             ),
         );
     }
