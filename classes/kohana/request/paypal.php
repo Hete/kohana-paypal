@@ -3,7 +3,10 @@
 defined('SYSPATH') or die('No direct script access.');
 
 /**
- * PayPal request.
+ * PayPal request. This class inherit from Request to provide all the Kohana's
+ * external request features.
+ * 
+ * @see Request
  * 
  * @package PayPal
  * @category Request
@@ -12,8 +15,16 @@ defined('SYSPATH') or die('No direct script access.');
  */
 abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants {
 
+    public static $ENVIRONMENTS = array(
+        static::SANDBOX,
+        static::SANDBOX_BETA,
+        static::LIVE
+    );
+
     /**
-     * @deprecated use $CURRENCY_CODES
+     * 
+     * 
+     * @deprecated use $CURRENCY_CODES 
      * @var type 
      */
     public static $CURRENCIES = array('AUD', 'BRL', 'CAD', 'CZK', 'DKK', 'EUR',
@@ -22,6 +33,7 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
 
     /**
      * Supported currencies.
+     * 
      * @var array
      */
     public static $CURRENCY_CODES = array('AUD', 'BRL', 'CAD', 'CZK', 'DKK', 'EUR',
@@ -30,6 +42,7 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
 
     /**
      * Supported days of week.
+     * 
      * @var array
      */
     public static $DAYS_OF_WEEK = array(
@@ -42,18 +55,28 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
         'FRIDAY',
         'SATURDAY',
     );
+
+    /**
+     * Required states.
+     * 
+     * @var array 
+     */
     public static $REQUIRED_STATES = array(
-        'REQUIRED', 'NOT_REQUIRED'
+        static::REQUIRED,
+        static::NOT_REQUIRED
     );
 
     /**
      * Redirection command (if appliable).
+     * 
      * @var string 
      */
     protected $_redirect_command = "";
 
     /**
-     * Environment (sandbox or live)
+     * Environment (sandbox, live or sandbox-beta). You may change this value
+     * in application/config/paypal.php
+     * 
      * @var string 
      */
     protected $_environment;
@@ -61,6 +84,7 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
     /**
      * Configuration specific to the environnement. Use the config() method for
      * read-only access.
+     * 
      * @var array 
      */
     private $_config;
@@ -68,12 +92,14 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
     /**
      * Security token. This avoid request being instanciated from a client to be
      * executed by another.
+     * 
      * @var string 
      */
     private $_security_token;
 
     /**
      * Validation object for this request.
+     * 
      * @var Validation 
      */
     private $_validation;
@@ -81,6 +107,7 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
     /**
      * Constructor for the PayPal request. Using the factory method in the 
      * PayPal class is a much better approach.
+     * 
      * @param array $params
      * @param HTTP_Cache $cache
      * @param array $injected_routes
@@ -130,6 +157,7 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
 
     /**
      * Config access method. Uses Arr::path.
+     * 
      * @param string $key
      * @param string $value
      * @return type
@@ -140,6 +168,7 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
 
     /**
      * Alias for post() method. Defined for retrocompatibility and clearness.
+     * 
      * @param type $key
      * @param type $value
      */
@@ -149,15 +178,17 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
 
     /**
      * Validation rules. Must be implemented by request type.
+     * 
      * @return array array of rules.
      */
     protected abstract function rules();
 
     /**
      * Validates the request based on its rules defined in the rules() function.
+     * 
      * @param string $security_token You may set a custom security token to
      * make sure the request is handled by the same client.
-     * @return \PayPal_Request for builder syntax.
+     * @return PayPal_Request for builder syntax.
      * @throws PayPal_Exception if the request is invalid.
      */
     public function check() {
@@ -184,14 +215,17 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
      * @return string
      */
     public function api_url() {
-        if ($this->_environment === 'live') {
+
+        if ($this->_environment === static::LIVE) {
             // Live environment does not use a sub-domain
             $env = '';
         } else {
             // Use the environment sub-domain
             $env = $this->_environment . '.';
         }
+
         $unappended = preg_replace("/(Kohana_)?PayPal_/", "", get_class($this));
+
         // Remove prefix to the class, _ => / and capitalized
         $method = ucfirst(str_replace("_", "/", $unappended));
 
@@ -254,9 +288,15 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
 
         // Execute the request
         $response = parent::execute();
+        
+        $data = NULL;
 
         // Data must be parsed before the constructor call
         parse_str($response->body(), $data);
+        
+        if($data === NULL) {
+            throw new PayPal_Exception($this, NULL, "Couldn't parse the response from PayPal.");
+        }
 
         // Parse the response
         $paypal_response = Response_PayPal::factory($data, $response);
@@ -271,7 +311,7 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
                 ":id" => $paypal_response["error(0)_errorId"],
             );
             Log::instance()->add(Log::ERROR, $message, $variables);
-            throw new PayPal_Exception($this, $paypal_response, $message, $variables, (int)$paypal_response["error(0)_errorId"]);
+            throw new PayPal_Exception($this, $paypal_response, $message, $variables, (int) $paypal_response["error(0)_errorId"]);
         }
 
         // Adding the redirect url to the datas
