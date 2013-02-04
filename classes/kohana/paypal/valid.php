@@ -57,6 +57,7 @@ class Kohana_PayPal_Valid extends Valid {
 
     /**
      * Tells if the specified value is a PayPal supported currency.
+     * @deprecated for naming convention, use currency_code instead.
      * @param string $str
      * @return boolean
      */
@@ -86,14 +87,29 @@ class Kohana_PayPal_Valid extends Valid {
         return static::contained($str, PayPal_AdaptivePayments::$PAYMENT_PERIODS);
     }
 
+    /**
+     * 
+     * @param type $str
+     * @return type
+     */
     public static function preapproval_status($str) {
         return static::contained($str, PayPal_AdaptivePayments_PreapprovalDetails::$PREAPPROVAL_STATES);
     }
 
+    /**
+     * 
+     * @param type $str
+     * @return type
+     */
     public static function fee_payer($str) {
         return static::contained($str, Request_PayPal::$FEES_PAYER);
     }
 
+    /**
+     * 
+     * @param type $str
+     * @return type
+     */
     public static function pin_type($str) {
         return static::contained($str, Request_PayPal::$REQUIRED_STATES);
     }

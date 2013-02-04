@@ -4,6 +4,8 @@ This module have been redesigned in a morelikely Kohana way. Requests and
 Responses inherint from Kohana classes, so you have pretty much all Kohana can
 offer in termes of external requesting.
 
+There is a very important thing and it is called number formatting. PayPal only accept float numbers with dots. PayPal::number_format should then save your life.
+
 If you want to build a class for a request, you have to make a new class extending PayPal. You have also to implement a required() method which returns an key-tree array against which the request's parameters will be validated.
 
 I need help to build request files to eventually support the whole PayPal NVP API (= lots of work).
@@ -14,11 +16,11 @@ It supports new PayPal APIs.
 
 ## Supported APIs
 
-* AdaptivePayments (nearly finished)
+* AdaptivePayments
 * Permissions (in development)
 * Invoicing (under heavy development)
 * AdaptiveAccounts (coming soon!)
-
+ 
 You may implement custom api by defining the appropriate classes in your project
 or in the module itself and pull request me your work!
 
@@ -33,6 +35,10 @@ or in the module itself and pull request me your work!
 * Deal with failure through PayPal_Exception.
 * Redirect URL are pre-computed from the class and available in the response.
 * More to come.. !
+
+## Incoming features
+* Messages for validation errors
+* Filters
 
 ## Latest changes in development trunk
 
@@ -90,4 +96,4 @@ if(!$response->check()) {
 
 PayPal has around 5 apis, which each have from 5 to 10 methods. If you want to code some APIs, it's pretty simple, you only have to build the rules for request and response !
 
-Yeah, unit testing also. Kohana has a module for that, so it shouldn't be so hard.
+Writing unittests would really make my life easier (and so your and everyone who will use this module).
