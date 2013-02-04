@@ -30,6 +30,15 @@ class Kohana_Response_PayPal extends Validation implements PayPal_Constants {
     );
 
     /**
+     * 
+     * @param Response $response
+     * @return Response_PayPal
+     */
+    public static function factory(array $data, Response $response = NULL, $redirect_url = NULL) {
+        return new Response_PayPal_NVP($data, $response, $redirect_url);
+    }
+
+    /**
      * Redirection url for this request.
      * @var string 
      */
@@ -43,22 +52,11 @@ class Kohana_Response_PayPal extends Validation implements PayPal_Constants {
 
     /**
      * 
-     * @param Response $response
-     * @return Response_PayPal
-     */
-    public static function factory(array $data, Response $response = NULL, $redirect_url = NULL) {
-        return new Response_PayPal($data, $response, $redirect_url);
-    }
-
-    /**
-     * 
      * @param Response $response from a PayPal request.
      */
     public function __construct(array $data, Response $response = NULL, $redirect_url = NULL) {
 
-
-        parent::__construct($data);       
-        
+        parent::__construct($data);
 
         $this->redirect_url = $redirect_url;
         $this->response = $response;
@@ -66,7 +64,7 @@ class Kohana_Response_PayPal extends Validation implements PayPal_Constants {
         $this->rule("responseEnvelope_ack", "not_empty");
         $this->rule("responseEnvelope_ack", "PayPal_Valid::contained", array(":value", static::$SUCCESS_ACKNOWLEDGEMENTS));
     }
-    
+
     public function data($key = NULL) {
         return $key === NULL ? parent::data() : $this[$key];
     }

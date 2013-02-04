@@ -183,20 +183,7 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
      * Returns the API URL for the current environment and method.
      * @return string
      */
-    public function api_url() {
-        if ($this->_environment === 'live') {
-            // Live environment does not use a sub-domain
-            $env = '';
-        } else {
-            // Use the environment sub-domain
-            $env = $this->_environment . '.';
-        }
-        $unappended = preg_replace("/(Kohana_)?PayPal_/", "", get_class($this));
-        // Remove prefix to the class, _ => / and capitalized
-        $method = ucfirst(str_replace("_", "/", $unappended));
-
-        return 'https://svcs.' . $env . 'paypal.com/' . $method;
-    }
+    public abstract function api_url();
 
     /**
      * Returns the redirect URL for the current environment. 
@@ -234,6 +221,11 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
     }
 
     /**
+     * Execution for specific context (NVP, SOAP, etc..)
+     */
+    protected abstract function _execute(array $data, Response $response);
+
+    /**
      * Validate and send the request. It also logs non-sensitive data for 
      * statistical and legal purpose.
      * 
@@ -258,44 +250,8 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
         // Data must be parsed before the constructor call
         parse_str($response->body(), $data);
 
-        // Parse the response
-        $paypal_response = Response_PayPal::factory($data, $response);
-
-        // Validate the response
-        if (!$paypal_response->check()) {
-            // Logging the data in case of..
-            $message = "PayPal response failed with id :id at :category level. :message";
-            $variables = array(
-                ":category" => $paypal_response["error(0)_category"],
-                ":message" => $paypal_response["error(0)_message"],
-                ":id" => $paypal_response["error(0)_errorId"],
-            );
-            Log::instance()->add(Log::ERROR, $message, $variables);
-            throw new PayPal_Exception($this, $paypal_response, $message, $variables, (int)$paypal_response["error(0)_errorId"]);
-        }
-
-        // Adding the redirect url to the datas
-        $paypal_response->redirect_url = $this->redirect_url($paypal_response);
-
-        // Was successful, we store the correlation id and stuff in logs
-        $variables = array(
-            ":ack" => $paypal_response["responseEnvelope_ack"],
-            ":build" => $paypal_response["responseEnvelope_build"],
-            ":correlation_id" => $paypal_response["responseEnvelope_correlationId"],
-            ":timestamp" => $paypal_response["responseEnvelope_timestamp"],
-        );
-
-        Log::instance()->add(Log::INFO, "PayPal request was completed with :ack :build :correlation_id at :timestamp", $variables);
-
-        if ($paypal_response["responseEnvelope_ack"] === static::SUCCESS_WITH_WARNING) {
-            $variables += array(
-                ":error_id" => $paypal_response["error(0)_error_id"],
-                ":category" => $paypal_response["error(0)_category"],
-                ":message" => $paypal_response["error(0)_message"],
-            );
-            // In case of SuccessWithWarning, print the warning
-            Log::instance()->add(Log::WARNING, "PayPal request was completed with :ack :build :correlation_id at :timestamp but a warning with id :error_id was raised :message at :category level", $variables);
-        }
+        // Parse the response in the specific execution context
+        $paypal_response = $this->_execute($data, $response);
 
         if (isset($benchmark)) {
             Profiler::stop($benchmark);

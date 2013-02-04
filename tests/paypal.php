@@ -5,7 +5,8 @@ defined('SYSPATH') or die('No direct script access.');
 /**
  * General tests for the PayPal module.
  * 
- * 
+ * @package PayPal
+ * @category Test
  * @author Guillaume Poirier-Morency <guillaumepoiriermorency@gmail.com>
  */
 class PayPal_Test extends Unittest_TestCase {
@@ -55,8 +56,8 @@ class PayPal_Test extends Unittest_TestCase {
 
         $this->assertInstanceOf("Response_PayPal", $response);
 
-        $this->assertInstanceOf("Validation", $response);        
-        
+        $this->assertInstanceOf("Validation", $response);
+
         // Testing the data() function
         $this->assertEquals($response["payKey"], $response->data("payKey"));
 
