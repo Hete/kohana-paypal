@@ -30,6 +30,8 @@ class Kohana_Response_PayPal_SOAP extends Response_PayPal {
         }
 
         parent::__construct($response, $output);
+        
+        $this->rule();
     }
 
     private function read_array(XMLReader $reader) {

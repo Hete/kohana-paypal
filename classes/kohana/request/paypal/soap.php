@@ -14,6 +14,56 @@
  */
 abstract class Kohana_Request_PayPal_SOAP extends Request_PayPal {
 
+    public function __construct() {
+
+        $this->method(static::POST);
+
+        parent::__construct($uri, $cache, $injected_routes, $params);
+
+        // Setting up credentials
+
+        $cred = array(
+            "Credentials" => array(
+                "Username",
+                "Password",
+                "Signature",
+                "Subject"
+            )
+        );
+
+        $this->headers("RequesterCredentials", $cred);
+    }
+
+    public function api_url() {
+        if ($this->_environment === 'live') {
+            // Live environment does not use a sub-domain
+            $env = '';
+        } else {
+            // Use the environment sub-domain
+            $env = $this->_environment . '.';
+        }
+
+        return 'https://api-3t.' . $env . 'paypal.com/2.0/';
+    }
+
+    private function parse_array(array $array) {
+        
+    }
+
+    public function headers($key = NULL, $value = NULL) {
+
+        // Override $value to parse it to array
+
+        return parent::headers($key, $value);
+    }
+
+    public function param($key = NULL, $value = NULL) {
+
+        // Override $value to parse it to array
+
+        return parent::param($key, $value);
+    }
+
     /**
      * Recursively write array to document.
      * @param XMLWriter $writer
@@ -34,10 +84,6 @@ abstract class Kohana_Request_PayPal_SOAP extends Request_PayPal {
             $writer->endAttribute();
         }
     }
-
-    public function api_url() {
-        
-    }    
 
     public function execute() {
 

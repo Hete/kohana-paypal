@@ -50,6 +50,7 @@ or in the module itself and pull request me your work!
 * Encoding and decoding was quite dumb, so now on, just refer to standard PayPal doc to build requests and interpret responses;
 * Unittesting (I need help on this);
 * Improved stability for most of requests;
+* Support for NVP and SOAP. Since SOAP is hierarchical, there is work to support it through multi-dimentional arrays;
 
 ## How to use this api
 

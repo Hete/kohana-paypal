@@ -3,7 +3,8 @@
 defined('SYSPATH') or die('No direct script access.');
 
 /**
- * Implementation for SVCS protocol.
+ * Implementation for SVCS protocol. This only supported by AdaptiveAccounts
+ * and AdaptivePayments api. 
  * 
  * @package payPal
  * @category Request
@@ -11,6 +12,27 @@ defined('SYSPATH') or die('No direct script access.');
  * @copyright (c) 2013, Hète.ca Inc.
  */
 abstract class Kohana_Request_PayPal_SVCS extends Request_PayPal {
+
+    public function __construct($uri = TRUE, HTTP_Cache $cache = NULL, $injected_routes = array(), array $params = array()) {
+
+        // It's a post request
+        $this->method(static::POST);
+
+        parent::__construct($uri, $cache, $injected_routes, $params);
+
+        // Setting default headers
+        $this->headers('X-PAYPAL-SECURITY-USERID', $this->config("username"));
+        $this->headers('X-PAYPAL-SECURITY-PASSWORD', $this->config("password"));
+        $this->headers('X-PAYPAL-SECURITY-SIGNATURE', $this->config("signature"));
+        $this->headers('X-PAYPAL-REQUEST-DATA-FORMAT', 'NV');
+        $this->headers('X-PAYPAL-RESPONSE-DATA-FORMAT', 'NV');
+        $this->headers("X-PAYPAL-APPLICATION-ID", $this->config("api_id"));
+
+        // Setting default post
+        $this->param('requestEnvelope', '');
+        $this->param('requestEnvelope_detailLevel', 'ReturnAll');
+        $this->param('requestEnvelope_errorLanguage', $this->config("lang"));
+    }
 
     public function api_url() {
         if ($this->_environment === 'live') {

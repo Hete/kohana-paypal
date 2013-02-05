@@ -19,8 +19,6 @@ abstract class Kohana_PayPal_PaymentsPro extends Request_PayPal_NVP {
         "Sale"
     );
 
-   
-
 }
 
 ?>

@@ -124,11 +124,10 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
         // Config for current environment
         $this->_config = Kohana::$config->load('paypal.' . $this->_environment);
 
-        // uri is defined by the api url.a
+        // uri is defined by the api url.
         $uri = $this->api_url();
 
         parent::__construct($uri, $cache, $injected_routes);
-
 
         // Setting client to curl
         $this->client(Request_Client_External::factory($this->config("curl.options"), static::REQUEST_CLIENT));
@@ -138,23 +137,7 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
             $this->client()->options($key, $value);
         }
 
-        // Setting default headers
-        $this->headers('X-PAYPAL-SECURITY-USERID', $this->config("username"));
-        $this->headers('X-PAYPAL-SECURITY-PASSWORD', $this->config("password"));
-        $this->headers('X-PAYPAL-SECURITY-SIGNATURE', $this->config("signature"));
-        $this->headers('X-PAYPAL-REQUEST-DATA-FORMAT', 'NV');
-        $this->headers('X-PAYPAL-RESPONSE-DATA-FORMAT', 'NV');
-        $this->headers("X-PAYPAL-APPLICATION-ID", $this->config("api_id"));
-
-        // It's a post request
-        $this->method(static::POST);
-
-        $this->post($params);
-
-        // Setting default post
-        $this->post('requestEnvelope', '');
-        $this->post('requestEnvelope_detailLevel', 'ReturnAll');
-        $this->post('requestEnvelope_errorLanguage', $this->config("lang"));
+        $this->param($params);
 
         $this->_security_token = Security::token();
     }
@@ -177,7 +160,14 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
      * @param type $value
      */
     public function param($key = NULL, $value = NULL) {
-        return $this->post($key, $value);
+        switch ($this->method()) {
+            case Request::POST:
+                return $this->post($key, $value);
+            case Request::GET:
+                return $this->query($key, $value);
+            default:
+                throw new Kohana_Exception("Method :method is not supported", array(":method" => $this->method()));
+        }
     }
 
     /**

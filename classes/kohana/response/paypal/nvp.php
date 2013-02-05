@@ -22,6 +22,10 @@ class Kohana_Response_PayPal_NVP extends Response_PayPal {
         parse_str($response->body(), $data);
 
         parent::__construct($response, $data);
+
+        // Adding default rules
+        $this->rule("ACK", "not_empty");
+        $this->rule("ACK", "PayPal_Valid::contained", array(":value", static::$SUCCESS_ACKNOWLEDGEMENTS));
     }
 
 }

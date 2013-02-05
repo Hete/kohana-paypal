@@ -16,6 +16,9 @@ abstract class Kohana_Request_PayPal_NVP extends Request_PayPal {
 
     public function __construct($uri = TRUE, HTTP_Cache $cache = NULL, $injected_routes = array(), array $params = array()) {
 
+        // It's a GET request
+        $this->method(static::GET);
+
         parent::__construct($uri, $cache, $injected_routes, $params);
 
         $parts = explode("_", get_class($this));
@@ -25,6 +28,9 @@ abstract class Kohana_Request_PayPal_NVP extends Request_PayPal {
         $method = ucfirst($method);
 
         // Setting the METHOD
+        $this->param("USER", $this->config("username"));
+        $this->param("PWD", $this->config("password"));
+        $this->param("SIGNATURE", $this->config("api_id"));
         $this->param("METHOD", $method);
         $this->param("VERSION", 54.0);
     }
@@ -53,7 +59,7 @@ abstract class Kohana_Request_PayPal_NVP extends Request_PayPal {
 
         $response = parent::execute();
 
-        $paypal_response = new Response_PayPal_NVP($response); 
+        $paypal_response = new Response_PayPal_NVP($response);
 
         // Validate the response
         if (!$paypal_response->check()) {

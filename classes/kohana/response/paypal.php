@@ -23,6 +23,7 @@ abstract class Kohana_Response_PayPal extends Validation implements PayPal_Const
      */
     public static $ACKNOWLEDGEMENTS = array(
         "Success",
+        "PartialSuccess",
         "Failure",
         "SuccessWithWarning",
         "FailureWithWarning"
@@ -35,7 +36,8 @@ abstract class Kohana_Response_PayPal extends Validation implements PayPal_Const
      */
     public static $SUCCESS_ACKNOWLEDGEMENTS = array(
         "Success",
-        "SuccessWithWarning"
+        "SuccessWithWarning",
+        "PartialSuccess"
     );
 
     /**
@@ -71,8 +73,15 @@ abstract class Kohana_Response_PayPal extends Validation implements PayPal_Const
         $this->response = $response;
     }
 
-    public function data($key = NULL) {
-        return $key === NULL ? parent::data() : $this[$key];
+    /**
+     * Getter for data.
+     * 
+     * @param string $key
+     * @param string $default
+     * @return string
+     */
+    public function data($key = NULL, $default = NULL) {
+        return $key === NULL ? parent::data() : Arr::get($this, $key, $default);
     }
 
 }

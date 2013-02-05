@@ -11,7 +11,9 @@ defined('SYSPATH') or die('No direct script access.');
  * @author Hète.ca Team
  * @copyright (c) 2013, Hète.ca Inc.
  */
-class Kohana_PayPal_PaymentsPro_SetCustomerBillingAgreement extends PayPal_PaymentsPro {
+class Kohana_PayPal_PaymentsPro_NVP_SetCustomerBillingAgreement extends PayPal_PaymentsPro {
+
+    protected $_redirect_method = "";
 
     protected function redirect_params(Response_PayPal $response_data) {
         return array(
