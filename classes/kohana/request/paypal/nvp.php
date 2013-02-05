@@ -41,12 +41,11 @@ abstract class Kohana_Request_PayPal_NVP extends Request_PayPal {
         return 'https://api-3t.' . $env . 'paypal.com/nvp';
     }
 
-    protected function execute() {
+    public function execute() {
 
         $this->check();
 
         $data = NULL;
-
 
         if ($data === NULL) {
             throw new PayPal_Exception($this, NULL, "Couldn't parse the response from PayPal.");
@@ -54,10 +53,7 @@ abstract class Kohana_Request_PayPal_NVP extends Request_PayPal {
 
         $response = parent::execute();
 
-        $paypal_response = Response_PayPal_NVP::factory($response);
-
-        // Computing redirect url
-        $paypal_response->redirect_url = $this->redirect_url($paypal_response);
+        $paypal_response = new Response_PayPal_NVP($response); 
 
         // Validate the response
         if (!$paypal_response->check()) {

@@ -15,10 +15,14 @@ defined('SYSPATH') or die('No direct script access.');
  */
 abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants {
 
+    /**
+     *
+     * @var type 
+     */
     public static $ENVIRONMENTS = array(
-        static::SANDBOX,
-        static::SANDBOX_BETA,
-        static::LIVE
+        "sandbox",
+        "sandbox-beta",
+        "live"
     );
 
     /**
@@ -62,8 +66,8 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
      * @var array 
      */
     public static $REQUIRED_STATES = array(
-        static::REQUIRED,
-        static::NOT_REQUIRED
+        "REQUIRED",
+        "NOT_REQUIRED"
     );
 
     /**

@@ -27,9 +27,13 @@ abstract class Kohana_Request_PayPal_SVCS extends Request_PayPal {
         return 'https://svcs.' . $env . 'paypal.com/' . $method;
     }
 
-    protected function _execute(array $data, Response $response) {
+    public function execute() {
 
-        $paypal_response = Response_PayPal::factory($data, $response);
+        $this->check();
+
+        $response = parent::execute();
+
+        $paypal_response = new Response_PayPal_SVCS($response);
 
         // Validate the response
         if (!$paypal_response->check()) {

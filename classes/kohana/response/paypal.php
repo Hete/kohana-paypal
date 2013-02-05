@@ -22,10 +22,10 @@ abstract class Kohana_Response_PayPal extends Validation implements PayPal_Const
      * @var array 
      */
     public static $ACKNOWLEDGEMENTS = array(
-        static::SUCCESS,
-        static::FAILURE,
-        static::SUCCESS_WITH_WARNING,
-        static::FAILURE_WITH_WARNING
+        "Success",
+        "Failure",
+        "SuccessWithWarning",
+        "FailureWithWarning"
     );
 
     /**
@@ -34,8 +34,8 @@ abstract class Kohana_Response_PayPal extends Validation implements PayPal_Const
      * @var array 
      */
     public static $SUCCESS_ACKNOWLEDGEMENTS = array(
-        static::SUCCESS,
-        static::SUCCESS_WITH_WARNING
+        "Success",
+        "SuccessWithWarning"
     );
 
     /**
@@ -44,8 +44,8 @@ abstract class Kohana_Response_PayPal extends Validation implements PayPal_Const
      * @var array 
      */
     public static $FAILURE_ACKNOWLEDGEMENTS = array(
-        static::FAILURE,
-        static::FAILURE_WITH_WARNING
+        "Failure",
+        "FailureWithWarning"
     );
 
     /**
@@ -69,9 +69,6 @@ abstract class Kohana_Response_PayPal extends Validation implements PayPal_Const
         parent::__construct($data);
 
         $this->response = $response;
-        // Adding default rules
-        $this->rule("responseEnvelope_ack", "not_empty");
-        $this->rule("responseEnvelope_ack", "PayPal_Valid::contained", array(":value", static::$SUCCESS_ACKNOWLEDGEMENTS));
     }
 
     public function data($key = NULL) {

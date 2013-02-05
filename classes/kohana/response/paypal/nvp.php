@@ -9,10 +9,6 @@ defined('SYSPATH') or die('No direct script access.');
  */
 class Kohana_Response_PayPal_NVP extends Response_PayPal {
 
-    public static function factory(Response $response = NULL) {
-        return new Response_PayPal_NVP($response);
-    }
-
     /**
      * 
      * @param Response $response

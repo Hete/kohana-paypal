@@ -4,12 +4,11 @@ defined('SYSPATH') or die('No direct script access.');
 
 /**
  * 
+ * 
+ * @package PayPal
+ * @category Response
  */
 class Kohana_Response_PayPal_SOAP extends Response_PayPal {
-
-    public static function factory(Response $response = NULL) {
-        return new Response_PayPal_NVP($response);
-    }
 
     /**
      * 
@@ -20,27 +19,22 @@ class Kohana_Response_PayPal_SOAP extends Response_PayPal {
     public function __construct(Response $response) {
 
         // Parse SOAP body
-        
-        
+
         $reader = new XMLReader();
         $reader->XML($response->body());
-        
+
         $output = $this->read_array($reader);
-        
-        while($reader->read()) {
-            
+
+        while ($reader->read()) {
             
         }
 
-        parent::__construct();
+        parent::__construct($response, $output);
     }
-    
+
     private function read_array(XMLReader $reader) {
-        
+
         $output = array();
-        
-        
-        
     }
 
 }

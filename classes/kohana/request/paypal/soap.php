@@ -37,11 +37,7 @@ abstract class Kohana_Request_PayPal_SOAP extends Request_PayPal {
 
     public function api_url() {
         
-    }
-
-    protected function redirect_params(Response_PayPal $response_data) {
-        
-    }
+    }    
 
     public function execute() {
 
@@ -78,9 +74,7 @@ abstract class Kohana_Request_PayPal_SOAP extends Request_PayPal {
 
         $response = parent::execute();
 
-        $redirect_url = $this->redirect_url($response_data);
-
-        $parsed = Response_PayPal_SOAP::factory($response, $redirect_url);
+        $parsed = new Response_PayPal_SOAP($response);
 
         if (isset($benchmark)) {
             Profiler::stop($benchmark);
