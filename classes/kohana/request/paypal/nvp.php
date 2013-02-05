@@ -41,9 +41,23 @@ abstract class Kohana_Request_PayPal_NVP extends Request_PayPal {
         return 'https://api-3t.' . $env . 'paypal.com/nvp';
     }
 
-    protected function _execute(array $data, Response $response) {
+    protected function execute() {
 
-        $paypal_response = Response_PayPal_NVP::factory($data, $response);
+        $this->check();
+
+        $data = NULL;
+
+
+        if ($data === NULL) {
+            throw new PayPal_Exception($this, NULL, "Couldn't parse the response from PayPal.");
+        }
+
+        $response = parent::execute();
+
+        $paypal_response = Response_PayPal_NVP::factory($response);
+
+        // Computing redirect url
+        $paypal_response->redirect_url = $this->redirect_url($paypal_response);
 
         // Validate the response
         if (!$paypal_response->check()) {
@@ -60,8 +74,6 @@ abstract class Kohana_Request_PayPal_NVP extends Request_PayPal {
             throw new PayPal_Exception($this, $paypal_response, $message, $variables, (int) $paypal_response["error(0)_errorId"]);
         }
 
-        // Adding the redirect url to the datas
-        $paypal_response->redirect_url = $this->redirect_url($paypal_response);
 
         // Was successful, we store the correlation id and stuff in logs
         $variables = array(

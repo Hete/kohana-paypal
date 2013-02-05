@@ -251,52 +251,6 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
         return array();
     }
 
-    /**
-     * Execution for specific context (NVP, SOAP, etc..)
-     */
-    protected abstract function _execute(array $data, Response $response);
-
-    /**
-     * Validate and send the request. It also logs non-sensitive data for 
-     * statistical and legal purpose.
-     * 
-     * @see Response_PayPal
-     * 
-     * @return Response_PayPal 
-     * @throws PayPal_Exception if anything went wrong. Always set a try-catch
-     * for it.
-     */
-    public function execute() {
-
-        if (Kohana::$profiling) {
-            $benchmark = Profiler::start("Request_PayPal", __FUNCTION__);
-        }
-
-        // Validate the request
-        $this->check();
-
-        // Execute the request
-        $response = parent::execute();
-        
-        $data = NULL;
-
-        // Data must be parsed before the constructor call
-        parse_str($response->body(), $data);
-        
-        if($data === NULL) {
-            throw new PayPal_Exception($this, NULL, "Couldn't parse the response from PayPal.");
-        }
-
-        // Parse the response in the specific execution context
-        $paypal_response = $this->_execute($data, $response);
-
-        if (isset($benchmark)) {
-            Profiler::stop($benchmark);
-        }
-
-        return $paypal_response;
-    }
-
 }
 
 ?>

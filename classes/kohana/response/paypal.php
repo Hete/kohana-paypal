@@ -14,7 +14,7 @@ defined('SYSPATH') or die('No direct script access.');
  * @author Guillaume Poirier-Morency <guillaumepoiriermorency@gmail.com>
  * @copyright (c) 2012, Hète.ca Inc.
  */
-class Kohana_Response_PayPal extends Validation implements PayPal_Constants {
+abstract class Kohana_Response_PayPal extends Validation implements PayPal_Constants {
 
     /**
      * Defines all the possible acknowledgements values.
@@ -49,15 +49,6 @@ class Kohana_Response_PayPal extends Validation implements PayPal_Constants {
     );
 
     /**
-     * 
-     * @param Response $response
-     * @return Response_PayPal
-     */
-    public static function factory(array $data, Response $response = NULL, $redirect_url = NULL) {
-        return new Response_PayPal($data, $response, $redirect_url);
-    }
-
-    /**
      * Redirection url for this request.
      * @var string 
      */
@@ -73,11 +64,10 @@ class Kohana_Response_PayPal extends Validation implements PayPal_Constants {
      * 
      * @param Response $response from a PayPal request.
      */
-    public function __construct(array $data, Response $response = NULL, $redirect_url = NULL) {
+    public function __construct(Response $response = NULL, array $data = NULL) {
 
         parent::__construct($data);
 
-        $this->redirect_url = $redirect_url;
         $this->response = $response;
         // Adding default rules
         $this->rule("responseEnvelope_ack", "not_empty");
