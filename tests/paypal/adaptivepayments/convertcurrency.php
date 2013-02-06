@@ -15,7 +15,7 @@ class PayPal_AdaptivePayments_ConvertCurrency_Test extends Unittest_TestCase {
 
         $data = array(
             "baseAmountList.currency(0).code" => "EUR",
-            "baseAmountList.currency(0).amount" => 55.25,
+            "baseAmountList.currency(0).amount" => PayPal::number_format(44.50),
             "convertToCurrencyList.currencyCode(0).currencyCode" => "USD",
         );
 

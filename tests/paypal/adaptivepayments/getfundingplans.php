@@ -28,7 +28,7 @@ class PayPal_AdaptivePayments_GetFundingPlans_Test extends Unittest_TestCase {
         $pay_key = PayPal::factory("AdaptivePayments_Pay", array(
                     "actionType" => PayPal_AdaptivePayments_Pay::CREATE,
                     "receiverList.receiver(0).email" => "foo@gmail.com",
-                    "receiverList.receiver(0).amount" => 55,
+                    "receiverList.receiver(0).amount" => PayPal::number_format(44.50),
                     "currencyCode" => "CAD",
                     "cancelUrl" => "https://www.x.com",
                     "returnUrl" => "https://www.x.com",
