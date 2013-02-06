@@ -22,7 +22,7 @@ class PayPal_AdaptivePayments_Pay_Test extends Unittest_TestCase {
             "returnUrl" => "http://www.x.com",
             "currencyCode" => "CAD",
             "receiverList.receiver(0).email" => "foogmail.com", // Invalid email
-            "receiverList.receiver(0).amount" => 44.50,
+            "receiverList.receiver(0).amount" => PayPal::number_format(44.50),
         );
 
         PayPal::factory("AdaptivePayments_Pay", $data)->execute();
@@ -38,7 +38,7 @@ class PayPal_AdaptivePayments_Pay_Test extends Unittest_TestCase {
             "returnUrl" => "http://www.x.com",
             "currencyCode" => "CAD",
             "receiverList.receiver(0).email" => "foo@gmail.com", // Invalid email
-            "receiverList.receiver(0).amount" => 44.50,
+            "receiverList.receiver(0).amount" => PayPal::number_format(44.50),
         );
 
         PayPal::factory("AdaptivePayments_Pay", $data)->execute();
@@ -68,7 +68,7 @@ class PayPal_AdaptivePayments_Pay_Test extends Unittest_TestCase {
             "returnUrl" => "http://www.x.com",
             "currencyCode" => "CAD",
             "receiverList.receiver(0).email" => "foo@gmail.com",
-            "receiverList.receiver(0).amount" => 44.50,
+            "receiverList.receiver(0).amount" => PayPal::number_format(44.50),
         );
 
         $response = PayPal::factory("AdaptivePayments_Pay", $data)->execute();
