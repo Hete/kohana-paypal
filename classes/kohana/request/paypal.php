@@ -140,6 +140,16 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
         $this->param($params);
 
         $this->_security_token = Security::token();
+
+        // Load validations
+
+        $this->_validation = Validation::factory($this->param())
+                ->rule('securityToken', 'Security::check', array($this->_security_token));
+
+        // We add custom and basic rules proper to the request
+        foreach ($this->rules() as $field => $rules) {
+            $this->_validation->rules($field, $rules);
+        }
     }
 
     /**
@@ -178,6 +188,27 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
     protected abstract function rules();
 
     /**
+     * 
+     * @param type $field
+     * @param type $rule
+     * @param array $param
+     * @return type
+     */
+    public function rule($field, $rule, array $param = NULL) {
+        return $this->_validation->rule($field, $rule, $param);
+    }
+
+    /**
+     * 
+     * @param type $file
+     * @param array $param
+     * @return type
+     */
+    public function errors($file, array $param = NULL) {
+        return $this->_validation->error($file, $param);
+    }
+
+    /**
      * Validates the request based on its rules defined in the rules() function.
      * 
      * @param string $security_token You may set a custom security token to
@@ -187,15 +218,8 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
      */
     public function check() {
 
-        // Validate the request parameters
-        $this->_validation = Validation::factory($this->post())
-                ->rule('requestEnvelope_errorLanguage', 'not_empty')
-                ->rule('securityToken', 'Security::check', array($this->_security_token));
-
-        // We add custom and basic rules proper to the request
-        foreach ($this->rules() as $field => $rules) {
-            $this->_validation->rules($field, $rules);
-        }
+        // Update the validation
+        $this->_validation = $this->_validation->copy($this->param());
 
         if (!$this->_validation->check()) {
             throw new PayPal_Exception($this, NULL, "Paypal request failed to validate :errors", array(":errors" => print_r($this->_validation->errors(), TRUE)));

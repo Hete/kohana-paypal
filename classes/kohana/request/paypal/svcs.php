@@ -32,6 +32,8 @@ abstract class Kohana_Request_PayPal_SVCS extends Request_PayPal {
         $this->param('requestEnvelope', '');
         $this->param('requestEnvelope_detailLevel', 'ReturnAll');
         $this->param('requestEnvelope_errorLanguage', $this->config("lang"));
+        
+        $this->rule("requestEnvelope_errorLanguage", "not_empty");
     }
 
     public function api_url() {

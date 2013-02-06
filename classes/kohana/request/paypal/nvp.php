@@ -30,9 +30,9 @@ abstract class Kohana_Request_PayPal_NVP extends Request_PayPal {
         // Setting the METHOD
         $this->param("USER", $this->config("username"));
         $this->param("PWD", $this->config("password"));
-        $this->param("SIGNATURE", $this->config("api_id"));
+        $this->param("SIGNATURE", $this->config("signature"));
+        $this->param("VERSION", 58.0);
         $this->param("METHOD", $method);
-        $this->param("VERSION", 54.0);
     }
 
     public function api_url() {
@@ -53,6 +53,8 @@ abstract class Kohana_Request_PayPal_NVP extends Request_PayPal {
 
         $data = NULL;
 
+        parse_str(parent::execute()->body(), $data);
+
         if ($data === NULL) {
             throw new PayPal_Exception($this, NULL, "Couldn't parse the response from PayPal.");
         }
@@ -67,22 +69,21 @@ abstract class Kohana_Request_PayPal_NVP extends Request_PayPal {
             // Logging the data in case of..
             $message = "PayPal response failed with code :code and version :version :shortmessage. :longmessage";
             $variables = array(
-                ":version" => $paypal_response["VERSION"],
                 ":code" => $paypal_response["L_ERRORCODE0"],
                 ":shortmessage" => $paypal_response["L_SHORTMESSAGE0"],
                 ":longmessage" => $paypal_response["L_LONGMESSAGE0"],
             );
             Log::instance()->add(Log::ERROR, $message, $variables);
-            throw new PayPal_Exception($this, $paypal_response, $message, $variables, (int) $paypal_response["error(0)_errorId"]);
+            throw new PayPal_Exception($this, $paypal_response, $message, $variables, (int) $paypal_response["L_ERRORCODE0"]);
         }
 
 
         // Was successful, we store the correlation id and stuff in logs
         $variables = array(
-            ":ack" => $paypal_response["responseEnvelope_ack"],
-            ":build" => $paypal_response["responseEnvelope_build"],
-            ":correlation_id" => $paypal_response["responseEnvelope_correlationId"],
-            ":timestamp" => $paypal_response["responseEnvelope_timestamp"],
+            ":ack" => $paypal_response["ACK"],
+            ":build" => $paypal_response["BUILD"],
+            ":correlation_id" => $paypal_response["CORRELATIONID"],
+            ":timestamp" => $paypal_response["TIMESTAMP"],
         );
 
         Log::instance()->add(Log::INFO, "PayPal request was completed with :ack :build :correlation_id at :timestamp", $variables);
