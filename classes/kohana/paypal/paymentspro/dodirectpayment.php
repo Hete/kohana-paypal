@@ -1,6 +1,8 @@
 <?php
 
-class PayPal_PaymentsPro_DoDirectPayment extends PayPal_PaymentsPro {
+defined('SYSPATH') or die('No direct script access.');
+
+class Kohana_PayPal_PaymentsPro_DoDirectPayment extends PayPal_PaymentsPro {
 
     protected function rules() {
         return array();

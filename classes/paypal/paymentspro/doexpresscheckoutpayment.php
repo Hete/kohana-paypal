@@ -1,10 +1,7 @@
 <?php
 
-/**
- * 
- * @package PayPal
- * @subpackage PaymentsPro
- */
+defined('SYSPATH') or die('No direct script access.');
+
 class PayPal_PaymentsPro_DoExpressCheckoutPayment extends Kohana_PayPal_PaymentsPro_DoExpressCheckoutPayment {
     
 }
