@@ -14,7 +14,7 @@ defined('SYSPATH') or die('No direct script access.');
  */
 abstract class Kohana_Request_PayPal_NVP extends Request_PayPal {
 
-    const NVP_VERSION = "72.0";
+    const NVP_VERSION = "98.0";
 
     public function __construct($uri = TRUE, HTTP_Cache $cache = NULL, $injected_routes = array(), array $params = array()) {
 
