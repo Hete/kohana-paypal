@@ -14,6 +14,8 @@ defined('SYSPATH') or die('No direct script access.');
  */
 abstract class Kohana_Request_PayPal_NVP extends Request_PayPal {
 
+    const NVP_VERSION = "98.0";
+
     public function __construct($uri = TRUE, HTTP_Cache $cache = NULL, $injected_routes = array(), array $params = array()) {
 
         // It's a GET request
@@ -28,11 +30,13 @@ abstract class Kohana_Request_PayPal_NVP extends Request_PayPal {
         $method = ucfirst($method);
 
         // Setting the METHOD
+        $this->param("METHOD", $method);
+
+        // Setting credentials
         $this->param("USER", $this->config("username"));
         $this->param("PWD", $this->config("password"));
         $this->param("SIGNATURE", $this->config("signature"));
-        $this->param("VERSION", 58.0);
-        $this->param("METHOD", $method);
+        $this->param("VERSION", static::NVP_VERSION);
     }
 
     public function api_url() {
@@ -67,8 +71,9 @@ abstract class Kohana_Request_PayPal_NVP extends Request_PayPal {
         if (!$paypal_response->check()) {
 
             // Logging the data in case of..
-            $message = "PayPal response failed with code :code and version :version :shortmessage. :longmessage";
+            $message = "PayPal response failed with code :code and version :version :shortmessage :longmessage";
             $variables = array(
+                ":version" => $paypal_response["VERSION"],
                 ":code" => $paypal_response["L_ERRORCODE0"],
                 ":shortmessage" => $paypal_response["L_SHORTMESSAGE0"],
                 ":longmessage" => $paypal_response["L_LONGMESSAGE0"],
@@ -77,6 +82,7 @@ abstract class Kohana_Request_PayPal_NVP extends Request_PayPal {
             throw new PayPal_Exception($this, $paypal_response, $message, $variables, (int) $paypal_response["L_ERRORCODE0"]);
         }
 
+        $paypal_response->redirect_url = $this->redirect_url($paypal_response);
 
         // Was successful, we store the correlation id and stuff in logs
         $variables = array(
@@ -96,7 +102,7 @@ abstract class Kohana_Request_PayPal_NVP extends Request_PayPal {
                 ":longmessage" => $paypal_response["L_LONGMESSAGE0"],
             );
             // In case of SuccessWithWarning, log the warning
-            Log::instance()->add(Log::WARNING, "PayPal request was completed with :ack :build :correlation_id at :timestamp but a warning with code :code and version :version was raised :shortmessage. :longmessage", $variables);
+            Log::instance()->add(Log::WARNING, "PayPal request was completed with :ack :build :correlation_id at :timestamp but a warning with code :code and version :version was raised :shortmessage :longmessage", $variables);
         }
 
         return $paypal_response;

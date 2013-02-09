@@ -3,17 +3,14 @@
 defined('SYSPATH') or die('No direct script access.');
 
 /**
+ * PayPal NVP response handler.
  * 
  * @package PayPal
  * @category Response
+ * @author Hète.ca Team
  */
 class Kohana_Response_PayPal_NVP extends Response_PayPal {
 
-    /**
-     * 
-     * @param Response $response
-     * @return Response_PayPal
-     */
     public function __construct(Response $response = NULL) {
 
         $data = NULL;
