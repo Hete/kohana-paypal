@@ -14,11 +14,11 @@ defined('SYSPATH') or die('No direct script access.');
  * @license    http://kohanaphp.com/license.html
  */
 interface Kohana_PayPal_Constants {
+    
     /**
      * Environment types.
      */
-
-    const SANDBOX = 'sandbox', LIVE = '';
+    const SANDBOX = 'sandbox', LIVE = 'live', SANDBOX_BETA = 'sandbox-beta';
 
     /**
      * Request client class
@@ -29,7 +29,15 @@ interface Kohana_PayPal_Constants {
      * Current version.
      */
     const VERSION = '2.1.0';
-    // Booleans
+
+    /**
+     * Booleans
+     * 
+     * Through the PayPal api, booleans are not consistent. Always use the
+     * boolean constant from the class of the request you are specifically
+     * using. For example, if you are using Pay api, obtaine the TRUE value
+     * from PayPal_AdaptivePayments_Pay::TRUE.
+     */
     const TRUE = 'true', FALSE = 'false';
 
     /**
@@ -49,7 +57,8 @@ interface Kohana_PayPal_Constants {
     const SHORT_DATE_FORMAT = "Y-m-d\T";
 
     /**
-     * Supported date format by PayPal.
+     * Supported date format by PayPal. It is always a good thing to use this 
+     * date format.
      */
     const DATE_FORMAT = "Y-m-d\TH:i:s.BP";
 

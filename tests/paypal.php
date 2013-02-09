@@ -5,7 +5,8 @@ defined('SYSPATH') or die('No direct script access.');
 /**
  * General tests for the PayPal module.
  * 
- * 
+ * @package PayPal
+ * @category Test
  * @author Guillaume Poirier-Morency <guillaumepoiriermorency@gmail.com>
  */
 class PayPal_Test extends Unittest_TestCase {
@@ -48,15 +49,15 @@ class PayPal_Test extends Unittest_TestCase {
             "returnUrl" => "http://www.x.com",
             "currencyCode" => "CAD",
             "receiverList.receiver(0).email" => "foo@gmail.com",
-            "receiverList.receiver(0).amount" => 44.50,
+            "receiverList.receiver(0).amount" => PayPal::number_format(44.50),
         );
 
         $response = PayPal::factory("AdaptivePayments_Pay", $data)->execute();
 
         $this->assertInstanceOf("Response_PayPal", $response);
 
-        $this->assertInstanceOf("Validation", $response);        
-        
+        $this->assertInstanceOf("Validation", $response);
+
         // Testing the data() function
         $this->assertEquals($response["payKey"], $response->data("payKey"));
 

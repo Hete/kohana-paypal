@@ -13,7 +13,7 @@ defined('SYSPATH') or die('No direct script access.');
  * @copyright  Hète.ca Inc.
  * @license    http://kohanaphp.com/license.html
  */
-abstract class Kohana_PayPal_AdaptivePayments extends Request_PayPal {
+abstract class Kohana_PayPal_AdaptivePayments extends Request_PayPal_SVCS {
     // Preapproval status
 
     const ACTIVE = 'ACTIVE', CANCELED = 'CANCELED', DEACTIVED = 'DEACTIVED';
@@ -22,6 +22,12 @@ abstract class Kohana_PayPal_AdaptivePayments extends Request_PayPal {
         'ACTIVE',
         'DEACTIVED',
         'CANCELED'
+    );
+    public static $FEES_PAYER = array(
+        'SENDER',
+        'PRIMARYRECEIVER',
+        'EACHRECEIVER',
+        'SECONDARYONLY'
     );
 
     // Action types

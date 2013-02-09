@@ -4,14 +4,15 @@ defined('SYSPATH') or die('No direct script access.');
 
 /**
  * 
- * @see elementName
- * 
  * @package PayPal
- * @category Permissions
- * @author Hète.ca Team
- * @copyright (c) 2013, Hète.ca Inc.
+ * @category PaymentsPro
  */
-class PayPal_Permissions_GetAdvancedPersonalData_Test extends Unittest_TestCase {
+class PayPal_PaymentsPro_DoDirectPayment_Test extends Unittest_TestCase {
+
+    public function setUp() {
+        parent::setUp();
+        Request::$initial = '';
+    }
 
     public function test_complete_request() {
         $this->markTestIncomplete('This test has not been implemented yet.');

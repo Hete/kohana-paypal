@@ -3,7 +3,10 @@
 defined('SYSPATH') or die('No direct script access.');
 
 /**
- * PayPal request.
+ * PayPal request. This class inherit from Request to provide all the Kohana's
+ * external request features.
+ * 
+ * @see Request
  * 
  * @package PayPal
  * @category Request
@@ -13,7 +16,19 @@ defined('SYSPATH') or die('No direct script access.');
 abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants {
 
     /**
-     * @deprecated use $CURRENCY_CODES
+     *
+     * @var type 
+     */
+    public static $ENVIRONMENTS = array(
+        "sandbox",
+        "sandbox-beta",
+        "live"
+    );
+
+    /**
+     * 
+     * 
+     * @deprecated use $CURRENCY_CODES 
      * @var type 
      */
     public static $CURRENCIES = array('AUD', 'BRL', 'CAD', 'CZK', 'DKK', 'EUR',
@@ -22,6 +37,7 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
 
     /**
      * Supported currencies.
+     * 
      * @var array
      */
     public static $CURRENCY_CODES = array('AUD', 'BRL', 'CAD', 'CZK', 'DKK', 'EUR',
@@ -30,6 +46,7 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
 
     /**
      * Supported days of week.
+     * 
      * @var array
      */
     public static $DAYS_OF_WEEK = array(
@@ -42,18 +59,28 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
         'FRIDAY',
         'SATURDAY',
     );
+
+    /**
+     * Required states.
+     * 
+     * @var array 
+     */
     public static $REQUIRED_STATES = array(
-        'REQUIRED', 'NOT_REQUIRED'
+        "REQUIRED",
+        "NOT_REQUIRED"
     );
 
     /**
      * Redirection command (if appliable).
+     * 
      * @var string 
      */
     protected $_redirect_command = "";
 
     /**
-     * Environment (sandbox or live)
+     * Environment (sandbox, live or sandbox-beta). You may change this value
+     * in application/config/paypal.php
+     * 
      * @var string 
      */
     protected $_environment;
@@ -61,6 +88,7 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
     /**
      * Configuration specific to the environnement. Use the config() method for
      * read-only access.
+     * 
      * @var array 
      */
     private $_config;
@@ -68,12 +96,14 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
     /**
      * Security token. This avoid request being instanciated from a client to be
      * executed by another.
+     * 
      * @var string 
      */
     private $_security_token;
 
     /**
      * Validation object for this request.
+     * 
      * @var Validation 
      */
     private $_validation;
@@ -81,6 +111,7 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
     /**
      * Constructor for the PayPal request. Using the factory method in the 
      * PayPal class is a much better approach.
+     * 
      * @param array $params
      * @param HTTP_Cache $cache
      * @param array $injected_routes
@@ -93,11 +124,10 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
         // Config for current environment
         $this->_config = Kohana::$config->load('paypal.' . $this->_environment);
 
-        // uri is defined by the api url.a
+        // uri is defined by the api url.
         $uri = $this->api_url();
 
         parent::__construct($uri, $cache, $injected_routes);
-
 
         // Setting client to curl
         $this->client(Request_Client_External::factory($this->config("curl.options"), static::REQUEST_CLIENT));
@@ -107,29 +137,24 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
             $this->client()->options($key, $value);
         }
 
-        // Setting default headers
-        $this->headers('X-PAYPAL-SECURITY-USERID', $this->config("username"));
-        $this->headers('X-PAYPAL-SECURITY-PASSWORD', $this->config("password"));
-        $this->headers('X-PAYPAL-SECURITY-SIGNATURE', $this->config("signature"));
-        $this->headers('X-PAYPAL-REQUEST-DATA-FORMAT', 'NV');
-        $this->headers('X-PAYPAL-RESPONSE-DATA-FORMAT', 'NV');
-        $this->headers("X-PAYPAL-APPLICATION-ID", $this->config("api_id"));
-
-        // It's a post request
-        $this->method(static::POST);
-
-        $this->post($params);
-
-        // Setting default post
-        $this->post('requestEnvelope', '');
-        $this->post('requestEnvelope_detailLevel', 'ReturnAll');
-        $this->post('requestEnvelope_errorLanguage', $this->config("lang"));
+        $this->param($params);
 
         $this->_security_token = Security::token();
+
+        // Load validations
+
+        $this->_validation = Validation::factory($this->param())
+                ->rule('securityToken', 'Security::check', array($this->_security_token));
+
+        // We add custom and basic rules proper to the request
+        foreach ($this->rules() as $field => $rules) {
+            $this->_validation->rules($field, $rules);
+        }
     }
 
     /**
      * Config access method. Uses Arr::path.
+     * 
      * @param string $key
      * @param string $value
      * @return type
@@ -140,37 +165,61 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
 
     /**
      * Alias for post() method. Defined for retrocompatibility and clearness.
+     * 
      * @param type $key
      * @param type $value
      */
     public function param($key = NULL, $value = NULL) {
-        return $this->post($key, $value);
+        switch ($this->method()) {
+            case Request::POST:
+                return $this->post($key, $value);
+            case Request::GET:
+                return $this->query($key, $value);
+            default:
+                throw new Kohana_Exception("Method :method is not supported", array(":method" => $this->method()));
+        }
     }
 
     /**
      * Validation rules. Must be implemented by request type.
+     * 
      * @return array array of rules.
      */
     protected abstract function rules();
 
     /**
+     * 
+     * @param type $field
+     * @param type $rule
+     * @param array $param
+     * @return type
+     */
+    public function rule($field, $rule, array $param = NULL) {
+        return $this->_validation->rule($field, $rule, $param);
+    }
+
+    /**
+     * 
+     * @param type $file
+     * @param array $param
+     * @return type
+     */
+    public function errors($file, array $param = NULL) {
+        return $this->_validation->error($file, $param);
+    }
+
+    /**
      * Validates the request based on its rules defined in the rules() function.
+     * 
      * @param string $security_token You may set a custom security token to
      * make sure the request is handled by the same client.
-     * @return \PayPal_Request for builder syntax.
+     * @return PayPal_Request for builder syntax.
      * @throws PayPal_Exception if the request is invalid.
      */
     public function check() {
 
-        // Validate the request parameters
-        $this->_validation = Validation::factory($this->post())
-                ->rule('requestEnvelope_errorLanguage', 'not_empty')
-                ->rule('securityToken', 'Security::check', array($this->_security_token));
-
-        // We add custom and basic rules proper to the request
-        foreach ($this->rules() as $field => $rules) {
-            $this->_validation->rules($field, $rules);
-        }
+        // Update the validation
+        $this->_validation = $this->_validation->copy($this->param());
 
         if (!$this->_validation->check()) {
             throw new PayPal_Exception($this, NULL, "Paypal request failed to validate :errors", array(":errors" => print_r($this->_validation->errors(), TRUE)));
@@ -183,20 +232,7 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
      * Returns the API URL for the current environment and method.
      * @return string
      */
-    public function api_url() {
-        if ($this->_environment === 'live') {
-            // Live environment does not use a sub-domain
-            $env = '';
-        } else {
-            // Use the environment sub-domain
-            $env = $this->_environment . '.';
-        }
-        $unappended = preg_replace("/(Kohana_)?PayPal_/", "", get_class($this));
-        // Remove prefix to the class, _ => / and capitalized
-        $method = ucfirst(str_replace("_", "/", $unappended));
-
-        return 'https://svcs.' . $env . 'paypal.com/' . $method;
-    }
+    public abstract function api_url();
 
     /**
      * Returns the redirect URL for the current environment. 
@@ -231,77 +267,6 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
      */
     protected function redirect_params(Response_PayPal $response_data) {
         return array();
-    }
-
-    /**
-     * Validate and send the request. It also logs non-sensitive data for 
-     * statistical and legal purpose.
-     * 
-     * @see Response_PayPal
-     * 
-     * @return Response_PayPal 
-     * @throws PayPal_Exception if anything went wrong. Always set a try-catch
-     * for it.
-     */
-    public function execute() {
-
-        if (Kohana::$profiling) {
-            $benchmark = Profiler::start("Request_PayPal", __FUNCTION__);
-        }
-
-        // Validate the request
-        $this->check();
-
-        // Execute the request
-        $response = parent::execute();
-
-        // Data must be parsed before the constructor call
-        parse_str($response->body(), $data);
-
-        // Parse the response
-        $paypal_response = Response_PayPal::factory($data, $response);
-
-        // Validate the response
-        if (!$paypal_response->check()) {
-            // Logging the data in case of..
-            $message = "PayPal response failed with id :id at :category level. :message";
-            $variables = array(
-                ":category" => $paypal_response["error(0)_category"],
-                ":message" => $paypal_response["error(0)_message"],
-                ":id" => $paypal_response["error(0)_errorId"],
-            );
-            Log::instance()->add(Log::ERROR, $message, $variables);
-            throw new PayPal_Exception($this, $paypal_response, $message, $variables, (int)$paypal_response["error(0)_errorId"]);
-        }
-
-        // Adding the redirect url to the datas
-        $paypal_response->redirect_url = $this->redirect_url($paypal_response);
-
-        // Was successful, we store the correlation id and stuff in logs
-        $variables = array(
-            ":ack" => $paypal_response["responseEnvelope_ack"],
-            ":build" => $paypal_response["responseEnvelope_build"],
-            ":correlation_id" => $paypal_response["responseEnvelope_correlationId"],
-            ":timestamp" => $paypal_response["responseEnvelope_timestamp"],
-        );
-
-        Log::instance()->add(Log::INFO, "PayPal request was completed with :ack :build :correlation_id at :timestamp", $variables);
-
-        if ($paypal_response["responseEnvelope_ack"] === static::SUCCESS_WITH_WARNING) {
-            $variables += array(
-                ":error_id" => $paypal_response["error(0)_error_id"],
-                ":category" => $paypal_response["error(0)_category"],
-                ":message" => $paypal_response["error(0)_message"],
-            );
-            // In case of SuccessWithWarning, print the warning
-            Log::instance()->add(Log::WARNING, "PayPal request was completed with :ack :build :correlation_id at :timestamp but a warning with id :error_id was raised :message at :category level", $variables);
-        }
-
-        if (isset($benchmark)) {
-            Profiler::stop($benchmark);
-        }
-
-        return $paypal_response;
     }
 
 }

@@ -27,7 +27,7 @@ class PayPal_AdaptivePayments_SetPaymentOptions_Test extends Unittest_TestCase {
             "returnUrl" => "http://www.x.com",
             "currencyCode" => "CAD",
             "receiverList.receiver(0).email" => "foo@gmail.com",
-            "receiverList.receiver(0).amount" => 44.50,
+            "receiverList.receiver(0).amount" => PayPal::number_format(44.50),
         );
 
         $pay_key = PayPal::factory("AdaptivePayments_Pay", $data)->execute()->data("payKey");
