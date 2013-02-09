@@ -1,7 +1,14 @@
 <?php
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+defined('SYSPATH') or die('No direct script access.');
+
+/**
+ * 
+ * @package PayPal
+ * @subpackage IPN
  */
+abstract class Kohana_PayPal_IPN extends Request_PayPal_NVP {
+    
+}
+
 ?>

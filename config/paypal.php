@@ -24,6 +24,15 @@ return array(
         ),
         // Language for responses
         'lang' => 'en_US',
+        'ipn' => array(
+            'enabled' => TRUE, // If enabled, will automatically register ipn notification
+            'receiver' => array(
+                'id' => NULL,
+                'email' => NULL,
+                'country' => NULL 
+            ),
+            'protocol' => 'http'
+        ),
     ),
     'live' => array(
         // PayPal API and username
@@ -41,6 +50,15 @@ return array(
         ),
         // Language for responses
         'lang' => 'en_US',
+        'ipn' => array(
+            'enabled' => TRUE,
+            'receiver' => array(
+                'id' => NULL,
+                'email' => NULL,
+                'country' => NULL 
+            ),
+            'protocol' => 'https'
+        ),
     ),
     'sandbox-beta' => array(
         // PayPal API and username
@@ -59,5 +77,14 @@ return array(
         ),
         // Language for responses
         'lang' => 'en_US',
+        'ipn' => array(
+            'enabled' => TRUE,
+            'receiver' => array(
+                'id' => NULL,
+                'email' => NULL,
+                'country' => NULL 
+            ),
+            'protocol' => 'http'
+        ),
     ),
 );

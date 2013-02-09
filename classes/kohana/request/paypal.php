@@ -151,6 +151,13 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
             $this->_validation->rules($field, $rules);
         }
     }
+    
+    /**
+     * 
+     */
+    public function environment() {
+        return $this->_environment;
+    }
 
     /**
      * Config access method. Uses Arr::path.
