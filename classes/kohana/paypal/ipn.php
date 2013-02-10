@@ -14,6 +14,8 @@ defined('SYSPATH') or die('No direct script access.');
  */
 abstract class Kohana_PayPal_IPN extends Request_PayPal_NVP {
 
+    const VERIFIED = "VERIFIED", INVALID = "INVALID";
+
     public function __construct($uri = TRUE, HTTP_Cache $cache = NULL, $injected_routes = array(), array $params = array()) {
 
         // It's a GET request

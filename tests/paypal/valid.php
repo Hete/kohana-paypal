@@ -3,7 +3,8 @@
 defined('SYSPATH') or die('No direct script access.');
 
 /**
- * Tests for PayPal validations.
+ * @package PayPal
+ * @category Tests
  */
 class PayPal_Valid_Test extends Unittest_TestCase {
 
@@ -35,10 +36,10 @@ class PayPal_Valid_Test extends Unittest_TestCase {
         $array = array("a", 1, "b" => 2);
 
         $this->assertTrue(PayPal_Valid::contained("a", $array));
-        
+
         // b is a key, not a value
         $this->assertFalse(PayPal_Valid::contained("b", $array));
-        
+
         $this->assertTrue(PayPal_Valid::contained(1, $array));
     }
 

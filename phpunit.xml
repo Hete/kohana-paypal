@@ -1,17 +1,6 @@
 <phpunit colors="true" verbose="true" bootstrap="../unittest/bootstrap.php">
-    <testsuite name="PayPal general tests">
+    <testsuite name="PayPal tests">
         <directory suffix='.php'>tests/</directory>  
-    </testsuite>
-    <testsuite name="AdaptivePayments tests">
-        <directory suffix='.php'>tests/paypal/adaptivepayments/</directory>    
-    </testsuite>
-    <testsuite name="AdaptiveAccounts tests">
-        <directory suffix='.php'>tests/paypal/adaptiveaccounts/</directory>
-    </testsuite>
-    <testsuite name="Invoicing tests">
-        <directory suffix='.php'>tests/paypal/invoicing/</directory>
-    </testsuite>	
-    <testsuite name="Permissions tests">
-        <directory suffix='.php'>tests/paypal/permissions/</directory>
+        <directory suffix='.php'>tests/paypal/</directory>  
     </testsuite>
 </phpunit>
