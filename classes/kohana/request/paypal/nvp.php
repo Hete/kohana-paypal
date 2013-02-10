@@ -8,7 +8,6 @@ defined('SYSPATH') or die('No direct script access.');
  * @see https://www.x.com/developers/paypal/documentation-tools/api/NVPAPIOverview
  * 
  * @package PayPal
- * @category Request
  * @author Hète.ca Team
  * @copyright (c) 2013, Hète.ca Inc.
  */
@@ -71,7 +70,7 @@ abstract class Kohana_Request_PayPal_NVP extends Request_PayPal {
         $response = parent::execute();
 
         $paypal_response = new Response_PayPal_NVP($this, $response);
-        
+
         $paypal_response->check();
 
         $paypal_response->redirect_url = $this->redirect_url($paypal_response);
@@ -88,7 +87,7 @@ abstract class Kohana_Request_PayPal_NVP extends Request_PayPal {
 
         if ($paypal_response["ACK"] === static::SUCCESS_WITH_WARNING) {
             $variables += array(
-                ":version" => $paypal_response["VERSION"],
+                ":version" => Arr::get($paypal_response, "VERSION", static::NVP_VERSION),
                 ":code" => $paypal_response["L_ERRORCODE0"],
                 ":shortmessage" => $paypal_response["L_SHORTMESSAGE0"],
                 ":longmessage" => $paypal_response["L_LONGMESSAGE0"],

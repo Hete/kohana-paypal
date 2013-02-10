@@ -50,16 +50,19 @@ class PayPal_AdaptivePayments_Test extends Unittest_TestCase {
         $this->assertInstanceOf("Response_Paypal", $result);
     }
 
+    public function test_ConvertCurrency() {
+        $this->markTestIncomplete("This test has not been implemented yet.");
+    }
+
     /**
-     * @expectedException PayPal_Exception
-     * @expectedExceptionCode 580027
+     * @expectedException PayPal_Validation_Exception
      */
-    public function test_convert_currency() {
+    public function test_ConvertCurrency_bad_currency() {
 
         $data = array(
-            "baseAmountList.currency(0).code" => "EUR",
+            "baseAmountList.currency(0).code" => "FOO",
             "baseAmountList.currency(0).amount" => PayPal::number_format(44.50),
-            "convertToCurrencyList.currencyCode(0).currencyCode" => "USD",
+            "convertToCurrencyList.currencyCode(0).currencyCode" => "BAR",
         );
 
         $result = PayPal::factory("AdaptivePayments_ConvertCurrency", $data)->execute();

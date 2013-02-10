@@ -9,7 +9,6 @@ defined('SYSPATH') or die('No direct script access.');
  * @see Request
  * 
  * @package PayPal
- * @category Request
  * @author Guillaume Poirier-Morency <guillaumepoiriermorency@gmail.com> * 
  * @copyright (c) 2012, Hète.ca Inc.
  */
@@ -94,6 +93,13 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
     private $_config;
 
     /**
+     * Filters
+     * 
+     * @var array 
+     */
+    private $_filters;
+
+    /**
      * Security token. This avoid request being instanciated from a client to be
      * executed by another.
      * 
@@ -146,6 +152,9 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
         $this->_validation = Validation::factory($this->param())
                 ->rule('securityToken', 'Security::check', array($this->_security_token));
 
+        // Setting labels
+        $this->_validation->labels($this->labels());
+
         // We add custom and basic rules proper to the request
         foreach ($this->rules() as $field => $rules) {
             $this->_validation->rules($field, $rules);
@@ -177,6 +186,10 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
      * @param type $value
      */
     public function param($key = NULL, $value = NULL) {
+
+        // Filter the value
+        // $value = $this->filter($key, $value);
+
         switch ($this->method()) {
             case Request::POST:
                 return $this->post($key, $value);
@@ -187,12 +200,13 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
         }
     }
 
-    /**
-     * Validation rules. Must be implemented by request type.
-     * 
-     * @return array array of rules.
-     */
-    protected abstract function rules();
+    public function bind($key, $value = NULL) {
+        return $this->_validation->bind($key, $value);
+    }
+
+    public function label($field, $label) {
+        return $this->_validation->label($field, $label);
+    }
 
     /**
      * Alias for Validation::rule.
@@ -219,6 +233,65 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
     public function errors($file, array $param = NULL) {
         return $this->_validation->error($file, $param);
     }
+
+    /**
+     * Labels
+     * 
+     * @return array
+     */
+    public function labels() {
+        return array();
+    }
+
+    /**
+     * Run filter on a $key => $value.
+     * 
+     * @todo
+     * @param type $key
+     * @param type $value
+     */
+    private function filter($key, $value = NULL) {
+
+        $filters = $this->filters();
+
+        foreach (Arr::get($filters, $key, array()) as $filter) {
+
+            // Put :value if empty
+            $parameters = Arr::get($filter, 0, array(":value"));
+
+            // Substitution
+            foreach ($parameters as &$parameter) {
+                if (is_string($parameter)) {
+                    $parameter = __($parameter, array(":field" => $key, ":value" => $filter));
+                }
+            }
+
+            // Apply the filter
+            $value = call_user_func_array($filter[0], $parameters);
+        }
+
+        return $value;
+    }
+
+    /**
+     * Filters
+     * 
+     * @return array
+     */
+    public function filters() {
+        return array(
+            "payKey" => array(
+                array("trim")
+            )
+        );
+    }
+
+    /**
+     * Validation rules. Must be implemented by request type.
+     * 
+     * @return array array of rules.
+     */
+    protected abstract function rules();
 
     /**
      * Validates the request based on its rules defined in the rules() function.

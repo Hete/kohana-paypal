@@ -8,10 +8,9 @@ defined('SYSPATH') or die('No direct script access.');
  * @see https://www.x.com/developers/paypal/documentation-tools/api/getexpresscheckoutdetails-api-operation-nvp
  *
  * @package PayPal
- * @category Permissions
+ * @subpackage Permissions
  * @author Guillaume Poirier-Morency
  * @copyright 2012 (c), Hète.ca Inc.
- * @license http://kohanaphp.com/license.html
  */
 class Kohana_PayPal_Permissions_CancelPermissions extends PayPal_Permissions {
 

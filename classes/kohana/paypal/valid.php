@@ -8,9 +8,8 @@ defined('SYSPATH') or die('No direct script access.');
  * @see Valid
  * 
  * @package PayPal
- * @category Valid
  * @author Guillaume Poirier-Morency
- * @copyright Hète.ca  
+ * @copyright (c) 2013, Hète.ca Inc.
  */
 class Kohana_PayPal_Valid extends Valid {
 

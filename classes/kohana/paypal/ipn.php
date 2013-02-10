@@ -12,21 +12,8 @@ defined('SYSPATH') or die('No direct script access.');
  * @author Hète.ca Team
  * @copyright (c) 2013, Hète.ca Inc.
  */
-abstract class Kohana_PayPal_IPN extends Request_PayPal_NVP {
-
-    const VERIFIED = "VERIFIED", INVALID = "INVALID";
-
-    public function __construct($uri = TRUE, HTTP_Cache $cache = NULL, $injected_routes = array(), array $params = array()) {
-
-        // It's a GET request
-        $this->method(static::GET);
-
-        parent::__construct($uri, $cache, $injected_routes, $params);
-
-        // Empty the nvp request for safety
-        $this->param(array());
-    }
-
+abstract class Kohana_PayPal_IPN extends Request_PayPal_IPN {
+    
 }
 
 ?>

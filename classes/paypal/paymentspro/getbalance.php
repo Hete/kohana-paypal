@@ -1,7 +1,9 @@
 <?php
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+defined('SYSPATH') or die('No direct script access.');
+
+class PayPal_PaymentsPro_GetBalance extends Kohana_PayPal_PaymentsPro_GetBalance {
+    
+}
+
 ?>

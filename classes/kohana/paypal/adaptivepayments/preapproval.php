@@ -5,9 +5,10 @@ defined('SYSPATH') or die('No direct script access.');
 /**
  * PayPal Preapproval request.
  * 
+ * @see https://cms.paypal.com/ca/cgi-bin/?cmd=_render-content&content_ID=developer/e_howto_api_APPreapproval
+ * 
  * @package PayPal
- * @category AdaptivePayments
- * @link https://cms.paypal.com/ca/cgi-bin/?cmd=_render-content&content_ID=developer/e_howto_api_APPreapproval
+ * @subpackage AdaptivePayments
  * @author Guillaume Poirier-Morency
  * @copyright (c) 2012, Hète.ca Inc.
  */

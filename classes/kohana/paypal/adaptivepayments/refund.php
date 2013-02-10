@@ -3,7 +3,13 @@
 defined('SYSPATH') or die('No direct script access.');
 
 /**
- * @todo Finish rules for this request
+ * 
+ * @see https://cms.paypal.com/ca/cgi-bin/?cmd=_render-content&content_ID=developer/e_howto_api_APPreapprovalDetails
+ * 
+ * @package PayPal
+ * @subpackage AdaptativePayments
+ * @author Quentin Avedissian <quentin.avedissian@gmail.com>
+ * @copyright (c) 2012, Hète.ca Inc.
  */
 class Kohana_PayPal_AdaptivePayments_Refund extends PayPal_AdaptivePayments {
 

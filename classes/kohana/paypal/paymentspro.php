@@ -6,7 +6,7 @@ defined('SYSPATH') or die('No direct script access.');
  * Base class for Payments Pro api.
  * 
  * @package PayPal
- * @category PaymentsPro
+ * @subpackage PaymentsPro
  * @author Hète.ca Team
  * @copyright (c) 2013, Hète.ca Inc.
  */

@@ -8,7 +8,7 @@ defined('SYSPATH') or die('No direct script access.');
  * @link  https://cms.paypal.com/us/cgi-bin/?cmd=_render-content&content_ID=developer/library_documentation
  *
  * @package PayPal
- * @category Permissions
+ * @subpackage Invoicing
  * @author Guillaume Poirier-Morency
  * @copyright 2012 (c), Hète.ca Inc.
  * @license http://kohanaphp.com/license.html

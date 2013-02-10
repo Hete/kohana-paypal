@@ -4,6 +4,9 @@ defined('SYSPATH') or die('No direct script access.');
 
 /**
  * @link https://cms.paypal.com/ca/cgi-bin/?cmd=_render-content&content_ID=developer/e_howto_api_APPaymentDetails 
+ * 
+ * @package PayPal
+ * @subpackage AdaptivePayments
  */
 class Kohana_PayPal_AdaptivePayments_PaymentDetails extends PayPal_AdaptivePayments {
 

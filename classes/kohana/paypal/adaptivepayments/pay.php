@@ -8,6 +8,7 @@ defined('SYSPATH') or die('No direct script access.');
  * @see https://www.x.com/developers/paypal/documentation-tools/api/pay-api-operation
  * 
  * @package PayPal
+ * @subpackage AdaptivePayments
  * @author Hète.ca Team
  * @copyright (c) 2012, Hète.ca
  */

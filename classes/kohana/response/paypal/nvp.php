@@ -32,7 +32,7 @@ class Kohana_Response_PayPal_NVP extends Response_PayPal {
             // Logging the data in case of..
             $message = "PayPal response failed with code :code and version :version :shortmessage :longmessage";
             $variables = array(
-                ":version" => $this["VERSION"],
+                ":version" => Arr::get($this, "VERSION", Request_PayPal_NVP::NVP_VERSION),
                 ":code" => $this["L_ERRORCODE0"],
                 ":shortmessage" => $this["L_SHORTMESSAGE0"],
                 ":longmessage" => $this["L_LONGMESSAGE0"],

@@ -7,7 +7,7 @@ defined('SYSPATH') or die('No direct script access.');
  * @link https://www.x.com/developers/paypal/documentation-tools/api/setpaymentoptions-api-operation
  * 
  * @package PayPal
- * @category AdaptivePayments
+ * @subpackage AdaptivePayments
  * @author Guillaume Poirier-Morency
  * @copyright 2012 (c), Hète.ca Inc.
  */

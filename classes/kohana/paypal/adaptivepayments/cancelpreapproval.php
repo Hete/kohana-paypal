@@ -7,7 +7,7 @@ defined('SYSPATH') or die('No direct script access.');
  * @link https://www.x.com/developers/paypal/documentation-tools/api/cancelpreapproval-api-operation
  * 
  * @package PayPal
- * @category AdaptativePayments
+ * @subpackage AdaptativePayments
  * @author Quentin Avedissian <quentin.avedissian@gmail.com>
  * @copyright Hète.ca Inc.
  */

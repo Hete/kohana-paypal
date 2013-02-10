@@ -20,7 +20,9 @@ class PayPal_IPN_Test extends Unittest_TestCase {
 
         $response = PayPal::factory("IPN_NotifyValidate", array())->execute();
 
-        $this->assertEquals($response->body(), PayPal_IPN::INVALID);
+        $this->assertEquals($response->response->body(), Response_PayPal_IPN::INVALID);
+        
+        $this->assertEquals($response->response->body(), $response["status"]);
     }
 
 }

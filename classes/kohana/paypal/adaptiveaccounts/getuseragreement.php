@@ -1,7 +1,20 @@
 <?php
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+defined('SYSPATH') or die('No direct script access.');
+
+/**
+ * 
+ * @package PayPal
+ * @subpackage AdaptiveAccounts
+ * @author Hète.ca Team
+ * @copyright (c) 2013, Hète.ca Inc.
  */
+class Kohana_PayPal_AdaptiveAccounts_GetUserAgreement extends PayPal_AdaptiveAccounts {
+
+    protected function rules() {
+        return array();
+    }
+
+}
+
 ?>

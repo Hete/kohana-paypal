@@ -7,7 +7,7 @@ defined('SYSPATH') or die('No direct script access.');
  * @link https://www.x.com/developers/paypal/documentation-tools/api/convertcurrency-api-operation
  * 
  * @package PayPal
- * @category AdaptativePayments
+ * @subpackage AdaptivePayments
  * @author Quentin Avedissian <quentin.avedissian@gmail.com>
  * @copyright Hète.ca Inc.
  */
@@ -21,7 +21,7 @@ class Kohana_PayPal_AdaptivePayments_ConvertCurrency extends PayPal_AdaptivePaym
             ),
             "baseAmountList.currency(0).amount" => array(
                 array("not_empty"),
-                array("numeric")
+                array("PayPal_Valid::numeric")
             ),
             "convertToCurrencyList.currencyCode(0).currencyCode" => array(
                 array("not_empty"),

@@ -6,7 +6,7 @@ defined('SYSPATH') or die('No direct script access.');
  * General tests for the PayPal module.
  * 
  * @package PayPal
- * @category Test
+ * @category Tests
  * @author Guillaume Poirier-Morency <guillaumepoiriermorency@gmail.com>
  */
 class PayPal_Test extends Unittest_TestCase {
