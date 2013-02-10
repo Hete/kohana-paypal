@@ -33,7 +33,7 @@ class Kohana_PayPal_IPN_NotifyValidate extends PayPal_IPN {
             ),
             "test_ipn" => array(
                 array("not_empty"),
-                array("equals", array(":value", (int) ($this->environment() === PayPal::SANDBOX)))
+                array("equals", array(":value", (($this->environment() === PayPal::SANDBOX) ? "1" : "0")))
             ),
             "txn_type" => array(
                 array("not_empty")

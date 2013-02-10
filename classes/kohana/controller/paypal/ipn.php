@@ -28,7 +28,8 @@ class Kohana_Controller_PayPal_IPN extends Controller {
         try {
             PayPal::factory("IPN_NotifyValidate", $this->request->query())->execute();
         } catch (PayPal_Exception $ppe) {
-            throw new HTTP_Exception_401($ppe->getMessage());
+            Log::instance()->add(Log::ERROR, $ppe->getMessage());
+            throw new HTTP_Exception_401("You request were invalid.");
         }
     }
 
@@ -44,6 +45,13 @@ class Kohana_Controller_PayPal_IPN extends Controller {
         $reflective_request->action($this->request->query("txn_type"));
 
         $reflective_request->execute();
+    }
+
+    /**
+     * Example of function to deal with express checkout ipn.
+     */
+    public function action_express_checkout() {
+        $this->response->body("This action is only a test.");
     }
 
 }
