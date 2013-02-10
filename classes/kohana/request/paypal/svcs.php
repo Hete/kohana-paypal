@@ -44,6 +44,7 @@ abstract class Kohana_Request_PayPal_SVCS extends Request_PayPal {
             // Use the environment sub-domain
             $env = $this->_environment . '.';
         }
+
         $unappended = preg_replace("/(Kohana_)?PayPal_/", "", get_class($this));
         // Remove prefix to the class, _ => / and capitalized
         $method = ucfirst(str_replace("_", "/", $unappended));

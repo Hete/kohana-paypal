@@ -44,7 +44,7 @@ class Kohana_Response_PayPal_SOAP extends Response_PayPal {
 
     /**
      * 
-     * @throws PayPal_Exception
+     * @throws PayPal_Validation_Exception
      * @return Response_PayPal_SOAP
      */
     public function check() {
@@ -54,7 +54,7 @@ class Kohana_Response_PayPal_SOAP extends Response_PayPal {
             $message = "PayPal response failed.";
 
             Log::instance()->add(Log::ERROR, $message, NULL);
-            throw new PayPal_Exception($this->request, $this, $message, NULL);
+            throw new PayPal_Validation_Exception($this, $this->request, $this, $message, NULL);
         }
 
         return $this;

@@ -41,7 +41,7 @@ class Kohana_Response_PayPal_SVCS extends Response_PayPal {
                 ":id" => $this["error(0)_errorId"],
             );
             Log::instance()->add(Log::ERROR, $message, $variables);
-            throw new PayPal_Exception($this->request, $this, $message, $variables, (int) $this["error(0)_errorId"]);
+            throw new PayPal_Validation_Exception($this, $this->request, $this, $message, $variables, (int) $this["error(0)_errorId"]);
         }
 
         return $this;

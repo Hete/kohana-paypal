@@ -94,6 +94,7 @@ abstract class Kohana_Response_PayPal extends Validation implements PayPal_Const
     /**
      * Overwritten for auto-completion.
      * 
+     * @throws PayPal_Validation_Exception
      * @return \Response_PayPal
      */
     public function check() {

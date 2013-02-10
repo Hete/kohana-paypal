@@ -38,7 +38,7 @@ class Kohana_Response_PayPal_NVP extends Response_PayPal {
                 ":longmessage" => $this["L_LONGMESSAGE0"],
             );
             Log::instance()->add(Log::ERROR, $message, $variables);
-            throw new PayPal_Exception($this->request, $this, $message, $variables, (int) $this["L_ERRORCODE0"]);
+            throw new PayPal_Validation_Exception($this, $this->request, $this, $message, $variables, (int) $this["L_ERRORCODE0"]);
         }
 
         return $this;
