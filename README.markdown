@@ -85,9 +85,9 @@ try {
 
 </pre>
 
-### Advanced documentation
+## Advanced documentation
 
-## Request
+### Request
 
 Request are inheriting from Kohana_Request and provide all its features in a
 built-in way.
@@ -98,8 +98,6 @@ cleaner.
 
 Also, requests name must not start by PayPal_, again for readability purpose.
 
-### Example
-
 <pre>
 
 $request = PayPal::factory("PaymentsPro_SetExpressCheckout"); // Despites the 
@@ -109,8 +107,6 @@ class is named PayPal_PaymentsPro_SetExpressCheckout
 
 Best way to insert data in a PayPal request is through the param method. Using
 post and query is not recommended: in fact, param will do it for you.
-
-### Example
 
 <pre>
 
@@ -130,14 +126,12 @@ Route parameters, but as no route applies in external requests and param is a
 very appropriate name for the purpose, I have decided to use it as a convenient
 getter/setter for standard request parameters.
 
-## Response
+### Response
 
 The response is a Validation object so you do not (and should not) have to pass
 it in another Validation object to validate it.
 
 Responses are immutable.
-
-### Example
 
 <pre>
 
@@ -153,7 +147,21 @@ inherit from PayPal_Exception) in case of failure.
 
 </pre>
 
-## Some cool approach
+### Protocols
+
+This module suports many different protocols. The most common protocol used to communicate with PayPal is NVP (name-value pair). You do not really have to deal with them as the requests you will be using already inherit from its protocol. Requests will be first all implemented in NVP, then I will have to integrate some changes to be able to switch to SOAP without trouble.
+
+The main issue with SOAP is that it is not uni-dimensional, leading to a real complexity when it comes to validation. Kohana does not have multi-dimensional validation. This is why NVP is much more recommended.
+
+### Why this module is not generic
+
+Each different api requires a class, and each of their requests requires a class too. It is designed this way to provide overloading possibilities at every levels. Let say a constant name is not consistent and changes over the api? It can be overloaded in the specific api where it is different. Also each api requires specific validation rules, so having a class for each allow you to have custom validation any request.
+
+### Why Response_PayPal does not inherit from Response
+
+Response provides nothing but a body() method, which returns the body of PayPal's response. Validating or implementing convenient array access into this object is difficult (you have to create a Validation attribute). By making itself a Validation object, it opens all the Kohana validation possibilities, which is rather useful. Anyway, you would validate your input in another Validation object and probably drop the Response.
+
+### Some cool approach
 
 Let's say you have a group of inputs for a paypal checkout form, you can simply 
 pass it in the request if keys are compatible.
