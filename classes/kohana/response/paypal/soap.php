@@ -5,8 +5,11 @@ defined('SYSPATH') or die('No direct script access.');
 /**
  * 
  * 
+ * @todo implement SOAP protocol
+ * 
  * @package PayPal
- * @category Response
+ * @author Hète.ca Team
+ * @copyright (c) 2013, Hète.ca Inc.
  */
 class Kohana_Response_PayPal_SOAP extends Response_PayPal {
 
@@ -16,7 +19,7 @@ class Kohana_Response_PayPal_SOAP extends Response_PayPal {
      * 
      * @param Response $response
      */
-    public function __construct(Response $response) {
+    public function __construct(Request_PayPal $request, Response $response) {
 
         // Parse SOAP body
 
@@ -29,14 +32,32 @@ class Kohana_Response_PayPal_SOAP extends Response_PayPal {
             
         }
 
-        parent::__construct($response, $output);
-        
+        parent::__construct($request, $response, $output);
+
         $this->rule();
     }
 
     private function read_array(XMLReader $reader) {
 
         $output = array();
+    }
+
+    /**
+     * 
+     * @throws PayPal_Exception
+     * @return Response_PayPal_SOAP
+     */
+    public function check() {
+        // Validate the response
+        if (!parent::check()) {
+            // Logging the data in case of..
+            $message = "PayPal response failed.";
+
+            Log::instance()->add(Log::ERROR, $message, NULL);
+            throw new PayPal_Exception($this->request, $this, $message, NULL);
+        }
+
+        return $this;
     }
 
 }

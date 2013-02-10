@@ -151,7 +151,7 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
             $this->_validation->rules($field, $rules);
         }
     }
-    
+
     /**
      * 
      */
@@ -195,6 +195,9 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
     protected abstract function rules();
 
     /**
+     * Alias for Validation::rule.
+     * 
+     * @see Validation::rule
      * 
      * @param type $field
      * @param type $rule
@@ -206,6 +209,8 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
     }
 
     /**
+     * Access to latest validation errors. Data in here are cleared if you call
+     * check again.
      * 
      * @param type $file
      * @param array $param
@@ -237,6 +242,7 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
 
     /**
      * Returns the API URL for the current environment and method.
+     * 
      * @return string
      */
     public abstract function api_url();
@@ -269,11 +275,21 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
 
     /**
      * Paramètres de redirection générés à partir de la réponse de PayPal.
+     * 
      * @param Response_PayPal $response_data
      * @return array
      */
     protected function redirect_params(Response_PayPal $response_data) {
         return array();
+    }
+
+    /**
+     * Overriden for auto-completion.
+     * 
+     * @return Response_PayPal
+     */
+    public function execute() {
+        return parent::execute();
     }
 
 }

@@ -51,6 +51,11 @@ abstract class Kohana_Request_PayPal_NVP extends Request_PayPal {
         return 'https://api-3t.' . $env . 'paypal.com/nvp';
     }
 
+    /**
+     * 
+     * @return Response_PayPal_NVP
+     * @throws PayPal_Exception
+     */
     public function execute() {
 
         $this->check();
@@ -65,22 +70,9 @@ abstract class Kohana_Request_PayPal_NVP extends Request_PayPal {
 
         $response = parent::execute();
 
-        $paypal_response = new Response_PayPal_NVP($response);
-
-        // Validate the response
-        if (!$paypal_response->check()) {
-
-            // Logging the data in case of..
-            $message = "PayPal response failed with code :code and version :version :shortmessage :longmessage";
-            $variables = array(
-                ":version" => $paypal_response["VERSION"],
-                ":code" => $paypal_response["L_ERRORCODE0"],
-                ":shortmessage" => $paypal_response["L_SHORTMESSAGE0"],
-                ":longmessage" => $paypal_response["L_LONGMESSAGE0"],
-            );
-            Log::instance()->add(Log::ERROR, $message, $variables);
-            throw new PayPal_Exception($this, $paypal_response, $message, $variables, (int) $paypal_response["L_ERRORCODE0"]);
-        }
+        $paypal_response = new Response_PayPal_NVP($this, $response);
+        
+        $paypal_response->check();
 
         $paypal_response->redirect_url = $this->redirect_url($paypal_response);
 

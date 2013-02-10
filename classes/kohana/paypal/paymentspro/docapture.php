@@ -4,7 +4,7 @@ defined('SYSPATH') or die('No direct script access.');
 
 /**
  * 
- * @see elementName
+ * @see https://www.x.com/developers/paypal/documentation-tools/api/docapture-api-operation-nvp
  * 
  * @package PayPal
  * @category PaymentsPro

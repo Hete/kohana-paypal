@@ -57,6 +57,12 @@ abstract class Kohana_Response_PayPal extends Validation implements PayPal_Const
     public $redirect_url;
 
     /**
+     *
+     * @var Request_PayPal 
+     */
+    public $request;
+
+    /**
      * Original response.
      * @var Response 
      */
@@ -66,10 +72,11 @@ abstract class Kohana_Response_PayPal extends Validation implements PayPal_Const
      * 
      * @param Response $response from a PayPal request.
      */
-    public function __construct(Response $response = NULL, array $data = NULL) {
+    public function __construct(Request_PayPal $request, Response $response = NULL, array $data = NULL) {
 
         parent::__construct($data);
 
+        $this->request = $request;
         $this->response = $response;
     }
 
@@ -82,6 +89,15 @@ abstract class Kohana_Response_PayPal extends Validation implements PayPal_Const
      */
     public function data($key = NULL, $default = NULL) {
         return $key === NULL ? parent::data() : Arr::get($this, $key, $default);
+    }
+
+    /**
+     * Overwritten for auto-completion.
+     * 
+     * @return \Response_PayPal
+     */
+    public function check() {
+        return parent::check();
     }
 
 }

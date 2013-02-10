@@ -6,8 +6,9 @@ defined('SYSPATH') or die('No direct script access.');
  * PayPal exception.
  *
  * @package PayPal
- * @author     Guillaume Poirier-Morency
- * @copyright  Hète.ca Inc.
+ * @category Exceptions
+ * @author Guillaume Poirier-Morency
+ * @copyright (c) 2013, Hète.ca Inc.
  * @license    http://kohanaphp.com/license.html
  */
 class Kohana_PayPal_Exception extends Kohana_Exception {

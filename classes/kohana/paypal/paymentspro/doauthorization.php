@@ -4,6 +4,8 @@ defined('SYSPATH') or die('No direct script access.');
 
 /**
  * 
+ * @see https://www.x.com/developers/paypal/documentation-tools/api/doauthorization-api-operation-nvp
+ * 
  * @package PayPal
  * @subpackage PaymentsPro
  * @author Hète.ca Team

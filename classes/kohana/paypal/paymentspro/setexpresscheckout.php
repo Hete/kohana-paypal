@@ -4,6 +4,10 @@ defined('SYSPATH') or die('No direct script access.');
 
 /**
  * 
+ * @see https://www.x.com/developers/paypal/documentation-tools/api/setexpresscheckout-api-operation-nvp
+ * 
+ * @package Paypal
+ * @subpackage PaymentsPro
  */
 class Kohana_PayPal_PaymentsPro_SetExpressCheckout extends PayPal_PaymentsPro {
 

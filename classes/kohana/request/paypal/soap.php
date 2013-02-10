@@ -87,6 +87,10 @@ abstract class Kohana_Request_PayPal_SOAP extends Request_PayPal {
         }
     }
 
+    /**
+     * 
+     * @return Response_PayPal_SOAP
+     */
     public function execute() {
 
         if (Kohana::$profiling) {
@@ -122,7 +126,7 @@ abstract class Kohana_Request_PayPal_SOAP extends Request_PayPal {
 
         $response = parent::execute();
 
-        $parsed = new Response_PayPal_SOAP($response);
+        $parsed = new Response_PayPal_SOAP($this, $response);
 
         if (isset($benchmark)) {
             Profiler::stop($benchmark);

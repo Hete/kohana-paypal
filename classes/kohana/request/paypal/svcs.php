@@ -32,7 +32,7 @@ abstract class Kohana_Request_PayPal_SVCS extends Request_PayPal {
         $this->param('requestEnvelope', '');
         $this->param('requestEnvelope_detailLevel', 'ReturnAll');
         $this->param('requestEnvelope_errorLanguage', $this->config("lang"));
-        
+
         $this->rule("requestEnvelope_errorLanguage", "not_empty");
     }
 
@@ -51,27 +51,20 @@ abstract class Kohana_Request_PayPal_SVCS extends Request_PayPal {
         return 'https://svcs.' . $env . 'paypal.com/' . $method;
     }
 
+    /**
+     * 
+     * @return Response_PayPal_SVCS
+     * @throws PayPal_Exception
+     */
     public function execute() {
 
         $this->check();
 
         $response = parent::execute();
 
-        $paypal_response = new Response_PayPal_SVCS($response);
+        $paypal_response = new Response_PayPal_SVCS($this, $response);
 
-        // Validate the response
-        if (!$paypal_response->check()) {
-
-            // Logging the data in case of..
-            $message = "PayPal response failed with id :id at :category level. :message";
-            $variables = array(
-                ":category" => $paypal_response["error(0)_category"],
-                ":message" => $paypal_response["error(0)_message"],
-                ":id" => $paypal_response["error(0)_errorId"],
-            );
-            Log::instance()->add(Log::ERROR, $message, $variables);
-            throw new PayPal_Exception($this, $paypal_response, $message, $variables, (int) $paypal_response["error(0)_errorId"]);
-        }
+        $paypal_response->check();
 
         // Adding the redirect url to the datas
         $paypal_response->redirect_url = $this->redirect_url($paypal_response);

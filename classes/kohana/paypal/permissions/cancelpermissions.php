@@ -5,7 +5,7 @@ defined('SYSPATH') or die('No direct script access.');
 /**
  * Cancel permissions of a specified token.
  *
- * @link  https://cms.paypal.com/us/cgi-bin/?cmd=_render-content&content_ID=developer/library_documentation
+ * @see https://www.x.com/developers/paypal/documentation-tools/api/getexpresscheckoutdetails-api-operation-nvp
  *
  * @package PayPal
  * @category Permissions
