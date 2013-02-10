@@ -1,0 +1,104 @@
+Fixed IPN!
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+# On branch 3.2/develop
+# Changes to be committed:
+#   (use "git reset HEAD <file>..." to unstage)
+#
+#	modified:   classes/kohana/paypal/adaptiveaccounts.php
+#	modified:   classes/kohana/paypal/adaptiveaccounts/addbankaccount.php
+#	modified:   classes/kohana/paypal/adaptiveaccounts/addpaymentcard.php
+#	modified:   classes/kohana/paypal/adaptiveaccounts/createaccount.php
+#	modified:   classes/kohana/paypal/adaptiveaccounts/getuseragreement.php
+#	modified:   classes/kohana/paypal/adaptiveaccounts/getverifiedstatus.php
+#	modified:   classes/kohana/paypal/adaptiveaccounts/setfundingsourceconfirmed.php
+#	modified:   classes/kohana/paypal/adaptivepayments.php
+#	modified:   classes/kohana/paypal/adaptivepayments/cancelpreapproval.php
+#	modified:   classes/kohana/paypal/adaptivepayments/convertcurrency.php
+#	modified:   classes/kohana/paypal/adaptivepayments/executepayment.php
+#	modified:   classes/kohana/paypal/adaptivepayments/getfundingplans.php
+#	modified:   classes/kohana/paypal/adaptivepayments/getpaymentoptions.php
+#	modified:   classes/kohana/paypal/adaptivepayments/getshippingaddresses.php
+#	modified:   classes/kohana/paypal/adaptivepayments/pay.php
+#	modified:   classes/kohana/paypal/adaptivepayments/paymentdetails.php
+#	modified:   classes/kohana/paypal/adaptivepayments/preapproval.php
+#	modified:   classes/kohana/paypal/adaptivepayments/preapprovaldetails.php
+#	modified:   classes/kohana/paypal/adaptivepayments/refund.php
+#	modified:   classes/kohana/paypal/adaptivepayments/setpaymentoptions.php
+#	modified:   classes/kohana/paypal/constants.php
+#	modified:   classes/kohana/paypal/invoicing.php
+#	modified:   classes/kohana/paypal/invoicing/cancelinvoice.php
+#	modified:   classes/kohana/paypal/invoicing/createandsendinvoice.php
+#	modified:   classes/kohana/paypal/invoicing/createinvoice.php
+#	modified:   classes/kohana/paypal/invoicing/getinvoicedetails.php
+#	modified:   classes/kohana/paypal/invoicing/markinvoiceaspaid.php
+#	modified:   classes/kohana/paypal/invoicing/markinvoiceasrefunded.php
+#	modified:   classes/kohana/paypal/invoicing/markinvoiceasunpaid.php
+#	modified:   classes/kohana/paypal/invoicing/searchinvoice.php
+#	modified:   classes/kohana/paypal/invoicing/sendinvoice.php
+#	modified:   classes/kohana/paypal/invoicing/updateinvoice.php
+#	modified:   classes/kohana/paypal/ipn.php
+#	modified:   classes/kohana/paypal/ipn/notifyvalidate.php
+#	modified:   classes/kohana/paypal/paymentspro.php
+#	modified:   classes/kohana/paypal/paymentspro/addressverify.php
+#	modified:   classes/kohana/paypal/paymentspro/billoutstandingamount.php
+#	modified:   classes/kohana/paypal/paymentspro/callback.php
+#	modified:   classes/kohana/paypal/paymentspro/createbillingagreement.php
+#	modified:   classes/kohana/paypal/paymentspro/createrecurringpaymentsprofile.php
+#	modified:   classes/kohana/paypal/paymentspro/docapture.php
+#	modified:   classes/kohana/paypal/paymentspro/dononreferencedcredit.php
+#	modified:   classes/kohana/paypal/paymentspro/doreauthorization.php
+#	modified:   classes/kohana/paypal/paymentspro/doreferencetransaction.php
+#	modified:   classes/kohana/paypal/paymentspro/getbalance.php
+#	modified:   classes/kohana/paypal/paymentspro/getbillingagreementcustomerdetails.php
+#	modified:   classes/kohana/paypal/paymentspro/managependingtransactionprofilestatus.php
+#	modified:   classes/kohana/paypal/paymentspro/managependingtransactionstatus.php
+#	modified:   classes/kohana/paypal/paymentspro/refundtransaction.php
+#	modified:   classes/kohana/paypal/paymentspro/setcustomerbillingagreement.php
+#	modified:   classes/kohana/paypal/paymentspro/transactionsearch.php
+#	modified:   classes/kohana/paypal/paymentspro/updaterecurringpaymentprofile.php
+#	modified:   classes/kohana/paypal/permissions.php
+#	modified:   classes/kohana/paypal/permissions/cancelpermissions.php
+#	modified:   classes/kohana/paypal/permissions/getaccesstoken.php
+#	modified:   classes/kohana/paypal/permissions/getadvancedpersonaldata.php
+#	modified:   classes/kohana/paypal/permissions/getbasicpersonaldata.php
+#	modified:   classes/kohana/paypal/permissions/getpermissions.php
+#	modified:   classes/kohana/paypal/permissions/requestpermissions.php
+#	modified:   classes/kohana/paypal/valid.php
+#	modified:   classes/kohana/request/paypal.php
+#	new file:   classes/kohana/request/paypal/ipn.php
+#	modified:   classes/kohana/request/paypal/nvp.php
+#	new file:   classes/kohana/response/paypal/ipn.php
+#	modified:   classes/kohana/response/paypal/nvp.php
+#	new file:   classes/paypal/adaptiveaccounts/addbankaccount.php
+#	new file:   classes/paypal/adaptiveaccounts/addpaymentcard.php
+#	new file:   classes/paypal/adaptiveaccounts/createaccount.php
+#	new file:   classes/paypal/adaptiveaccounts/getuseragreement.php
+#	new file:   classes/paypal/adaptiveaccounts/getverifiedstatus.php
+#	new file:   classes/paypal/adaptiveaccounts/setfundingsourceconfirmed.php
+#	modified:   classes/paypal/paymentspro/addressverify.php
+#	modified:   classes/paypal/paymentspro/billoutstandingamount.php
+#	modified:   classes/paypal/paymentspro/callback.php
+#	modified:   classes/paypal/paymentspro/createbillingagreement.php
+#	modified:   classes/paypal/paymentspro/createrecurringpaymentsprofile.php
+#	modified:   classes/paypal/paymentspro/doauthorization.php
+#	modified:   classes/paypal/paymentspro/docapture.php
+#	modified:   classes/paypal/paymentspro/dononreferencedcredit.php
+#	modified:   classes/paypal/paymentspro/doreauthorization.php
+#	modified:   classes/paypal/paymentspro/doreferencetransaction.php
+#	modified:   classes/paypal/paymentspro/getbalance.php
+#	modified:   classes/paypal/paymentspro/getbillingagreementcustomerdetails.php
+#	modified:   classes/paypal/paymentspro/gettransactiondetails.php
+#	modified:   classes/paypal/paymentspro/managependingtransactionprofilestatus.php
+#	modified:   classes/paypal/paymentspro/managependingtransactionstatus.php
+#	modified:   classes/paypal/paymentspro/refundtransaction.php
+#	modified:   classes/paypal/paymentspro/setcustomerbillingagreement.php
+#	modified:   classes/paypal/paymentspro/transactionsearch.php
+#	modified:   classes/paypal/paymentspro/updaterecurringpaymentprofile.php
+#	modified:   classes/paypal/permissions/cancelpermissions.php
+#	new file:   classes/request/paypal/ipn.php
+#	new file:   classes/response/paypal/ipn.php
+#	modified:   tests/paypal.php
+#	modified:   tests/paypal/adaptivepayments.php
+#	modified:   tests/paypal/ipn.php
+#

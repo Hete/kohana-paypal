@@ -3,11 +3,12 @@
 defined('SYSPATH') or die('No direct script access.');
 
 /**
- * PayPay request implementation for NVP protocol.
+ * Class to centralize PayPal IPN requests.
  * 
- * @see https://www.x.com/developers/paypal/documentation-tools/api/NVPAPIOverview
+ * @see https://www.x.com/developers/paypal/documentation-tools/ipn/integration-guide/IPNIntro
  * 
  * @package PayPal
+ * @subpackage IPN
  * @author Hète.ca Team
  * @copyright (c) 2013, Hète.ca Inc.
  */
@@ -19,9 +20,8 @@ abstract class Kohana_Request_PayPal_IPN extends Request_PayPal {
         $this->method(static::GET);
 
         parent::__construct($uri, $cache, $injected_routes, $params);
-        
+
         $this->param("cmd", "_" . $this->_redirect_command);
-        
     }
 
     public function api_url() {

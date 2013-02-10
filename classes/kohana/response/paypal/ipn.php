@@ -1,7 +1,13 @@
 <?php
 
+defined('SYSPATH') or die('No direct script access.');
+
 /**
  * 
+ * @package PayPal
+ * @subpackage IPN
+ * @author Hète.ca
+ * @copyright (c) 2013, Hète.ca Inc.
  */
 class Kohana_Response_PayPal_IPN extends Response_PayPal {
 
@@ -15,7 +21,6 @@ class Kohana_Response_PayPal_IPN extends Response_PayPal {
 
         // Adding default rules
         $this->rule("STATUS", "not_empty");
-        $this->rule("STATUS", "equals", array(":value", static::VERIFIED));
     }
 
 }

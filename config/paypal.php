@@ -27,9 +27,9 @@ return array(
         'ipn' => array(
             'enabled' => TRUE, // If enabled, will automatically register ipn notification
             'receiver' => array(
-                'id' => NULL,
-                'email' => NULL,
-                'country' => NULL 
+                'id' => "28fj8098wjnu",
+                'email' => "foo@foo.com",
+                'country' => "US" 
             ),
             'protocol' => 'http'
         ),
