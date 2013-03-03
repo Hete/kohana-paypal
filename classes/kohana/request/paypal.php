@@ -122,7 +122,7 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
      * @param HTTP_Cache $cache
      * @param array $injected_routes
      */
-    public function __construct($uri = TRUE, HTTP_Cache $cache = NULL, $injected_routes = array(), array $params = array()) {
+    public function __construct($uri = TRUE, HTTP_Cache $cache = NULL, $injected_routes = array(), array $params = array(), array $expected = NULL) {
 
         // Loading current environment
         $this->_environment = Kohana::$config->load("paypal.environment");
@@ -143,7 +143,7 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
             $this->client()->options($key, $value);
         }
 
-        $this->param($params);
+        $this->values($params, $expected);
 
         $this->_security_token = Security::token();
 
@@ -184,11 +184,12 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
      * 
      * @param type $key
      * @param type $value
+     * @param array $expected
      */
     public function param($key = NULL, $value = NULL) {
 
         // Filter the value
-        // $value = $this->filter($key, $value);
+        // $value = $this->filter($key, $value);       
 
         switch ($this->method()) {
             case Request::POST:
@@ -197,6 +198,26 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
                 return $this->query($key, $value);
             default:
                 throw new Kohana_Exception("Method :method is not supported", array(":method" => $this->method()));
+        }
+    }
+
+    /**
+     * 
+     * @param array $values
+     * @param array $expected
+     */
+    public function values(array $values, array $expected = NULL) {
+
+        if ($expected === NULL) {
+            $expected = array_keys($values);
+        }
+
+        foreach ($expected as $field) {
+
+            if (!array_key_exists($field, $values))
+                continue;
+
+            $this->param($field, $values[$field]);
         }
     }
 
