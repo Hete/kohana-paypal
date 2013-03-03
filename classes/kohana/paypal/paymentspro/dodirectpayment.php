@@ -11,6 +11,10 @@ defined('SYSPATH') or die('No direct script access.');
  */
 class Kohana_PayPal_PaymentsPro_DoDirectPayment extends PayPal_PaymentsPro {
 
+    public static $CREDIT_CARD_TYPES = array(
+        "Visa", "MasterCard", "Discover", "Amex", "Maestro"
+    );
+
     protected function rules() {
         return array();
     }
