@@ -163,6 +163,14 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
 
     /**
      * 
+     * @return Validation
+     */
+    public function validation() {
+        return $this->_validation;
+    }
+
+    /**
+     * 
      */
     public function environment() {
         return $this->_environment;
@@ -328,7 +336,7 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
         $this->_validation = $this->_validation->copy($this->param());
 
         if (!$this->_validation->check()) {
-            throw new PayPal_Validation_Exception($this->_validation, $this, NULL, "Paypal request failed to validate :errors", array(":errors" => print_r($this->_validation->errors(), TRUE)));
+            throw new PayPal_Validation_Exception($this->_validation, $this, NULL, "Paypal request failed to validate.");
         }
 
         return $this;

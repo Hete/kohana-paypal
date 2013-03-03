@@ -11,6 +11,7 @@ return array(
     "paypal.paymentspro.dodirectpayment.STREET2" => "Suite de l'adresse",
     "paypal.paymentspro.dodirectpayment.CITY" => "Ville",
     "paypal.paymentspro.dodirectpayment.STATE" => "Province",
+    "paypal.paymentspro.dodirectpayment.COUNTRYCODE" => "Pays",
     "paypal.paymentspro.dodirectpayment.SHIPTOPHONENUM" => "Numéro de téléphone pour la livraison",
     "paypal.paymentspro.dodirectpayment.ACCT" => "Numéro de la carte",
 );
