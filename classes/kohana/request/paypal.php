@@ -125,7 +125,7 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
     public function __construct($uri = TRUE, HTTP_Cache $cache = NULL, $injected_routes = array(), array $params = array(), array $expected = NULL) {
 
         // Loading current environment
-        $this->_environment = Kohana::$config->load("paypal.environment");
+        $this->_environment = PayPal::$default_environment;
 
         // Config for current environment
         $this->_config = Kohana::$config->load('paypal.' . $this->_environment);
