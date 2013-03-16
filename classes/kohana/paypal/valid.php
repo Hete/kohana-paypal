@@ -44,14 +44,25 @@ class Kohana_PayPal_Valid extends Valid {
 
     /**
      * Tells if the value matches PayPal date format.
-     * @param type $str
-     * @return type
+     * @param string $str
+     * @return boolean
      */
     public static function date($str) {
 
         $time = strtotime($str);
 
         return parent::date($str) && (date(PayPal::DATE_FORMAT, $time) === $str | date(PayPal::SHORT_DATE_FORMAT, $time) === $str);
+    }
+
+    /**
+     * Validate a date against a date format.
+     * 
+     * @param string $str
+     * @param string $format
+     * @return boolean
+     */
+    public static function date_format($str, $format) {
+        return parent::date($str) && (Date::formatted_time($str, $format) === $str);
     }
 
     /**

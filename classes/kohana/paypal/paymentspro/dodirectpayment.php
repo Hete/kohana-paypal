@@ -3,12 +3,16 @@
 defined('SYSPATH') or die('No direct script access.');
 
 /**
- * 
+ * Implementation of DoDirectPayment.
  * 
  * @see https://www.x.com/developers/paypal/documentation-tools/api/dodirectpayment-api-operation-nvp
  * 
+ * @todo write a regex for EXPDATE 
+ * 
  * @package PayPal
  * @subpackage PaymentsPro
+ * @author Hète.ca Team
+ * @copyright (c) 2013, Hète.ca Inc.
  */
 class Kohana_PayPal_PaymentsPro_DoDirectPayment extends PayPal_PaymentsPro {
 
@@ -41,7 +45,9 @@ class Kohana_PayPal_PaymentsPro_DoDirectPayment extends PayPal_PaymentsPro {
                 array("max_length", array(":value", 4))
             ),
             "EXPDATE" => array(
-                array("NOT_EMPTY"),
+                array("not_empty"),
+                array("alpha_numeric",),
+                array("exact_length", array(":value", 6))
             ),
             "COUNTRYCODE" => array(
                 array("not_empty"),
@@ -66,7 +72,6 @@ class Kohana_PayPal_PaymentsPro_DoDirectPayment extends PayPal_PaymentsPro {
                 array("phone"),
             ),
             "IPADDRESS" => array(
-                array("not_empty"),
                 array("ip")
             ),
         );
