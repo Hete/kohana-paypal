@@ -17,9 +17,10 @@ class Kohana_PayPal implements PayPal_Constants {
 
     /**
      * Default environment.
+     * 
      * @var string 
      */
-    public static $default_environment = static::SANDBOX;
+    public static $default_environment = "sandbox";
 
     /**
      * Factory method for Request_PayPal object. It is implemented here because

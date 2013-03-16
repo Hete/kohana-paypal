@@ -30,10 +30,10 @@ class PayPal_Test extends Unittest_TestCase {
         $this->assertEquals($request->param(), $request->post());
 
         // Curl key exists
-        $this->assertNotNull($request->config("curl"));
+        $this->assertNotNull($request->config("client"));
 
         // Curl options is at least an array
-        $this->assertTrue(Arr::is_array($request->config("curl.options")));
+        $this->assertTrue(Arr::is_array($request->config("client")));
     }
 
     /**

@@ -12,12 +12,10 @@ return array(
         'signature' => NULL,
         // Static api id for sandbox apps.
         'api_id' => 'APP-80W284485P519543T',
-        // cURL settings
-        'curl' => array(
+        // Client settings
+        'client' => array(
             // Additionnal options
             'options' => array(
-                CURLOPT_SSL_VERIFYPEER => FALSE,
-                CURLOPT_SSL_VERIFYHOST => FALSE,
                 CURLOPT_USERAGENT => "Kohana",
             )
         ),
@@ -28,7 +26,7 @@ return array(
             'receiver' => array(
                 'id' => "28fj8098wjnu",
                 'email' => "foo@foo.com",
-                'country' => "US" 
+                'country' => "US"
             ),
             'protocol' => 'http'
         ),
@@ -40,23 +38,24 @@ return array(
         // PayPal API signature
         'signature' => NULL,
         'api_id' => NULL,
+        // cURL settings
         'curl' => array(
+            // Additionnal options
             'options' => array(
                 CURLOPT_SSL_VERIFYPEER => TRUE,
-                CURLOPT_SSL_VERIFYHOST => TRUE,
                 CURLOPT_USERAGENT => "Kohana",
             )
         ),
         // Language for responses
         'lang' => 'en_US',
         'ipn' => array(
-            'enabled' => TRUE,
+            'enabled' => TRUE, // If enabled, will automatically register ipn notification
             'receiver' => array(
-                'id' => NULL,
-                'email' => NULL,
-                'country' => NULL 
+                'id' => "28fj8098wjnu",
+                'email' => "foo@foo.com",
+                'country' => "US"
             ),
-            'protocol' => 'https'
+            'protocol' => 'http'
         ),
     ),
     'sandbox-beta' => array(
@@ -69,8 +68,6 @@ return array(
         'api_id' => 'APP-80W284485P519543T',
         'curl' => array(
             'options' => array(
-                CURLOPT_SSL_VERIFYPEER => FALSE,
-                CURLOPT_SSL_VERIFYHOST => FALSE,
                 CURLOPT_USERAGENT => "Kohana",
             )
         ),
@@ -81,7 +78,7 @@ return array(
             'receiver' => array(
                 'id' => NULL,
                 'email' => NULL,
-                'country' => NULL 
+                'country' => NULL
             ),
             'protocol' => 'http'
         ),

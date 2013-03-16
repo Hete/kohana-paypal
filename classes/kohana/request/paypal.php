@@ -135,13 +135,8 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
 
         parent::__construct($uri, $cache, $injected_routes);
 
-        // Setting client to curl
-        $this->client(Request_Client_External::factory($this->config("curl.options"), static::REQUEST_CLIENT));
-
         // Custom setup for the cURL client
-        foreach ($this->config("curl.options") as $key => $value) {
-            $this->client()->options($key, $value);
-        }
+        $this->client(Request_Client_External::factory($this->config("client", array())));
 
         $this->values($params, $expected);
 
