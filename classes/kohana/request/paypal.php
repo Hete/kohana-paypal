@@ -58,6 +58,27 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
         'FRIDAY',
         'SATURDAY',
     );
+    
+    /**
+     * Supported months of year.
+     * 
+     * @var array
+     */
+    public static $MONTHS_OF_YEAR = array(
+        "NO_MONTH_SPECIFIED",
+        "JANUARY",
+        "FEBRUARY",
+        "MARCH",
+        "APRIL",
+        "MAY",
+        "JUNE",
+        "JULY",
+        "AUGUST",
+        "SEPTEMBER",
+        "OCTOBER",
+        "NOVEMBER",
+        "DECEMBER",
+    );
 
     /**
      * Required states.
