@@ -59,7 +59,7 @@
                 </div>
 
                 <div class="control-group">
-                    <?php echo Form::label("dodirectpayment[STATE]", __("paypal.paymentspro.dodirectpayment.STATE"), array("id" => "STATE", "class" => "span12")) ?>
+                    <?php echo Form::label("dodirectpayment[STATE]", __("paypal.paymentspro.dodirectpayment.STATE"), array("id" => "STATE")) ?>
                     <?php echo Form::input("dodirectpayment[STATE]", $dodirectpayment->param("STATE"), array("class" => "span12")) ?>
                 </div>
 
@@ -117,10 +117,12 @@
 
     <div class="span4">
 
-        <div class="control-group">
+        <div class="control-group">            
             <?php echo Form::label("ACCT", __("paypal.paymentspro.dodirectpayment.ACCT")) ?>
-            <?php echo Form::input("dodirectpayment[ACCT]", $dodirectpayment->param("ACCT"), array("id" => "ACCT", "class" => "span9")) ?>
-            <?php echo Form::input("dodirectpayment[CVV2]", $dodirectpayment->param("CVV2"), array("id" => "CVV2", "class" => "span3")) ?>
+            <div class="control-input controls-row">
+                <?php echo Form::input("dodirectpayment[ACCT]", $dodirectpayment->param("ACCT"), array("id" => "ACCT", "class" => "span9")) ?>
+                <?php echo Form::input("dodirectpayment[CVV2]", $dodirectpayment->param("CVV2"), array("id" => "CVV2", "class" => "span3")) ?>
+            </div>
         </div>
     </div>
 

@@ -38,7 +38,7 @@ class Kohana_PayPal_PaymentsPro_DoDirectPayment extends PayPal_PaymentsPro {
             ),
             "ACCT" => array(
                 array("not_empty"),
-                array("credit_card")
+                array("credit_card", array(":value", $this->param("CREDITCARDTYPE")))
             ),
             "CVV2" => array(
                 array("not_empty"),
