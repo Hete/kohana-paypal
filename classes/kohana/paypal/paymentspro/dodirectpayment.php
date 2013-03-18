@@ -20,6 +20,17 @@ class Kohana_PayPal_PaymentsPro_DoDirectPayment extends PayPal_PaymentsPro {
         "Visa", "MasterCard", "Discover", "Amex", "Maestro"
     );
 
+    /**
+     * Expected fields from customer. To use with values method.
+     * 
+     * @var array 
+     */
+    public static $EXPECTED = array(
+        "FIRSTNAME", "LASTNAME", "EMAIL", "CREDITCARDTYPE", "ACCT", "CVV2",
+        "EXPDATE", "COUNTRYCODE", "STREET", "STREET2", "CITY", "STATE", "ZIP",
+        "SHIPTOPHONENUM"
+    );
+
     protected function rules() {
         return array(
             "FIRSTNAME" => array(
@@ -68,7 +79,7 @@ class Kohana_PayPal_PaymentsPro_DoDirectPayment extends PayPal_PaymentsPro {
             "ZIP" => array(
                 array("not_empty"),
             ),
-            "SHIPPHONENUM" => array(
+            "SHIPTOPHONENUM" => array(
                 array("phone"),
             ),
             "IPADDRESS" => array(

@@ -16,11 +16,11 @@ defined('SYSPATH') or die('No direct script access.');
  */
 abstract class Kohana_Request_PayPal_SOAP extends Request_PayPal {
 
-    public function __construct() {
+    public function __construct($uri, $cache, $injected_routes, $params, array $expected = NULL) {
 
         $this->method(static::POST);
 
-        parent::__construct($uri, $cache, $injected_routes, $params);
+        parent::__construct($uri, $cache, $injected_routes, $params, $expected);
 
         // Setting up credentials
 

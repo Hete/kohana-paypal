@@ -15,12 +15,12 @@ abstract class Kohana_Request_PayPal_NVP extends Request_PayPal {
 
     const NVP_VERSION = "98.0";
 
-    public function __construct($uri = TRUE, HTTP_Cache $cache = NULL, $injected_routes = array(), array $params = array()) {
+    public function __construct($uri = TRUE, HTTP_Cache $cache = NULL, $injected_routes = array(), array $params = array(), array $expected = NULL) {
 
         // It's a GET request
         $this->method(static::GET);
 
-        parent::__construct($uri, $cache, $injected_routes, $params);
+        parent::__construct($uri, $cache, $injected_routes, $params, $expected);
 
         $parts = explode("_", get_class($this));
 

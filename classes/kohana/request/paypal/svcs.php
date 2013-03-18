@@ -13,12 +13,12 @@ defined('SYSPATH') or die('No direct script access.');
  */
 abstract class Kohana_Request_PayPal_SVCS extends Request_PayPal {
 
-    public function __construct($uri = TRUE, HTTP_Cache $cache = NULL, $injected_routes = array(), array $params = array()) {
+    public function __construct($uri = TRUE, HTTP_Cache $cache = NULL, $injected_routes = array(), array $params = array(), array $expected = NULL) {
 
         // It's a post request
         $this->method(static::POST);
 
-        parent::__construct($uri, $cache, $injected_routes, $params);
+        parent::__construct($uri, $cache, $injected_routes, $params, $expected);
 
         // Setting default headers
         $this->headers('X-PAYPAL-SECURITY-USERID', $this->config("username"));

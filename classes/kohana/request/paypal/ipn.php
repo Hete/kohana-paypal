@@ -14,12 +14,12 @@ defined('SYSPATH') or die('No direct script access.');
  */
 abstract class Kohana_Request_PayPal_IPN extends Request_PayPal {
 
-    public function __construct($uri = TRUE, HTTP_Cache $cache = NULL, $injected_routes = array(), array $params = array()) {
+    public function __construct($uri = TRUE, HTTP_Cache $cache = NULL, $injected_routes = array(), array $params = array(), array $expected = NULL) {
 
         // It's a GET request
         $this->method(static::GET);
 
-        parent::__construct($uri, $cache, $injected_routes, $params);
+        parent::__construct($uri, $cache, $injected_routes, $params, $expected);
 
         $this->param("cmd", "_" . $this->_redirect_command);
     }
