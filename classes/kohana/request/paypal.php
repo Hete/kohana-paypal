@@ -58,7 +58,7 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
         'FRIDAY',
         'SATURDAY',
     );
-    
+
     /**
      * Supported months of year.
      * 
@@ -388,7 +388,7 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
         // Add the command to the parameters
         $params = array('cmd' => '_' . $this->_redirect_command) + $this->redirect_params($response_data);
 
-        return 'https://www.' . $env . 'paypal.com/cgi-bin/webscr?' . http_build_query($params, '', '&');
+        return 'https://www.' . $env . 'paypal.com/cgi-bin/webscr' . URL::query($params, FALSE);
     }
 
     /**
