@@ -243,6 +243,8 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
 
             $this->param($field, $values[$field]);
         }
+        
+        return $this;
     }
 
     public function bind($key, $value = NULL) {
