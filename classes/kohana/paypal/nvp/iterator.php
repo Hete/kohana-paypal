@@ -27,8 +27,8 @@ defined('SYSPATH') or die('No direct script access.');
  */
 class Kohana_PayPal_NVP_Iterator implements Iterator {
 
-    public static function factory(array $data, $prefix) {
-        return new PayPal_NVP_Iterator($data, $prefix);
+    public static function factory(array $data, $regex) {
+        return new PayPal_NVP_Iterator($data, $regex);
     }
 
     /**
@@ -36,17 +36,14 @@ class Kohana_PayPal_NVP_Iterator implements Iterator {
      * @var ArrayIterator
      */
     private $data,
-            $prefix;
+            $regex;
 
-    public function __construct(array $data, $prefix) {
+    public function __construct(array $data, $regex) {
         $this->data = new ArrayIterator($data);
-        $this->prefix = $prefix;
+        $this->regex = $regex;
     }
 
     public function current() {
-        
-        //
-        
         return $this->data->current();
     }
 
@@ -63,7 +60,7 @@ class Kohana_PayPal_NVP_Iterator implements Iterator {
     }
 
     public function valid() {
-        $this->data->valid() && PayPal_Valid::starts_with($this->data->current(), $this->prefix);
+        $this->data->valid() && preg_match("/$this->regex/", $this->data->current());
     }
 
 }
