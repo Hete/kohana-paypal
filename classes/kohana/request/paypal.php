@@ -9,7 +9,7 @@ defined('SYSPATH') or die('No direct script access.');
  * @see Request
  * 
  * @package PayPal
- * @author Guillaume Poirier-Morency <guillaumepoiriermorency@gmail.com> * 
+ * @author Guillaume Poirier-Morency <guillaumepoiriermorency@gmail.com>
  * @copyright (c) 2012, Hète.ca Inc.
  */
 abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants {
@@ -58,7 +58,7 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
         'FRIDAY',
         'SATURDAY',
     );
-    
+
     /**
      * Supported months of year.
      * 
@@ -178,6 +178,7 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
     }
 
     /**
+     * Returns the validation object for this request.
      * 
      * @return Validation
      */
@@ -186,35 +187,31 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
     }
 
     /**
+     * Returns the environment for this request. (ex. sandbox, live).
      * 
+     * @return string
      */
     public function environment() {
         return $this->_environment;
     }
 
     /**
-     * Config access method. Uses Arr::path.
+     * Config access method through Arr::path
      * 
-     * @param string $key
-     * @param string $value
-     * @return type
+     * @see Arr::path    
      */
     public function config($path, $default = NULL, $delimiter = NULL) {
         return Arr::path($this->_config, $path, $default, $delimiter);
     }
 
     /**
-     * Alias for post() method. Defined for retrocompatibility and clearness.
+     * Alias the post() or query() depending on the method (POST or GET) used.
      * 
      * @param type $key
      * @param type $value
      * @param array $expected
      */
     public function param($key = NULL, $value = NULL) {
-
-        // Filter the value
-        // $value = $this->filter($key, $value);       
-
         switch ($this->method()) {
             case Request::POST:
                 return $this->post($key, $value);
@@ -226,9 +223,12 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
     }
 
     /**
+     * Pass values to the request. Expected values are keys that filters which
+     * values are going to be added to the request.
      * 
-     * @param array $values
-     * @param array $expected
+     * @param array $values are key-value pairs being passed to the request 
+     * param() method.
+     * @param array $expected is an array of key to filter values passing.
      */
     public function values(array $values, array $expected = NULL) {
 
@@ -243,7 +243,7 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
 
             $this->param($field, $values[$field]);
         }
-        
+
         return $this;
     }
 
@@ -255,39 +255,12 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
         return $this->_validation->label($field, $label);
     }
 
-    /**
-     * Alias for Validation::rule.
-     * 
-     * @see Validation::rule
-     * 
-     * @param type $field
-     * @param type $rule
-     * @param array $param
-     * @return type
-     */
     public function rule($field, $rule, array $param = NULL) {
         return $this->_validation->rule($field, $rule, $param);
     }
 
-    /**
-     * Access to latest validation errors. Data in here are cleared if you call
-     * check again.
-     * 
-     * @param type $file
-     * @param array $param
-     * @return type
-     */
     public function errors($file, array $param = NULL) {
         return $this->_validation->error($file, $param);
-    }
-
-    /**
-     * Labels
-     * 
-     * @return array
-     */
-    public function labels() {
-        return array();
     }
 
     /**
@@ -321,16 +294,23 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
     }
 
     /**
+     * Labels
+     * 
+     * @todo Implement this method
+     * 
+     * @return array
+     */
+    public function labels() {
+        return array();
+    }
+
+    /**
      * Filters
      * 
      * @return array
      */
     public function filters() {
-        return array(
-            "payKey" => array(
-                array("trim")
-            )
-        );
+        return array();
     }
 
     /**
@@ -387,10 +367,13 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
             $env = $this->_environment . '.';
         }
 
-        // Add the command to the parameters
-        $params = array('cmd' => '_' . $this->_redirect_command) + $this->redirect_params($response_data);
+        // Fetch specific parameters
+        $params = $this->redirect_params($response_data);
 
-        return 'https://www.' . $env . 'paypal.com/cgi-bin/webscr?' . http_build_query($params, '', '&');
+        // Add the cmd 
+        $params["cmd"] = '_' . $this->_redirect_command;
+
+        return "https://www." . $env . "paypal.com/cgi-bin/webscr" . URL::query($params);
     }
 
     /**

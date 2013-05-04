@@ -1,12 +1,22 @@
 <?php
 
+defined('SYSPATH') or die('No direct script access.');
+
+/**
+ * Validation exception for PayPal requests.
+ * 
+ * @package PayPal
+ * @category Exceptions
+ * @author Hète.ca Team
+ * @copyright (c) 2013, Hète.ca Inc.
+ */
 class Kohana_PayPal_Validation_Exception extends PayPal_Exception {
 
     /**
      *
      * @var Validation 
      */
-    private $validation;
+    public $validation;
 
     public function __construct(Validation $validation, Request_PayPal $request, Response_PayPal $response = NULL, $message = "PayPal request failed.", array $variables = NULL, $code = 0) {
 
