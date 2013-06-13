@@ -11,13 +11,17 @@ defined('SYSPATH') or die('No direct script access.');
  */
 class Kohana_PayPal_PaymentsPro_GetExpressCheckoutDetails extends PayPal_PaymentsPro {
 
+    public static function payment_requests(Response_PayPal_NVP $response) {
+        
+    }
+
     /**
      * 
      * @param Response_PayPal_NVP $response
      * @param type $index
      * @return type
      */
-    public static function paymentrequest(Response_PayPal_NVP $response, $index) {
+    public static function payment_request(Response_PayPal_NVP $response, $index) {
 
         // find and format keys
 
@@ -35,7 +39,12 @@ class Kohana_PayPal_PaymentsPro_GetExpressCheckoutDetails extends PayPal_Payment
         return $paymentrequest;
     }
 
+    public static function items(Response_PayPal_NVP $response, $index) {
+        
+    }
+
     /**
+     * 
      * 
      * @param Response_PayPal_NVP $response
      * @param type $index

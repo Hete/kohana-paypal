@@ -95,7 +95,7 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
      * 
      * @var string 
      */
-    protected $_redirect_command = "";
+    protected $_redirect_command = '';
 
     /**
      * Environment (sandbox, live or sandbox-beta). You may change this value
