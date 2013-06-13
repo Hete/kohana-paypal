@@ -9,8 +9,8 @@ defined('SYSPATH') or die('No direct script access.');
  * @author Guillaume Poirier-Morency
  * @copyright Hète.ca Inc.
  */
-interface Kohana_PayPal_Constants {    
-    
+interface Kohana_PayPal_Constants {
+
     /**
      * Environment types.
      */
@@ -36,14 +36,16 @@ interface Kohana_PayPal_Constants {
      */
     const TRUE = 'true', FALSE = 'false';
 
+    const NONE = 'None';
+    
     /**
      * Acknowledgements
      */
-    const SUCCESS = "Success",
+    const SUCCESS =
+    "Success",
             FAILURE = "Failure",
             SUCCESS_WITH_WARNING = "SuccessWithWarning",
             FAILURE_WITH_WARNING = "FailureWithWarning";
-
     // Required states
     const REQUIRED = "REQUIRED", NOT_REQUIRED = "NOT_REQUIRED";
 
