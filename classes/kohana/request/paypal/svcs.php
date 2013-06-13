@@ -13,25 +13,22 @@ defined('SYSPATH') or die('No direct script access.');
  */
 abstract class Kohana_Request_PayPal_SVCS extends Request_PayPal {
 
-    public function __construct($uri = TRUE, HTTP_Cache $cache = NULL, $injected_routes = array(), array $params = array(), array $expected = NULL) {
+    public function __construct($uri = TRUE, HTTP_Cache $cache = NULL, $injected_routes = array(), array $data = array(), array $expected = NULL) {
 
-        // It's a post request
-        $this->method(static::POST);
-
-        parent::__construct($uri, $cache, $injected_routes, $params, $expected);
+        parent::__construct($uri, $cache, $injected_routes, $data, $expected);
 
         // Setting default headers
         $this->headers('X-PAYPAL-SECURITY-USERID', $this->config("username"));
         $this->headers('X-PAYPAL-SECURITY-PASSWORD', $this->config("password"));
         $this->headers('X-PAYPAL-SECURITY-SIGNATURE', $this->config("signature"));
+        $this->headers("X-PAYPAL-APPLICATION-ID", $this->config("api_id"));
         $this->headers('X-PAYPAL-REQUEST-DATA-FORMAT', 'NV');
         $this->headers('X-PAYPAL-RESPONSE-DATA-FORMAT', 'NV');
-        $this->headers("X-PAYPAL-APPLICATION-ID", $this->config("api_id"));
 
         // Setting default post
-        $this->param('requestEnvelope', '');
-        $this->param('requestEnvelope_detailLevel', 'ReturnAll');
-        $this->param('requestEnvelope_errorLanguage', $this->config("lang"));
+        $this->data('requestEnvelope', '');
+        $this->data('requestEnvelope_detailLevel', 'ReturnAll');
+        $this->data('requestEnvelope_errorLanguage', $this->config("lang"));
 
         $this->rule("requestEnvelope_errorLanguage", "not_empty");
     }
@@ -60,6 +57,8 @@ abstract class Kohana_Request_PayPal_SVCS extends Request_PayPal {
     public function execute() {
 
         $this->check();
+        
+        $this->_post = $this->_data;
 
         $response = parent::execute();
 
@@ -78,7 +77,7 @@ abstract class Kohana_Request_PayPal_SVCS extends Request_PayPal {
             ":timestamp" => $paypal_response["responseEnvelope_timestamp"],
         );
 
-        Log::instance()->add(Log::INFO, "PayPal request was completed with :ack :build :correlation_id at :timestamp", $variables);
+        Kohana::$log->add(Log::INFO, "PayPal request was completed with :ack :build :correlation_id at :timestamp", $variables);
 
         if ($paypal_response["responseEnvelope_ack"] === static::SUCCESS_WITH_WARNING) {
             $variables += array(
@@ -87,7 +86,7 @@ abstract class Kohana_Request_PayPal_SVCS extends Request_PayPal {
                 ":message" => $paypal_response["error(0)_message"],
             );
             // In case of SuccessWithWarning, print the warning
-            Log::instance()->add(Log::WARNING, "PayPal request was completed with :ack :build :correlation_id at :timestamp but a warning with id :error_id was raised :message at :category level", $variables);
+            Kohana::$log->add(Log::WARNING, "PayPal request was completed with :ack :build :correlation_id at :timestamp but a warning with id :error_id was raised :message at :category level", $variables);
         }
 
         return $paypal_response;

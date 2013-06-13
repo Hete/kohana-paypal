@@ -35,11 +35,12 @@ class Kohana_PayPal_Valid extends Valid {
 
     /**
      * Validate a float number for PayPal
+     * 
      * @param type $str
      * @return boolean
      */
     public static function numeric($str) {
-        return (bool) preg_match('/^-?+(?=.*[0-9])[0-9]*+' . preg_quote(".") . '?+[0-9]*+$/D', (string) $str);
+        return (bool) preg_match('/^-?+(?=.*[0-9])[0-9]*+' . preg_quote('.') . '?+[0-9]*+$/D', (string) $str);
     }
 
     /**

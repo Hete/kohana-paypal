@@ -32,7 +32,7 @@ class Kohana_Response_PayPal_NVP extends Response_PayPal {
 
     /**
      *      
-     * @return \Kohana_Response_PayPal_NVP the response for builder syntax.
+     * @return Response_PayPal_NVP the response for builder syntax.
      * @throws PayPal_Validation_Exception if the response does not validate.
      */
     public function check() {
