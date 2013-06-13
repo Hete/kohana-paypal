@@ -16,6 +16,14 @@ class Kohana_PayPal_PaymentsPro_SetExpressCheckout extends PayPal_PaymentsPro {
     protected function redirect_params(Response_PayPal $response) {
         return array("token" => $response["TOKEN"]);
     }
+    
+    protected function filters() {
+        return array(
+            'PAYMENTREQUEST_.+_AMT' => array(
+                array('PayPal::number_format') // Number format amounts
+            )
+        );
+    }
 
     protected function rules() {
         return array();

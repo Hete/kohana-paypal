@@ -17,27 +17,24 @@ abstract class Kohana_Request_PayPal_NVP extends Request_PayPal {
 
     public function __construct($uri = TRUE, HTTP_Cache $cache = NULL, $injected_routes = array(), array $params = array(), array $expected = NULL) {
 
-        // It's a GET request
-        $this->method(static::GET);
-
         parent::__construct($uri, $cache, $injected_routes, $params, $expected);
 
-        $parts = explode("_", get_class($this));
+        $parts = explode('_', get_class($this));
 
         $method = $parts[count($parts) - 1];
 
         $method = ucfirst($method);
 
         // Setting the METHOD
-        $this->param("METHOD", $method);
+        $this->param('METHOD', $method);
 
         // Setting credentials
-        $this->param("USER", $this->config("username"));
-        $this->param("PWD", $this->config("password"));
-        $this->param("SIGNATURE", $this->config("signature"));
-        $this->param("VERSION", static::NVP_VERSION);
+        $this->data('USER', $this->config('username'));
+        $this->data('PWD', $this->config('password'));
+        $this->data('SIGNATURE', $this->config('signature'));
+        $this->data('VERSION', static::NVP_VERSION);
     }
-   
+
     public function api_url() {
         if ($this->_environment === 'live') {
             // Live environment does not use a sub-domain
@@ -46,8 +43,8 @@ abstract class Kohana_Request_PayPal_NVP extends Request_PayPal {
             // Use the environment sub-domain
             $env = $this->_environment . '.';
         }
-
-        return 'https://api-3t.' . $env . 'paypal.com/nvp';
+        
+        return URL::site("https://api-3t.{$env}paypal.com/nvp", 'https');
     }
 
     /**
@@ -58,6 +55,9 @@ abstract class Kohana_Request_PayPal_NVP extends Request_PayPal {
     public function execute() {
 
         $this->check();
+        
+        // Update internal post
+        $this->_get = $this->_data;
 
         $data = NULL;
 
@@ -77,23 +77,23 @@ abstract class Kohana_Request_PayPal_NVP extends Request_PayPal {
 
         // Was successful, we store the correlation id and stuff in logs
         $variables = array(
-            ":ack" => $paypal_response["ACK"],
-            ":build" => $paypal_response["BUILD"],
-            ":correlation_id" => $paypal_response["CORRELATIONID"],
-            ":timestamp" => $paypal_response["TIMESTAMP"],
+            ':ack' => $paypal_response['ACK'],
+            ':build' => $paypal_response['BUILD'],
+            ':correlation_id' => $paypal_response['CORRELATIONID'],
+            ':timestamp' => $paypal_response['TIMESTAMP'],
         );
 
-        Log::instance()->add(Log::INFO, "PayPal request was completed with :ack :build :correlation_id at :timestamp", $variables);
+        Kohana::$log->add(Log::INFO, 'PayPal request was completed with :ack :build :correlation_id at :timestamp', $variables);
 
-        if ($paypal_response["ACK"] === static::SUCCESS_WITH_WARNING) {
+        if ($paypal_response['ACK'] === Request_PayPal_NVP::SUCCESS_WITH_WARNING) {
             $variables += array(
-                ":version" => Arr::get($paypal_response, "VERSION", static::NVP_VERSION),
-                ":code" => $paypal_response["L_ERRORCODE0"],
-                ":shortmessage" => $paypal_response["L_SHORTMESSAGE0"],
-                ":longmessage" => $paypal_response["L_LONGMESSAGE0"],
+                ':version' => Arr::get($paypal_response, 'VERSION', Request_PayPal_NVP::NVP_VERSION),
+                ':code' => $paypal_response['L_ERRORCODE0'],
+                ':shortmessage' => $paypal_response['L_SHORTMESSAGE0'],
+                ':longmessage' => $paypal_response['L_LONGMESSAGE0'],
             );
             // In case of SuccessWithWarning, log the warning
-            Log::instance()->add(Log::WARNING, "PayPal request was completed with :ack :build :correlation_id at :timestamp but a warning with code :code and version :version was raised :shortmessage :longmessage", $variables);
+            Kohana::$log->add(Log::WARNING, 'PayPal request was completed with :ack :build :correlation_id at :timestamp but a warning with code :code and version :version was raised :shortmessage :longmessage', $variables);
         }
 
         return $paypal_response;
