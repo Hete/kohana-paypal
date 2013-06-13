@@ -12,13 +12,11 @@ defined('SYSPATH') or die('No direct script access.');
  * @author Hète.ca Team
  * @copyright (c) 2013, Hète.ca Inc.
  */
-class Kohana_PayPal_PaymentsPro_AdressVerify extends PayPal_PaymentsPro {
-    
+class Kohana_PayPal_PaymentsPro_AddressVerify extends PayPal_PaymentsPro {
     /**
      * Indicates whether the address is a confirmed address on file at PayPal.
      */
-    const NONE = 'None',
-            CONFIRMED = 'Confirmed',
+    const CONFIRMED = 'Confirmed',
             UNCONFIRMED = 'Unconfirmed';
 
     /**
@@ -26,8 +24,7 @@ class Kohana_PayPal_PaymentsPro_AdressVerify extends PayPal_PaymentsPro {
      * 
      * Indicates whether the ZIP address matches address information on file at PayPal.
      */
-    const NONE = 'None',
-            MATCHED = 'Matched',
+    const MATCHED = 'Matched',
             UNMATCHED = 'Unmatched';
 
     public function rules() {
