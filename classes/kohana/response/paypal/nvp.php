@@ -7,9 +7,15 @@ defined('SYSPATH') or die('No direct script access.');
  * 
  * @package PayPal
  * @author Hète.ca Team
+ * @copyright (c) 2013, Hète.ca Inc.
  */
 class Kohana_Response_PayPal_NVP extends Response_PayPal {
 
+    /**
+     * 
+     * @param Request_PayPal $request
+     * @param Response $response
+     */
     public function __construct(Request_PayPal $request, Response $response) {
 
         $data = NULL;
@@ -24,6 +30,11 @@ class Kohana_Response_PayPal_NVP extends Response_PayPal {
         $this->rule("ACK", "PayPal_Valid::contained", array(":value", static::$SUCCESS_ACKNOWLEDGEMENTS));
     }
 
+    /**
+     *      
+     * @return \Kohana_Response_PayPal_NVP the response for builder syntax.
+     * @throws PayPal_Validation_Exception if the response does not validate.
+     */
     public function check() {
 
         // Validate the response

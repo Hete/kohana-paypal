@@ -66,6 +66,32 @@ class Kohana_PayPal_Valid extends Valid {
     }
 
     /**
+     * Tells if a string starts with the specified $needle.
+     * @param type $haystack
+     * @param type $needle
+     * @return type
+     */
+    public static function starts_with($haystack, $needle) {
+        $length = strlen($needle);
+        return (substr($haystack, 0, $length) === $needle);
+    }
+
+    /**
+     * Tells if a string ends with the specified $needle.
+     * @param type $haystack
+     * @param type $needle
+     * @return boolean
+     */
+    public static function ends_with($haystack, $needle) {
+        $length = strlen($needle);
+        if ($length == 0) {
+            return true;
+        }
+
+        return (substr($haystack, -$length) === $needle);
+    }
+
+    /**
      * Tells if the specified value is a PayPal supported currency.
      * @deprecated for naming convention, use currency_code instead.
      * @param string $str

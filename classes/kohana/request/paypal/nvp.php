@@ -37,7 +37,7 @@ abstract class Kohana_Request_PayPal_NVP extends Request_PayPal {
         $this->param("SIGNATURE", $this->config("signature"));
         $this->param("VERSION", static::NVP_VERSION);
     }
-
+   
     public function api_url() {
         if ($this->_environment === 'live') {
             // Live environment does not use a sub-domain
