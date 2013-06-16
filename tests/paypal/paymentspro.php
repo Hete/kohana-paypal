@@ -26,7 +26,8 @@ class PayPal_PaymentsPro_Test extends Unittest_TestCase {
         // Une personne physique doit accéder au site de PayPal
         echo $response->redirect_url . "\n";
 
-        $this->token = readline('Enter TOKEN:');
+        $this->token = readline('TOKEN>');
+        $this->payer_id = readline('PAYER_ID>');
     }
 
     /**

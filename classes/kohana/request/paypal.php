@@ -217,7 +217,7 @@ abstract class Kohana_Request_PayPal extends Request implements PayPal_Constants
         }
 
         if ($value === NULL) {
-            return $this->_data[$key];
+            return Arr::get($this->_data, $key);
         }
 
         $this->_data[$key] = $value;
