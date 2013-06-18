@@ -16,6 +16,13 @@ return array(
     "paypal.paymentspro.dodirectpayment.COUNTRYCODE" => "Country",
     "paypal.paymentspro.dodirectpayment.SHIPTOPHONENUM" => "Phone number for shipping",
     "paypal.paymentspro.dodirectpayment.ACCT" => "Credit card number and security number",
+    "paypal.paymentspro.dodirectpayment.websitename" => "This website",
+    "paypal.paymentspro.dodirectpayment.modedetails" => "Learn more...",
+    "paypal.paymentspro.dodirectpayment.address" => "Address",
+    "paypal.paymentspro.dodirectpayment.basicinfo" => "Basic information",
+    "paypal.paymentspro.dodirectpayment.cardinfo" => "Card information",
+    "paypal.paymentspro.dodirectpayment.required" => "* All these fields are required.",
+    "paypal.paymentspro.dodirectpayment.details" => "<strong>:name</strong> uses PayPal &copy; for credit card operations. :link",
 );
 ?>
 

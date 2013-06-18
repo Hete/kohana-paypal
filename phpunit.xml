@@ -4,7 +4,6 @@
          stopOnError="true"
          stopOnFailure="true">
     <testsuite name="PayPal tests">
-        <directory suffix='.php'>tests/</directory>  
-        <directory suffix='.php'>tests/paypal/</directory>  
+        <file>tests/paypal.php</file>
     </testsuite>
 </phpunit>

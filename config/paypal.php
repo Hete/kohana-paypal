@@ -2,8 +2,13 @@
 
 defined('SYSPATH') or die('No direct script access.');
 
+/**
+ * Configuration for PayPal.
+ * 
+ * @package PayPal
+ * @author Guillaume Poirier-Morency <guillaumepoiriermorency@gmail.com>
+ */
 return array(
-    // PayPal environment: live, sandbox, beta-sandbox
     'sandbox' => array(
         // PayPal API and username
         'username' => NULL,
@@ -12,75 +17,60 @@ return array(
         'signature' => NULL,
         // Static api id for sandbox apps.
         'api_id' => 'APP-80W284485P519543T',
-        // Client settings
         'client' => array(
-            // Additionnal options
             'options' => array(
-                CURLOPT_USERAGENT => "Kohana",
+                CURLOPT_USERAGENT => 'Kohana',
             )
         ),
-        // Language for responses
-        'lang' => 'en_US',
-        'ipn' => array(
-            'enabled' => TRUE, // If enabled, will automatically register ipn notification
-            'receiver' => array(
-                'id' => "28fj8098wjnu",
-                'email' => "foo@foo.com",
-                'country' => "US"
-            ),
-            'protocol' => 'http'
-        ),
-    ),
-    'live' => array(
-        // PayPal API and username
-        'username' => NULL,
-        'password' => NULL,
-        // PayPal API signature
-        'signature' => NULL,
-        'api_id' => NULL,
-        // cURL settings
-        'curl' => array(
-            // Additionnal options
-            'options' => array(
-                CURLOPT_SSL_VERIFYPEER => TRUE,
-                CURLOPT_USERAGENT => "Kohana",
-            )
-        ),
-        // Language for responses
-        'lang' => 'en_US',
-        'ipn' => array(
-            'enabled' => TRUE, // If enabled, will automatically register ipn notification
-            'receiver' => array(
-                'id' => "28fj8098wjnu",
-                'email' => "foo@foo.com",
-                'country' => "US"
-            ),
-            'protocol' => 'http'
-        ),
-    ),
-    'sandbox-beta' => array(
-        // PayPal API and username
-        'username' => NULL,
-        'password' => NULL,
-        // PayPal API signature
-        'signature' => NULL,
-        // Static api id for sandbox apps.
-        'api_id' => 'APP-80W284485P519543T',
-        'curl' => array(
-            'options' => array(
-                CURLOPT_USERAGENT => "Kohana",
-            )
-        ),
-        // Language for responses
-        'lang' => 'en_US',
-        'ipn' => array(
-            'enabled' => TRUE,
+        'lang' => 'en_US', // Language for responses
+        'ipn' => array(// Instant payment notification
+            'enabled' => FALSE,
             'receiver' => array(
                 'id' => NULL,
                 'email' => NULL,
                 'country' => NULL
             ),
-            'protocol' => 'http'
+        ),
+    ),
+    'live' => array(
+        'username' => NULL,
+        'password' => NULL,
+        'signature' => NULL,
+        'api_id' => NULL,
+        'client' => array(
+            'options' => array(
+                CURLOPT_SSL_VERIFYPEER => TRUE,
+                CURLOPT_USERAGENT => "Kohana",
+            )
+        ),
+        'lang' => 'en_US',
+        'ipn' => array(
+            'enabled' => FALSE,
+            'receiver' => array(
+                'id' => NULL,
+                'email' => NULL,
+                'country' => NULL
+            ),
+        ),
+    ),
+    'sandbox-beta' => array(
+        'username' => NULL,
+        'password' => NULL,
+        'signature' => NULL,
+        'api_id' => 'APP-80W284485P519543T',
+        'client' => array(
+            'options' => array(
+                CURLOPT_USERAGENT => 'Kohana',
+            )
+        ),
+        'lang' => 'en_US',
+        'ipn' => array(
+            'enabled' => FALSE,
+            'receiver' => array(
+                'id' => NULL,
+                'email' => NULL,
+                'country' => NULL
+            ),
         ),
     ),
 );

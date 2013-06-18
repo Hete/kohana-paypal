@@ -2,7 +2,7 @@
 
 defined('SYSPATH') or die('No direct script access.');
 
-class Response_PayPal extends Kohana_Response_PayPal {
+class PayPal_Callback extends Kohana_PayPal_Callback {
     
 }
 

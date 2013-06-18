@@ -13,14 +13,96 @@ defined('SYSPATH') or die('No direct script access.');
  * @author Guillaume Poirier-Morency <guillaumepoiriermorency@gmail.com>
  * @copyright (c) 2012, Hète.ca Inc.
  */
-class Kohana_PayPal implements PayPal_Constants {
+class Kohana_PayPal {
 
     /**
-     * Default environment.
+     *
+     * @var type PayPal environment.
      * 
-     * @var string 
+     * Can be set to sandbox, live or sandbox-beta. You should preferably use
+     * predefined constants.
      */
-    public static $default_environment = "sandbox";
+    public static $environment = 'sandbox';
+
+    /**
+     * Environment types.
+     */
+
+    const SANDBOX = 'sandbox', LIVE = 'live', SANDBOX_BETA = 'sandbox-beta';
+
+    /**
+     * API version.
+     */
+    public static $API_VERSION = '98.0';
+
+    const TRUE = 'true', FALSE = 'false';
+
+    const NONE = 'None';
+
+    /**
+     * Acknowledgements
+     */
+    const SUCCESS =
+    'Success',
+            SUCCESS_WITH_WARNING = 'SuccessWithWarning',
+            FAILURE = 'Failure',
+            FAILURE_WITH_WARNING = 'FailureWithWarning';
+
+
+    /**
+     * Short date format supported by PayPal.
+     */
+    const SHORT_DATE_FORMAT = 'Y-m-d\T',
+            DATE_FORMAT = 'Y-m-d\TH:i:s.BP';
+
+    /**
+     *
+     * @var array 
+     */
+    public static $ENVIRONMENTS = array(
+        'sandbox',
+        'sandbox-beta',
+        'live'
+    );
+
+    /**
+     * Supported currencies.
+     * 
+     * @var array
+     */
+    public static $CURRENCY_CODES = array('AUD', 'BRL', 'CAD', 'CZK', 'DKK',
+        'EUR', 'HKD', 'HUF', 'ILS', 'JPY', 'MYR', 'MXN', 'NOK', 'NZD', 'PHP',
+        'PLN', 'GBP', 'SGD', 'SEK', 'CHF', 'TWD', 'THB', 'USD');
+
+    /**
+     * Supported days of week.
+     * 
+     * @var array
+     */
+    public static $DAYS_OF_WEEK = array(
+        'NO_DAY_SPECIFIED', 'SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY',
+        'THURSDAY', 'FRIDAY', 'SATURDAY'
+    );
+
+    /**
+     * Supported months of year.
+     * 
+     * @var array
+     */
+    public static $MONTHS_OF_YEAR = array(
+        'NO_MONTH_SPECIFIED', 'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY',
+        'JUNE', 'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'
+    );
+
+    /**
+     * Required states.
+     * 
+     * @var array 
+     */
+    public static $REQUIRED_STATES = array(
+        'REQUIRED',
+        'NOT_REQUIRED'
+    );
 
     /**
      * Factory method for Request_PayPal object. It is implemented here because

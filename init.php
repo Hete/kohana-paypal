@@ -2,8 +2,14 @@
 
 defined('SYSPATH') or die('No direct script access.');
 
-Route::set("ipn", "paypal/ipn(/<action>)")->defaults(array(
-    "controller" => "paypal_ipn",
-    "action" => "index"
-));
+if (Kohana::$config->load("paypal..ipn.enabled") === TRUE) {
+    /**
+     * Instant payment notification.
+     */
+    Route::set('ipn', 'ipn', array(
+    ))->defaults(array(
+        'controller' => 'ipn',
+        'action' => 'index'
+    ));
+}
 ?>
