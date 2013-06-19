@@ -5,9 +5,10 @@ defined('SYSPATH') or die('No direct script access.');
 /**
  * General tests for the PayPal module.
  * 
- * @package PayPal
+ * @package  PayPal
  * @category Tests
- * @author Guillaume Poirier-Morency <guillaumepoiriermorency@gmail.com>
+ * @author   Guillaume Poirier-Morency <guillaumepoiriermorency@gmail.com>
+ * @license  http://kohanaframework.org/license
  */
 class PayPal_Test extends Unittest_TestCase {
 

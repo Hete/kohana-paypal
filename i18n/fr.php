@@ -2,6 +2,14 @@
 
 defined('SYSPATH') or die('No direct script access.');
 
+/**
+ * French translations.
+ * 
+ * @package  PayPal
+ * @category I18n
+ * @author   Guillaume Poirier-Morency <guillaumepoiriermorency@gmail.com>
+ * @license  http://kohanaframework.org/license
+ */
 return array(
     "paypal.month.JANUARY" => "janvier",
     "paypal.month.FEBRUARY" => "février",

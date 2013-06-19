@@ -9,9 +9,10 @@ defined('SYSPATH') or die('No direct script access.');
  * class which provides basic Kohana request features such as post and headers
  * handling.
  * 
- * @package PayPal
- * @author Guillaume Poirier-Morency <guillaumepoiriermorency@gmail.com>
+ * @package   PayPal
+ * @author    Guillaume Poirier-Morency <guillaumepoiriermorency@gmail.com>
  * @copyright (c) 2012, Hète.ca Inc.
+ * @license   http://kohanaframework.org/license
  */
 class Kohana_PayPal {
 

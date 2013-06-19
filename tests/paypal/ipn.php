@@ -8,6 +8,7 @@ defined('SYSPATH') or die('No direct script access.');
  * @package PayPal
  * @subpackage IPN
  * @category Tests
+ * @license http://kohanaframework.org/license
  */
 class PayPal_IPN_Test extends Unittest_TestCase {
 

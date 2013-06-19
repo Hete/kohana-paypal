@@ -6,7 +6,8 @@ defined('SYSPATH') or die('No direct script access.');
  * Configuration for PayPal.
  * 
  * @package PayPal
- * @author Guillaume Poirier-Morency <guillaumepoiriermorency@gmail.com>
+ * @author  Guillaume Poirier-Morency <guillaumepoiriermorency@gmail.com>
+ * @license http://kohanaframework.org/license
  */
 return array(
     'sandbox' => array(

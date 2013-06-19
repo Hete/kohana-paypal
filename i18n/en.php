@@ -2,6 +2,14 @@
 
 defined('SYSPATH') or die('No direct script access.');
 
+/**
+ * English translations.
+ * 
+ * @package  PayPal
+ * @category I18n
+ * @author   Guillaume Poirier-Morency <guillaumepoiriermorency@gmail.com>
+ * @license  http://kohanaframework.org/license
+ */
 return array(
     "paypal.paymentspro.dodirectpayment.FIRSTNAME" => "First name",
     "paypal.paymentspro.dodirectpayment.LASTNAME" => "Last name",

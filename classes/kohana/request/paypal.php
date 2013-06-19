@@ -6,10 +6,11 @@ defined('SYSPATH') or die('No direct script access.');
  * PayPal request. This class inherit from Request to provide all the Kohana's
  * external request features.
  * 
- * @package PayPal
- * @category Requests
- * @author Guillaume Poirier-Morency <guillaumepoiriermorency@gmail.com>
+ * @package   PayPal
+ * @category  Requests
+ * @author    Guillaume Poirier-Morency <guillaumepoiriermorency@gmail.com>
  * @copyright (c) 2013, Hète.ca Inc.
+ * @license   http://kohanaframework.org/license
  */
 abstract class Kohana_Request_PayPal extends Request {
 
@@ -157,6 +158,8 @@ abstract class Kohana_Request_PayPal extends Request {
             return Arr::get($this->_data, $key);
         }
 
+        $value = $this->run_filter($key, $value);
+
         $this->_data[$key] = $value;
 
         return $this;
@@ -173,47 +176,67 @@ abstract class Kohana_Request_PayPal extends Request {
             if (!array_key_exists($field, $values))
                 continue;
 
-            $this->_data[$field] = $values[$field];
+            $this->data($field, $values[$field]);
         }
 
         return $this;
     }
 
-    protected function _filter_apply() {
+    protected function run_filter($field, $value) {
 
-        foreach ($this->_filters as $field => $filters) {
+        $filters = $this->filters();
 
-            $keys = preg_grep("/^$field$/", array_keys($this->_data));
+        // Get the filters for this column
+        $wildcards = empty($filters[TRUE]) ? array() : $filters[TRUE];
 
-            foreach ($keys as $key) {
+        // Merge in the wildcards
+        $filters = empty($filters[$field]) ? $wildcards : array_merge($wildcards, $filters[$field]);
 
-                $value = $this->_data[$key];
+        // Bind the field name and model so they can be used in the filter method
+        $_bound = array
+            (
+            ':field' => $field,
+            ':model' => $this,
+        );
 
-                // Apply each filters
-                foreach ($filters as $filter) {
+        foreach ($filters as $array) {
+            // Value needs to be bound inside the loop so we are always using the
+            // version that was modified by the filters that already ran
+            $_bound[':value'] = $value;
 
-                    $params = Arr::get($filter, 1, array(':value'));
+            // Filters are defined as array($filter, $params)
+            $filter = $array[0];
+            $params = Arr::get($array, 1, array(':value'));
 
-                    $variables = array(
-                        ':field' => $key,
-                        ':value' => $value
-                    );
-
-                    foreach ($params as &$param) {
-                        $param = __($param, $variables);
-                    }
-
-                    $value = call_user_func_array($filter[0], $params);
+            foreach ($params as $key => $param) {
+                if (is_string($param) AND array_key_exists($param, $_bound)) {
+                    // Replace with bound value
+                    $params[$key] = $_bound[$param];
                 }
+            }
 
-                $this->data[$key] = $value;
+            if (is_array($filter) OR !is_string($filter)) {
+                // This is either a callback as an array or a lambda
+                $value = call_user_func_array($filter, $params);
+            } elseif (strpos($filter, '::') === FALSE) {
+                // Use a function call
+                $function = new ReflectionFunction($filter);
+
+                // Call $function($this[$field], $param, ...) with Reflection
+                $value = $function->invokeArgs($params);
+            } else {
+                // Split the class and method of the rule
+                list($class, $method) = explode('::', $filter, 2);
+
+                // Use a static method call
+                $method = new ReflectionMethod($class, $method);
+
+                // Call $Class::$method($this[$field], $param, ...) with Reflection
+                $value = $method->invokeArgs(NULL, $params);
             }
         }
-    }
 
-    public function filter($field, $filter, $param = NULL) {
-        $this->_filters[$field][] = array($filter, $param);
-        return $this;
+        return $value;
     }
 
     /**
@@ -328,10 +351,7 @@ abstract class Kohana_Request_PayPal extends Request {
      * 
      * @return Response_PayPal
      */
-    public function execute() {
-
-        // Apply filters
-        $this->_filter_apply();
+    public function execute() {   
 
         // Validate the request
         $this->check();

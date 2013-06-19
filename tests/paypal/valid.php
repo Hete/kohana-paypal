@@ -3,8 +3,11 @@
 defined('SYSPATH') or die('No direct script access.');
 
 /**
- * @package PayPal
+ * 
+ * 
+ * @package  PayPal
  * @category Tests
+ * @license  http://kohanaframework.org/license
  */
 class PayPal_Valid_Test extends Unittest_TestCase {
 

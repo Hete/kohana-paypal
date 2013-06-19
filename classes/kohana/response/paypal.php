@@ -9,10 +9,11 @@ defined('SYSPATH') or die('No direct script access.');
  * 
  * @see Validation
  * 
- * @package PayPal
- * @category Response
- * @author Guillaume Poirier-Morency <guillaumepoiriermorency@gmail.com>
+ * @package   PayPal
+ * @category  Response
+ * @author    Guillaume Poirier-Morency <guillaumepoiriermorency@gmail.com>
  * @copyright (c) 2012, Hète.ca Inc.
+ * @license   http://kohanaframework.org/license
  */
 class Kohana_Response_PayPal extends Validation {
 
