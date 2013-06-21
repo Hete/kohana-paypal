@@ -182,6 +182,15 @@ abstract class Kohana_Request_PayPal extends Request {
         return $this;
     }
 
+    /**
+     * 
+     * 
+     * @link http://kohanaframework.org/3.3/guide-api/ORM#run_filter
+     * 
+     * @param string $field
+     * @param string $value
+     * @return string
+     */
     protected function run_filter($field, $value) {
 
         $filters = $this->filters();
@@ -351,7 +360,7 @@ abstract class Kohana_Request_PayPal extends Request {
      * 
      * @return Response_PayPal
      */
-    public function execute() {   
+    public function execute() {
 
         // Validate the request
         $this->check();
