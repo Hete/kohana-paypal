@@ -80,7 +80,7 @@ abstract class Kohana_Request_PayPal extends Request {
         $this->_data['VERSION'] = PayPal::$API_VERSION;
 
         // Custom setup for the cURL client
-        $this->client(Request_Client_External::factory($this->_config['client']));
+        $this->client(Request_Client_External::factory($this->_config['curl_options']));
 
         $this->values($data, $expected);
 

@@ -18,10 +18,8 @@ return array(
         'signature' => NULL,
         // Static api id for sandbox apps.
         'api_id' => 'APP-80W284485P519543T',
-        'client' => array(
-            'options' => array(
-                CURLOPT_USERAGENT => 'Kohana',
-            )
+        'curl_options' => array(
+            CURLOPT_USERAGENT => 'Kohana',
         ),
         'lang' => 'en_US', // Language for responses
         'ipn' => array(// Instant payment notification
@@ -38,11 +36,9 @@ return array(
         'password' => NULL,
         'signature' => NULL,
         'api_id' => NULL,
-        'client' => array(
-            'options' => array(
-                CURLOPT_SSL_VERIFYPEER => TRUE,
-                CURLOPT_USERAGENT => "Kohana",
-            )
+        'curl_options' => array(
+            CURLOPT_SSL_VERIFYPEER => TRUE,
+            CURLOPT_USERAGENT => 'Kohana',
         ),
         'lang' => 'en_US',
         'ipn' => array(
@@ -59,10 +55,8 @@ return array(
         'password' => NULL,
         'signature' => NULL,
         'api_id' => 'APP-80W284485P519543T',
-        'client' => array(
-            'options' => array(
-                CURLOPT_USERAGENT => 'Kohana',
-            )
+        'curl_options' => array(
+            CURLOPT_USERAGENT => 'Kohana',
         ),
         'lang' => 'en_US',
         'ipn' => array(
