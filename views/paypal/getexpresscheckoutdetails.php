@@ -1,3 +1,4 @@
+<?php defined('SYSPATH') or die('No direct script access.'); ?>
 
 <table class="table table-condensed table-bordered">
 
@@ -13,7 +14,7 @@
 
     <?php while ($payment = Arr::get($getexpresscheckoutdetails, "PAYMENTREQUEST_" . $payment_index . "_AMT")): ?>
 
-        <?php $payment_details = PayPal_PaymentsPro_GetExpressCheckoutDetails::paymentrequest($getexpresscheckoutdetails, $payment_index) ?>    
+        <?php $payment_details = PayPal_GetExpressCheckoutDetails::payment_request($getexpresscheckoutdetails, $payment_index) ?>    
 
         <tr>
             <th colspan="5"><?php echo Arr::get($payment_details, "DESC", "Détails du paiement") ?></th>
@@ -21,9 +22,9 @@
 
         <?php $product_index = 0 ?>
 
-        <?php while ($product = Arr::get($getexpresscheckoutdetails, "L_PAYMENTREQUEST_" . $payment_index . "_AMT$product_index")): ?>
+        <?php while ($product = Arr::get($getexpresscheckoutdetails, "L_PAYMENTREQUEST_$payment_index" . "_AMT$product_index")): ?>
 
-            <?php $item_details = PayPal_PaymentsPro_GetExpressCheckoutDetails::item($getexpresscheckoutdetails, $payment_index, $product_index) ?>    
+            <?php $item_details = PayPal_GetExpressCheckoutDetails::item($getexpresscheckoutdetails, $payment_index, $product_index) ?>    
 
             <tr>
                 <td><?php echo Arr::get($item_details, "NAME") ?></td>         
@@ -40,19 +41,29 @@
 
         <?php $payment_index++ ?>          
 
-        <tr class="text-right">
-            <th colspan="4">Sous-total</th>
-            <td><?php echo Num::format(Arr::get($payment_details, "ITEMAMT"), 2, TRUE) ?> <?php echo Arr::get($payment_details, "CURRENCYCODE") ?></td>
+        <tr>
+            <th class="text-right" colspan="4">Sous-total</th>
+            <td><?php echo Num::format(Arr::get($payment_details, 'ITEMAMT'), 2, TRUE) ?> <?php echo Arr::get($payment_details, "CURRENCYCODE") ?></td>
         </tr>
 
-        <tr class="text-right">
-            <th colspan="4">Total des taxes</th>
+        <tr>
+            <th class="text-right" colspan="4">Manutention</th>
+            <td><?php echo Num::format(Arr::get($payment_details, "HANDLINGAMT"), 2, TRUE) ?> <?php echo Arr::get($payment_details, "CURRENCYCODE") ?></td>
+        </tr>
+
+        <tr>
+            <th class="text-right" colspan="4">Livraison</th>
+            <td><?php echo Num::format(Arr::get($payment_details, "SHIPPINGAMT"), 2, TRUE) ?> <?php echo Arr::get($payment_details, "CURRENCYCODE") ?></td>
+        </tr>
+
+        <tr>
+            <th class="text-right" colspan="4">Taxes</th>
             <td><?php echo Num::format(Arr::get($payment_details, "TAXAMT"), 2, TRUE) ?> <?php echo Arr::get($payment_details, "CURRENCYCODE") ?></td>
         </tr>
 
-        <tr class="text-right">
-            <th colspan="4">Total</th>
-            <td><?php echo Num::format(Arr::get($payment_details, "AMT"), 2, TRUE) ?> <?php echo Arr::get($payment_details, "CURRENCYCODE") ?></td>
+        <tr>
+            <th class="text-right" colspan="4">Total</th>
+            <td><?php echo Num::format(Arr::get($payment_details, 'AMT'), 2, TRUE) ?> <?php echo Arr::get($payment_details, "CURRENCYCODE") ?></td>
         </tr>
 
     <?php endwhile; ?>

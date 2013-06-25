@@ -136,8 +136,8 @@
                 $months = array();
                 $years = array();
 
-                foreach (range(0, 11) as $month) {
-                    $months[$month] = ucfirst(__("paypal.month." . PayPal::$MONTHS_OF_YEAR[$month + 1]));
+                foreach (range(0, 12)as $month) {
+                    $months[str_pad($month, 2, '0', STR_PAD_LEFT)] = ucfirst(__("paypal.month." . PayPal::$MONTHS_OF_YEAR[$month]));
                 }
 
                 foreach (range($this_year, $this_year + 20) as $year) {
@@ -145,9 +145,9 @@
                 }
                 ?>
 
-                <?php echo Form::select("", $months, substr($dodirectpayment->param("EXPDATE"), 0, 2), array("class" => "dodirecypayment-month span8", 'onchange' => 'DoDirectPayment.onDateChange()')) ?>
-                <?php echo Form::select("", $years, substr($dodirectpayment->param("EXPDATE"), 2), array("class" => "dodirecypayment-year span4", 'onchange' => 'DoDirectPayment.onDateChange()')) ?>
-                <?php echo Form::hidden("dodirectpayment[EXPDATE]", $dodirectpayment->param("EXPDATE"), array("id" => "EXPDATE", "class" => "span12")) ?>
+                <?php echo Form::select('dodirectpayment[EXPMONTH]', $months, substr($dodirectpayment->data("EXPDATE"), 0, 2), array("class" => "span8", 'onchange' => 'DoDirectPayment.onDateChange(this)')) ?>
+                <?php echo Form::select('dodirectpayment[EXPYEAR]', $years, substr($dodirectpayment->data("EXPDATE"), 2), array("class" => "span4", 'onchange' => 'DoDirectPayment.onDateChange(this)')) ?>
+                <?php echo Form::hidden('dodirectpayment[EXPDATE]', $dodirectpayment->data("EXPDATE"), array("class" => "span12")) ?>
             </div>
         </div>
     </div>
@@ -157,12 +157,21 @@
 <script src="//code.jquery.com/jquery-1.10.1.min.js" type="text/javascript"></script>
 
 <script type="text/javascript">
+
+    /**
+     * 
+     * @type type
+     */
     var DoDirectPayment = {
+        /**
+         * 
+         * @returns {undefined}
+         */
         onDateChange: function() {
-            var date = new Date();
-            date.setMonth($(".dodirecypayment-expdate").children("select.dodirecypayment-month").first().val());
-            date.setYear($(".dodirecypayment-expdate").children("select.dodirecypayment-year").first().val());
-            $(".dodirecypayment-expdate").children("input[name='dodirectpayment[EXPDATE]']").val(date.toString("MMyyyy"));
+            var month = $("[name='dodirectpayment[EXPMONTH]']").val();
+            var year = $("[name='dodirectpayment[EXPYEAR]']").val();
+            $("[name='dodirectpayment[EXPDATE]']").val(month + year);
         }
     };
+    DoDirectPayment.onDateChange();
 </script>

@@ -27,7 +27,7 @@ class Kohana_PayPal_GetExpressCheckoutDetails extends Request_PayPal {
      * @param type $index
      * @return type
      */
-    public static function payment_request(Response_PayPal_NVP $response, $index) {
+    public static function payment_request(Response_PayPal $response, $index) {
 
         // find and format keys
 
@@ -45,7 +45,7 @@ class Kohana_PayPal_GetExpressCheckoutDetails extends Request_PayPal {
         return $paymentrequest;
     }
 
-    public static function items(Response_PayPal_NVP $response, $index) {
+    public static function items(Response_PayPal $response, $index) {
         
     }
 
@@ -56,7 +56,7 @@ class Kohana_PayPal_GetExpressCheckoutDetails extends Request_PayPal {
      * @param type $index
      * @return type
      */
-    public static function item(Response_PayPal_NVP $response, $index, $product_index) {
+    public static function item(Response_PayPal $response, $index, $product_index) {
 
         // find and format keys
 
