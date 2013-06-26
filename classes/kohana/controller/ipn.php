@@ -5,7 +5,7 @@ defined('SYSPATH') or die('No direct script access.');
 /**
  * Controller to deal with IPN requests.
  * 
- * @see https://www.x.com/developers/paypal/documentation-tools/ipn/integration-guide/IPNIntro
+ * @link https://developer.paypal.com/webapps/developer/docs/classic/ipn/integration-guide/IPNandPDTVariables/
  * 
  * @package   PayPal
  * @category  Controllers
@@ -15,21 +15,27 @@ defined('SYSPATH') or die('No direct script access.');
  */
 class Kohana_Controller_IPN extends Controller {
 
-    public function action_index() {
+    public function before() {
 
-        try {
-            $method_name = PayPal::factory('NotifyValidate', $this->request->query())
-                    ->execute()
-                    ->data('txn_type');
+        parent::before();
 
-            if (!method_exists($this, $method_name)) {
-                throw new HTTP_Exception_404('Action not supported.');
-            }
-        } catch (Validation_Exception $ve) {
-            throw new HTTP_Exception_401($ve->getMessage());
+        $environment = PayPal::$default_environment === 'live' ? '' : PayPal::$default_environment . '.';
+
+        /**
+         * Validate data against PayPal.
+         */
+        $status = Request::factory('https://www.' . $environment . 'paypal.com/cgi-bin/webscr')
+                ->query($this->request->post())
+                ->query('cmd', '_notify-validate')
+                ->execute()
+                ->body();
+
+        if ($status !== 'VERIFIED') {
+            throw new HTTP_Exception_401('Post data does not match against PayPal™.');
         }
 
-        $this->{'action_' . $method_name};
+        // Update action to be called
+        $this->request->action($this->request->post('txn_type'));
     }
 
     /**
