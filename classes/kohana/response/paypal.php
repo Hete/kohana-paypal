@@ -89,6 +89,12 @@ class Kohana_Response_PayPal extends Validation {
         ));
     }
 
+    /**
+     * 
+     * @param string $key
+     * @param variant $default
+     * @return variant
+     */
     public function data($key = NULL, $default = NULL) {
 
         if ($key === NULL) {
@@ -108,14 +114,13 @@ class Kohana_Response_PayPal extends Validation {
         // Validate the response
         if (!parent::check()) {
 
-            $message = 'Failed to validate PayPal response using :environment :version. An :code :severity occured. :shortmessage. :longmessage';
+            $message = 'Failed to validate PayPal response using :environment :version. An :code :severity occured. :longmessage';
             $variables = array(
                 ':environment' => PayPal::$environment,
                 ':version' => PayPal::$API_VERSION,
                 ':ack' => $this->data('ACK'),
                 ':code' => $this->data('L_ERRORCODE0'),
                 ':severity' => $this->data('L_SEVERITYCODE0'),
-                ':shortmessage' => $this->data('L_SHORTMESSAGE0'),
                 ':longmessage' => $this->data('L_LONGMESSAGE0')
             );
 

@@ -21,7 +21,25 @@ class Kohana_PayPal_SetExpressCheckout extends Request_PayPal {
 
     public function filters() {
         return array(
-            '.*AMT' => array(
+            'PAYMENTREQUEST_0_ITEMAMT' => array(
+                array('PayPal::number_format')
+            ),
+            'PAYMENTREQUEST_0_SHIPPINGAMT' => array(
+                array('PayPal::number_format')
+            ),
+            'PAYMENTREQUEST_0_INSURANCEAMT' => array(
+                array('PayPal::number_format')
+            ),
+            'PAYMENTREQUEST_0_SHIPDISCAMT' => array(
+                array('PayPal::number_format')
+            ),
+            'PAYMENTREQUEST_0_HANDLINGAMT' => array(
+                array('PayPal::number_format')
+            ),
+            'PAYMENTREQUEST_0_TAXAMT' => array(
+                array('PayPal::number_format')
+            ),
+            'PAYMENTREQUEST_0_AMT' => array(
                 array('PayPal::number_format')
             )
         );

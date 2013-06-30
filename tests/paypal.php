@@ -43,6 +43,17 @@ class PayPal_Test extends Unittest_TestCase {
 
         $this->assertInternalType('array', $request->data());
 
+        $this->assertInstanceOf('Validation', $request->validation());
+
+        // Testing the data function
+        $request->data('foo', 'bar');
+        $this->assertEquals($request['foo'], 'bar');
+        $this->assertEquals($request->data('foo'), 'bar');
+
+        // Filters testing
+        $request->data('PAYMENTREQUEST_0_AMT', 22.992387283728);
+        $this->assertEquals($request['PAYMENTREQUEST_0_AMT'], PayPal::number_format(22.992387283728));
+
         // API url must be a valid url
         $this->assertTrue(Valid::url($request->api_url()));
     }

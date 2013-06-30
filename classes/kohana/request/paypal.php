@@ -12,7 +12,7 @@ defined('SYSPATH') or die('No direct script access.');
  * @copyright (c) 2013, Hète.ca Inc.
  * @license   http://kohanaframework.org/license
  */
-abstract class Kohana_Request_PayPal extends Request {
+abstract class Kohana_Request_PayPal extends Request implements ArrayAccess {
 
     /**
      * Redirection command (if appliable).
@@ -56,9 +56,8 @@ abstract class Kohana_Request_PayPal extends Request {
      * Constructor for the PayPal request. Using the factory method in the 
      * PayPal class is a much better approach.
      * 
-     * @param array $data
-     * @param HTTP_Cache $cache
-     * @param array $injected_routes
+     * @param array $data are initial data for this request.
+     * @param array $expected is an array of keys to filter the initial data.
      */
     public function __construct($uri = TRUE, HTTP_Cache $cache = NULL, $injected_routes = array(), array $data = NULL, array $expected = NULL) {
 
@@ -73,18 +72,20 @@ abstract class Kohana_Request_PayPal extends Request {
         $parts = explode('_', get_class($this));
         $method = $parts[count($parts) - 1];
 
-        $this->_data['METHOD'] = $method;
-        $this->_data['USER'] = $this->_config['username'];
-        $this->_data['PWD'] = $this->_config['password'];
-        $this->_data['SIGNATURE'] = $this->_config['signature'];
-        $this->_data['VERSION'] = PayPal::$API_VERSION;
+        $this['METHOD'] = $method;
+        $this['USER'] = $this->_config['username'];
+        $this['PWD'] = $this->_config['password'];
+        $this['SIGNATURE'] = $this->_config['signature'];
+        $this['VERSION'] = PayPal::$API_VERSION;
 
         // Custom setup for the cURL client
         $this->client(Request_Client_External::factory($this->_config['curl_options']));
 
         $this->values($data, $expected);
 
-        // Load validations
+        // Add filters
+        $this->_filters = $this->filters();
+
         $this->_validation = Validation::factory($this->_data);
 
         // Add labels
@@ -94,9 +95,6 @@ abstract class Kohana_Request_PayPal extends Request {
         foreach ($this->rules() as $field => $rules) {
             $this->_validation->rules($field, $rules);
         }
-
-        // Add filters
-        $this->_filters = $this->filters();
     }
 
     protected function api_environment() {
@@ -134,7 +132,7 @@ abstract class Kohana_Request_PayPal extends Request {
     }
 
     /**
-     * Paramètres de redirection générés à partir de la réponse de PayPal.
+     * Redirection parameters.
      * 
      * @param Response_PayPal $response_data
      * @return array
@@ -143,10 +141,32 @@ abstract class Kohana_Request_PayPal extends Request {
         return array();
     }
 
+    public function offsetExists($offset) {
+        return isset($this->_data[$offset]);
+    }
+
+    public function offsetGet($offset) {
+        return $this->_data[$offset];
+    }
+
+    public function offsetSet($offset, $value) {
+        $this->_data[$offset] = $this->run_filter($offset, $value);
+    }
+
+    public function offsetUnset($offset) {
+        unset($this->_data[$offset]);
+    }
+
     public function data($key = NULL, $value = NULL) {
 
         if (is_array($key)) {
-            $this->_data = $key;
+
+            $this->_data = array();
+
+            foreach ($key as $field => $_value) {
+                $this[$field] = $_value;
+            }
+
             return $this;
         }
 
@@ -155,12 +175,10 @@ abstract class Kohana_Request_PayPal extends Request {
         }
 
         if ($value === NULL) {
-            return Arr::get($this->_data, $key);
+            return Arr::get($this, $key);
         }
 
-        $value = $this->run_filter($key, $value);
-
-        $this->_data[$key] = $value;
+        $this[$key] = $value;
 
         return $this;
     }
@@ -176,7 +194,7 @@ abstract class Kohana_Request_PayPal extends Request {
             if (!array_key_exists($field, $values))
                 continue;
 
-            $this->data($field, $values[$field]);
+            $this[$field] = $values[$field];
         }
 
         return $this;
@@ -324,11 +342,10 @@ abstract class Kohana_Request_PayPal extends Request {
      */
     public function check() {
 
-        // Update the validation
         $this->_validation = $this->_validation->copy($this->_data);
 
         if (!$this->_validation->check()) {
-            throw new Validation_Exception($this->_validation, 'Failed to validate PayPal request using :environment :version', array(
+            throw new Validation_Exception($this->_validation, 'Failed to validate PayPal request using :environment :version.', array(
         ':environment' => PayPal::$environment,
         ':version' => PayPal::$API_VERSION
             ));
