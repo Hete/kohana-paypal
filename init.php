@@ -2,7 +2,7 @@
 
 defined('SYSPATH') or die('No direct script access.');
 
-if (Kohana::$config->load("paypal..ipn.enabled") === TRUE) {
+if (Kohana::$config->load('paypal.' . PayPal::$environment . '.ipn_enabled') === TRUE) {
     /**
      * Instant payment notification.
      */

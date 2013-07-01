@@ -19,12 +19,15 @@ class Kohana_Controller_IPN extends Controller {
 
         parent::before();
 
-        $environment = PayPal::$default_environment === 'live' ? '' : PayPal::$default_environment . '.';
+        $environment = PayPal::$default_environment === 'live' ? '' : PayPal::$environment . '.';
+
+        $curl_options = Kohana::$config->load('paypal.' . PayPal::$environment . '.curl_options');
 
         /**
          * Validate data against PayPal.
          */
         $status = Request::factory('https://www.' . $environment . 'paypal.com/cgi-bin/webscr')
+                ->client(Request_Client_External::factory($curl_options))
                 ->query($this->request->post())
                 ->query('cmd', '_notify-validate')
                 ->execute()
