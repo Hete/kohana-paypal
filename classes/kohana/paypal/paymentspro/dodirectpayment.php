@@ -16,12 +16,12 @@ defined('SYSPATH') or die('No direct script access.');
  */
 class Kohana_PayPal_PaymentsPro_DoDirectPayment extends PayPal_PaymentsPro {
 
-    const NONE = "None",
-            COMPLETED = "Completed",
-            DENIED = "Denied";
+    const NONE = 'None',
+            COMPLETED = 'Completed',
+            DENIED = 'Denied';
 
     public static $CREDIT_CARD_TYPES = array(
-        "Visa", "MasterCard", "Discover", "Amex", "Maestro"
+        'Visa', 'MasterCard', 'Discover', 'Amex', 'Maestro'
     );
 
     /**
@@ -30,64 +30,65 @@ class Kohana_PayPal_PaymentsPro_DoDirectPayment extends PayPal_PaymentsPro {
      * @var array 
      */
     public static $EXPECTED = array(
-        "FIRSTNAME", "LASTNAME", "EMAIL", "CREDITCARDTYPE", "ACCT", "CVV2",
-        "EXPDATE", "COUNTRYCODE", "STREET", "STREET2", "CITY", "STATE", "ZIP",
-        "SHIPTOPHONENUM"
+        'FIRSTNAME', 'LASTNAME', 'EMAIL', 'CREDITCARDTYPE', 'ACCT', 'CVV2',
+        'EXPDATE', 'COUNTRYCODE', 'STREET', 'STREET2', 'CITY', 'STATE', 'ZIP',
+        'SHIPPINGTONAME', 'SHIPTOSTREET', 'SHIPTOSTREET2', 'SHIPTOCITY',
+        'SHIPTOSTATE', 'SHIPTOZIP', 'SHIPTOCOUNTRY', 'SHIPTOPHONENUM'
     );
 
     protected function rules() {
         return array(
-            "FIRSTNAME" => array(
-                array("not_empty"),
+            'FIRSTNAME' => array(
+                array('not_empty'),
             ),
-            "LASTNAME" => array(
-                array("not_empty"),
+            'LASTNAME' => array(
+                array('not_empty'),
             ),
-            "EMAIL" => array(
-                array("not_empty"),
-                array("email"),
+            'EMAIL' => array(
+                array('not_empty'),
+                array('email'),
             ),
-            "CREDITCARDTYPE" => array(
-                array("not_empty"),
-                array("PayPal_Valid::contained", array(":value", static::$CREDIT_CARD_TYPES))
+            'CREDITCARDTYPE' => array(
+                array('not_empty'),
+                array('PayPal_Valid::contained', array(':value', static::$CREDIT_CARD_TYPES))
             ),
-            "ACCT" => array(
-                array("not_empty"),
-                array("credit_card", array(":value", $this->param("CREDITCARDTYPE")))
+            'ACCT' => array(
+                array('not_empty'),
+                array('credit_card', array(':value', $this->param('CREDITCARDTYPE')))
             ),
-            "CVV2" => array(
-                array("not_empty"),
-                array("max_length", array(":value", 4))
+            'CVV2' => array(
+                array('not_empty'),
+                array('max_length', array(':value', 4))
             ),
-            "EXPDATE" => array(
-                array("not_empty"),
-                array("alpha_numeric",),
-                array("exact_length", array(":value", 6))
+            'EXPDATE' => array(
+                array('not_empty'),
+                array('alpha_numeric',),
+                array('exact_length', array(':value', 6))
             ),
-            "COUNTRYCODE" => array(
-                array("not_empty"),
+            'COUNTRYCODE' => array(
+                array('not_empty'),
             ),
-            "STREET" => array(
-                array("not_empty"),
-                array("max_length", array(":value", 100))
+            'STREET' => array(
+                array('not_empty'),
+                array('max_length', array(':value', 100))
             ),
-            "STREET2" => array(
-                array("max_length", array(":value", 100))
+            'STREET2' => array(
+                array('max_length', array(':value', 100))
             ),
-            "CITY" => array(
-                array("not_empty"),
+            'CITY' => array(
+                array('not_empty'),
             ),
-            "STATE" => array(
-                array("not_empty"),
+            'STATE' => array(
+                array('not_empty'),
             ),
-            "ZIP" => array(
-                array("not_empty"),
+            'ZIP' => array(
+                array('not_empty'),
             ),
-            "SHIPTOPHONENUM" => array(
-                array("phone"),
+            'SHIPTOPHONENUM' => array(
+                array('phone'),
             ),
-            "IPADDRESS" => array(
-                array("ip")
+            'IPADDRESS' => array(
+                array('ip')
             ),
         );
     }
