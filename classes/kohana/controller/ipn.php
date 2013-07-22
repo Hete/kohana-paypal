@@ -31,7 +31,7 @@ class Kohana_Controller_IPN extends Controller {
                 ->body();
 
         if ($status !== 'VERIFIED') {
-            throw new HTTP_Exception_401('Post data does not match against PayPal™.');
+            throw new HTTP_Exception_403('Post data does not match against PayPal™.');
         }
 
         // Update action to be called
