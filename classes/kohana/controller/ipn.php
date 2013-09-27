@@ -27,6 +27,7 @@ class Kohana_Controller_IPN extends Controller {
          * Validate data against PayPal.
          */
         $status = Request::factory('https://www.' . $environment . 'paypal.com/cgi-bin/webscr')
+                ->headers('Connection', 'close')
                 ->client(Request_Client_External::factory($curl_options))
                 ->query($this->request->post())
                 ->query('cmd', '_notify-validate')

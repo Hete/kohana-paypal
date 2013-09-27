@@ -80,6 +80,9 @@ abstract class Kohana_Request_PayPal extends Request implements ArrayAccess {
 
         // Custom setup for the cURL client
         $this->client(Request_Client_External::factory($this->_config['curl_options']));
+        
+        // HTTP 1.1 conformity
+        $this->headers('Connection', 'close');
 
         $this->values($data, $expected);
 
