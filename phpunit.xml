@@ -1,0 +1,9 @@
+<phpunit colors="true" 
+         verbose="true" 
+         bootstrap="../unittest/bootstrap.php"
+         stopOnError="true"
+         stopOnFailure="true">
+    <testsuite name="PayPal tests">
+        <file>tests/paypal.php</file>
+    </testsuite>
+</phpunit>
