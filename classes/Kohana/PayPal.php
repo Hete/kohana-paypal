@@ -26,13 +26,10 @@ defined('SYSPATH') or die('No direct script access.');
  *
  *     $data = PayPal::parse_response($response);
  *
- * If you want to have a multidimensional structure
- *
- *     $data = PayPal::parse_array($data);
  *
  * If you want to dump your multidimensional structure back to PayPal's format
  *
- *     $data = PayPal::compile_array($data);
+ *     $data = PayPal::flatten($data);
  *
  * Redirect the user if it is appliable.
  *
@@ -164,17 +161,23 @@ abstract class Kohana_PayPal {
      * @return Validation
      */
     public static function get_request_validation(Request $request) {
-        return Validation::factory($request->query());
+        return Validation::factory($request->query())
+            ->rule('USER', 'not_empty')
+            ->rule('PWD', 'not_empty')
+            ->rule('VERSION', 'not_empty')
+            ->rule('METHOD', 'equals', array(':value', str_replace('PayPal_', '', get_called_class())));
     }
 
     /**
      * Creates a Validation object for a PayPal Response.
+     *
+     * Fields are kept flattened since Validation is one-dimensional.
      * 
      * @param Response $response
      * @return Validation
      */
     public static function get_response_validation(Response $response) {
-        return Validation::factory(PayPal::parse_response($response))
+        return Validation::factory(PayPal::parse_response($response, FALSE))
                 ->rule('ACK', 'not_empty')
                 ->rule('ACK', 'in_array', array(':value', PayPal::$SUCCESS_ACKNOWLEDGEMENTS));
     }
@@ -288,7 +291,8 @@ abstract class Kohana_PayPal {
     /**
      * Flatten a multidimensional mixed array into a flattened PayPal array.
      * 
-     * @param array $array
+     * @param  array $array
+     * @return array
      */
     public static function flatten(array $array) {
 
@@ -327,11 +331,11 @@ abstract class Kohana_PayPal {
                         ->client(Request_Client_External::factory($config['client_options']))
                         ->headers('Connection', 'close')
                         ->query(array(
-                            'METHOD' => $method,
-                            'USER' => $config['username'],
-                            'PWD' => $config['password'],
+                            'METHOD'    => $method,
+                            'USER'      => $config['username'],
+                            'PWD'       => $config['password'],
                             'SIGNATURE' => $config['signature'],
-                            'VERSION' => $config['api_version']
+                            'VERSION'   => $config['api_version']
                         ));
     }
 
@@ -359,6 +363,9 @@ abstract class Kohana_PayPal {
 
     /**
      * Generates redirect query.
+
+     * This must be implemented by the method you are using, otherwise an
+     * exception will be thrown.
      *
      * @param  Response $response
      * @return array

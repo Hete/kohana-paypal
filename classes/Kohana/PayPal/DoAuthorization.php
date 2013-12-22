@@ -19,5 +19,4 @@ class Kohana_PayPal_DoAuthorization extends PayPal {
                 ->rule('TRANSACTIONID', 'not_empty')
                 ->rule('AMT', 'not_empty');
     }
-
 }

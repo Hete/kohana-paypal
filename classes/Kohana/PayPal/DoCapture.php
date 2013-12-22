@@ -20,6 +20,11 @@ class Kohana_PayPal_DoCapture extends PayPal {
         'Complete', 'NotComplete'
     );
 
+    public static get_request_validation(Request $request) {
+        return parent::get_request_validation($request)
+            ->rule('AUTHORIZATIONID', 'not_empty')
+    }
+
  
 
     public function rules() {

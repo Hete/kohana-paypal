@@ -41,6 +41,5 @@ class Kohana_Controller_IPN extends Controller {
     public function action_express_checkout() {
         $this->response->body('This action is only a test.');
     }
-
 }
 

@@ -12,12 +12,6 @@ defined('SYSPATH') or die('No direct script access.');
  */
 class PayPal_Test extends Unittest_TestCase {
 
-    public function setUp() {
-        parent::setUp();
-        Request::$initial = '';
-        $_SERVER['SERVER_NAME'] = 'localhost';
-    }
-
     private function println($message = NULL) {
         echo $message . "\n";
     }
@@ -34,28 +28,33 @@ class PayPal_Test extends Unittest_TestCase {
     /**
      * Various assertions about a PayPal request.
      */
-    public function test_request() {
+    public function test_PayPal() {
 
         // This must be sandbox
         $this->assertEquals(PayPal::$environment, PayPal::SANDBOX);
 
-        $request = PayPal::factory('SetExpressCheckout');
+        $setexpresscheckout = PayPal::factory('SetExpressCheckout');
 
-        $this->assertInternalType('array', $request->data());
+        $this->assertInternalType('array', $setexpresscheckout->data());
 
-        $this->assertInstanceOf('Validation', $request->validation());
-
-        // Testing the data function
-        $request->data('foo', 'bar');
-        $this->assertEquals($request['foo'], 'bar');
-        $this->assertEquals($request->data('foo'), 'bar');
-
-        // Filters testing
-        $request->data('PAYMENTREQUEST_0_AMT', 22.992387283728);
-        $this->assertEquals($request['PAYMENTREQUEST_0_AMT'], PayPal::number_format(22.992387283728));
+        $this->assertInstanceOf('Request', $setexpresscheckout->request());
 
         // API url must be a valid url
-        $this->assertTrue(Valid::url($request->api_url()));
+        $this->assertTrue(Valid::url(PayPal::api_url()));
+    }
+
+    public function test_parse_response() {
+        
+        $response = PayPal::factory('SetExpressCheckout')->request()->execute();
+
+        Request::parse_response($response);    
+        
+    }
+
+    public function test_flatten() {
+        
+        
+        
     }
 
     /**
@@ -64,26 +63,27 @@ class PayPal_Test extends Unittest_TestCase {
      * 
      * @depends test_request
      */
-    public function test_response() {
+    public function test_Response() {
 
-        $request = PayPal::factory('SetExpressCheckout', array(
-                    'AMT' => 45,
-                    'RETURNURL' => URL::site('', 'https'),
-                    'CANCELURL' => URL::site('', 'https')
+        $request = PayPal::factory('SetExpressCheckout')
+            ->request()
+            ->query(array(
+                'AMT' => 45,
+                'RETURNURL' => URL::site('', 'https'),
+                'CANCELURL' => URL::site('', 'https')
         ));
 
         $response = $request->execute();
 
-        $this->assertNotEmpty($response->data());
+        $this->assertNotEmpty($response->body());
 
-        $this->assertInstanceOf('Response_PayPal', $response);
+        $expanded_data = PayPal::parse_response($response);
 
-        $this->assertInstanceOf('Validation', $response);
+        $flattened_data = PayPal::parse_response($response, FALSE);
 
-        // Testing the data() function
-        $this->assertEquals($response['TOKEN'], $response->data('TOKEN'));
+        $this->assertEquals($flattened_data, PayPal::flatten($expanded_data));
 
-        $this->assertTrue(Valid::url($response->redirect_url));
+        $this->assertTrue(Valid::url($setexpresscheckout->redirect_url));
     }
 
     private $token;

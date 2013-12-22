@@ -28,7 +28,6 @@ class Kohana_PayPal_DoExpressCheckoutPayment extends PayPal {
     PENDING_REASON_VERIFY = 'verify',
     PENDING_REASON_OTHER = 'other';
 
-
     /**
      * The status of the payment.
      */
