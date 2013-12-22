@@ -37,7 +37,7 @@ abstract class Kohana_Request_PayPal_NVP extends Request_PayPal {
         $this->param("SIGNATURE", $this->config("signature"));
         $this->param("VERSION", static::NVP_VERSION);
     }
-   
+
     public function api_url() {
         if ($this->_environment === 'live') {
             // Live environment does not use a sub-domain
@@ -61,13 +61,13 @@ abstract class Kohana_Request_PayPal_NVP extends Request_PayPal {
 
         $data = NULL;
 
-        parse_str(parent::execute()->body(), $data);
+        $response = parent::execute();
+
+        parse_str($response->body(), $data);
 
         if ($data === NULL) {
             throw new PayPal_Exception($this, NULL, "Couldn't parse the response from PayPal.");
         }
-
-        $response = parent::execute();
 
         $paypal_response = new Response_PayPal_NVP($this, $response);
 
