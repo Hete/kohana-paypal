@@ -54,33 +54,32 @@ abstract class Kohana_PayPal {
      */
     const SANDBOX = 'sandbox', LIVE = 'live', SANDBOX_BETA = 'sandbox-beta';
 
-    const TRUE = 'true', FALSE = 'false';
-
     const NONE = 'None';
 
     /**
      * Acknowledgements
      */
     const SUCCESS = 'Success',
-    SUCCESS_WITH_WARNING = 'SuccessWithWarning',
-    FAILURE = 'Failure',
-    FAILURE_WITH_WARNING = 'FailureWithWarning';
-
+          SUCCESS_WITH_WARNING = 'SuccessWithWarning',
+          FAILURE = 'Failure',
+          FAILURE_WITH_WARNING = 'FailureWithWarning';
 
     /**
      * Short date format supported by PayPal.
      */
     const SHORT_DATE_FORMAT = 'Y-m-d\T',
-    DATE_FORMAT = 'Y-m-d\TH:i:s.BP';
+          DATE_FORMAT = 'Y-m-d\TH:i:s.BP';
 
     /**
      * Supported currencies.
      * 
      * @var array
      */
-    public static $CURRENCY_CODES = array('AUD', 'BRL', 'CAD', 'CZK', 'DKK',
+    public static $CURRENCY_CODES = array(
+        'AUD', 'BRL', 'CAD', 'CZK', 'DKK',
         'EUR', 'HKD', 'HUF', 'ILS', 'JPY', 'MYR', 'MXN', 'NOK', 'NZD', 'PHP',
-        'PLN', 'GBP', 'SGD', 'SEK', 'CHF', 'TWD', 'THB', 'USD');
+        'PLN', 'GBP', 'SGD', 'SEK', 'CHF', 'TWD', 'THB', 'USD'
+    );
     /**
      * Supported days of week.
      * 
@@ -183,40 +182,6 @@ abstract class Kohana_PayPal {
     }
 
     /**
-     * Returns the API URL for the environment defined by PayPal::$environment.
-     *
-     * @return string
-     */
-    public static function api_url() {
-
-        $environment = PayPal::$environment;
-
-        $api = Kohana::$config->load("paypal.$environment.signature") ? 'api-3t' : 'api';
-
-        if ($environment === PayPal::LIVE) {
-            return "https://$api.paypal.com/nvp";
-        }
-
-        return "https://$api.$environment.paypal.com/nvp";
-    }
-
-    /**
-     * Redirection url.
-     *
-     * @return string
-     */
-    public static function redirect_url() {
-
-        $environment = PayPal::$environment;
-
-        if ($environment === PayPal::LIVE) {
-            return "https://www.paypal.com/cgi-bin/webscr";
-        }
-
-        return "https://www.$environment.paypal.com/cgi-bin/webscr";
-    }
-
-    /**
      * Parse a PayPal Response body into an associative array.
      *
      * It will parse
@@ -250,42 +215,44 @@ abstract class Kohana_PayPal {
             throw new Kohana_Exception("Couldn't parse Response body. :body", array(':body' => $response->body()));
         }
 
-        if ($expand) {
-            foreach ($array as $key => $value) {
+        return $expand ? PayPal::expand($data) : $data;
+    }
 
-                if (is_array($value)) {
-                    continue;
-                }
+    public static function expand($array) {
+        
+        foreach ($array as $key => $value) {
 
-                if (preg_match_all('/(_\d+_)|(\.)/', $key, $matches, PREG_OFFSET_CAPTURE)) {
+            if (is_array($value)) {
+                continue;
+            }
 
-                    $match = $matches[0][count($matches) - 1];
-                    $offset = $matches[1][count($matches) - 1];
+            if (preg_match_all('/(_\d+_)|(\.)/', $key, $matches, PREG_OFFSET_CAPTURE)) {
 
-                    // left side is a key, right side an indexed array
-                    $left = substr($key, 0, $offset + 1);
-                    $right = substr($key, $offset + count($match));
-                    $index = (int) substr($key, $offset + 1, count($match) - 1);
+                $match = $matches[0][count($matches) - 1];
+                $offset = $matches[1][count($matches) - 1];
+
+                // left side is a key, right side an indexed array
+                $left = substr($key, 0, $offset + 1);
+                $right = substr($key, $offset + count($match));
+                $index = (int) substr($key, $offset + 1, count($match) - 1);
+
+                if (!array_key_exists($left, $array))
+                    $array[$left] = array();
+
+                if (is_numeric($index)) {
 
                     if (!array_key_exists($left, $array))
-                        $array[$left] = array();
+                        $array[$left][$index] = array();
 
-                    if (is_numeric($index)) {
-
-                        if (!array_key_exists($left, $array))
-                            $array[$left][$index] = array();
-
-                        $array[$left][$index][$right] = $value;
-                    } else {
-                        $array[$left][$right] = $value;
-                    }
-
-                    unset($data[$key]);
+                    $array[$left][$index][$right] = $value;
+                } else {
+                    $array[$left][$right] = $value;
                 }
+
+                unset($array[$key]);
             }
         }
-
-        return $data;
+        
     }
 
     /**
@@ -311,6 +278,8 @@ abstract class Kohana_PayPal {
                 unset($array[$key]);
             }
         }
+
+        return $array;
     }
 
     /**
@@ -327,16 +296,26 @@ abstract class Kohana_PayPal {
 
         $config = Kohana::$config->load('paypal.' . PayPal::$environment);
 
-        $this->request = Request::factory(PayPal::api_url(), $client_params)
-                        ->client(Request_Client_External::factory($config['client_options']))
-                        ->headers('Connection', 'close')
-                        ->query(array(
-                            'METHOD'    => $method,
-                            'USER'      => $config['username'],
-                            'PWD'       => $config['password'],
-                            'SIGNATURE' => $config['signature'],
-                            'VERSION'   => $config['api_version']
-                        ));
+        $environment = PayPal::$environment;
+
+        $api = $config['signature'] ? 'api-3t' : 'api';
+
+        $url = "https://$api.$environment.paypal.com/nvp";
+
+        if ($environment === PayPal::LIVE) {
+            $url = "https://$api.paypal.com/nvp";
+        }
+
+        $this->request = Request::factory($url, $client_params)
+            ->client(Request_Client_External::factory($config['client_options']))
+            ->headers('Connection', 'close')
+            ->query(array(
+                'METHOD'    => $method,
+                'USER'      => $config['username'],
+                'PWD'       => $config['password'],
+                'SIGNATURE' => $config['signature'],
+                'VERSION'   => $config['api_version']
+            ));
     }
 
     /**
@@ -359,6 +338,22 @@ abstract class Kohana_PayPal {
      */
     public function redirect(Response $response) {
         HTTP::redirect(PayPal::redirect_url(), URL::query($this->redirect_query($response)));
+    }
+
+    /**
+     * Redirection url.
+     *
+     * @return string
+     */
+    public function redirect_url() {
+
+        $environment = PayPal::$environment;
+
+        if ($environment === PayPal::LIVE) {
+            return 'https://www.paypal.com/cgi-bin/webscr';
+        }
+
+        return "https://www.$environment.paypal.com/cgi-bin/webscr";
     }
 
     /**
