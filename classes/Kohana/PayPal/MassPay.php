@@ -18,14 +18,6 @@ class Kohana_PayPal_MassPay extends PayPal {
         'EmaiLAddress', 'UserID', 'PhoneNumber'
     );
 
-    public function filters() {
-        return array(
-            'L_AMT.+' => array(
-                array('PayPal::number_format')
-            )
-        );
-    }
-
     public function rules() {
         return array(
             'EMAILSUBJECT' => array(
@@ -52,5 +44,4 @@ class Kohana_PayPal_MassPay extends PayPal {
             )
         );
     }
-
 }

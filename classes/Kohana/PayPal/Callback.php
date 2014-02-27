@@ -20,6 +20,4 @@ class Kohana_PayPal_Callback extends PayPal {
                 ->rule('CURRENCYCODE', 'not_empty')
                 ->rule('CURRENCYCODE', 'in_array', array(':value', PayPal::$CURRENTY_CODES));
     }
-
 }
-

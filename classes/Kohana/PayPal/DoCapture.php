@@ -20,34 +20,14 @@ class Kohana_PayPal_DoCapture extends PayPal {
         'Complete', 'NotComplete'
     );
 
-    public static get_request_validation(Request $request) {
+    public static function get_request_validation(Request $request) {
         return parent::get_request_validation($request)
             ->rule('AUTHORIZATIONID', 'not_empty')
+            ->rule('AMT', 'not_empty')
+            ->rule('AMT', 'numeric')
+            ->rule('COMPLETETYPE', 'in_array', array(':value' => PayPal_DoCapture::$COMPLETE_TYPES))
+            ->rule('INVNUM', 'max_length', array(':value', 127))
+            ->rule('NOTE', 'max_length', array(':value', 255));
     }
-
- 
-
-    public function rules() {
-        return array(
-            'AUTHORIZATIONID' => array(
-                array('not_empty')
-            ),
-            'AMT' => array(
-                array('not_empty'),
-                array('numeric')
-            ),
-            'COMPLETETYPE' => array(
-                array('not_empty'),
-                array('in_array', array(':value', PayPal_DoCapture::$COMPLETE_TYPES))
-            ),
-            'INVNUM' => array(
-                array('max_length', array(':value', 127)),
-            ),
-            'NOTE' => array(
-                array('max_length', array(':value', 255)),
-            )
-        );
-    }
-
 }
 

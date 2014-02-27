@@ -11,22 +11,16 @@ defined('SYSPATH') or die('No direct script access.');
  */
 class IPNTest extends Unittest_TestCase {
 
-    public function setUp() {
-        parent::setUp();
-        Request::$initial = "";
-    }
-
     public function test_NotifyValidate() {
 
         $response = PayPal::factory('NotifyValidate')
-            ->request()
-                ->query(array(
-                    'txn_type'          => 'express_checkout',
-                    'receiver_id'       => '1234',
-                    'receiver_email'    => 'paypal@example.com',
-                    'residence_country' => 'US',
-                    'test_ipn'          => TRUE
-                ))->execute();
+            ->query(array(
+                'txn_type'          => 'express_checkout',
+                'receiver_id'       => '1234',
+                'receiver_email'    => 'paypal@example.com',
+                'residence_country' => 'US',
+                'test_ipn'          => TRUE
+            ))->execute();
 
         $this->assertEquals($response->body(), PayPal_NotifyValidate::INVALID);
     }

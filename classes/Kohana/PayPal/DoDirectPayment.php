@@ -34,7 +34,7 @@ class Kohana_PayPal_DoDirectPayment extends PayPal {
         'SHIPTOPHONENUM'
     );
 
-    public static function get_request_validation() {
+    public static function get_request_validation(Request $request) {
         return parent::get_request_validation($request)
             ->rule('FIRSTNAME', 'not_empty')
             ->rule('LASTNAME', 'not_empty')
@@ -71,19 +71,4 @@ class Kohana_PayPal_DoDirectPayment extends PayPal {
             ->rule('SHIPTOPHONENUM', 'phone')
             ->rule('IPADRESS', 'ip');
     }
-
-    public function filters() {
-        return array(
-            '.*AMT' => array(
-                array('PayPal::number_format')
-            ),
-        );
-    }
-
-    public function rules() {
-        return array(
-        );
-    }
-
 }
-

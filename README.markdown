@@ -2,177 +2,81 @@
 
 This module supports classic PayPal api along with an IPN endpoint.
 
+## Featuers
+* Full-support for NVP api
+* Validation
+* IPN 
+
 ## Basic usage
 
     $setexpresscheckout = PayPal::factory('SetExpressCheckout');
 
-You can set the value in your Request pretty much the way you like it.
+You can pass options like with Request factory
+
+    $setexpresscheckotu = PayPal::factory('SetExpressCheckout', array(
+        'cache' => Cache::instance()
+    ));
+
+You can get the inner Request object
 
     $response = $setexpresscheckout
         ->request()
-        ->query('AMT', 33.23)
-        ->execute();
+            ->query('AMT', 33.23)
+            ->execute();
 
 Executing the Request will returna Response object.
 
-    $setexpresscheckout->redirect($response);
+Redirection are handled for requests that requires user interaction.
+    
+    $url = PayPal_SetExpressCheckout::redirect_url($response);
+    $param = PayPal_SetExpressCheckout::redirect_query($response);
 
-PayPal provides a class for parsing the Response into an associative array.
+    HTTP::redirect($url . URL::query($param));
 
-    $response = PayPal::parse_response($response)
+Or simply
+    
+    PayPal_SetExpressCheckout::redirect($response);
 
-If you need to work with real PHP associative array, you can use
+PayPal class provides a method for parsing the Response into an associative array.
 
-    $response = PayPal::parse_array($response)
+    $response = PayPal::parse_response($response);
 
-When you are done,
+If you need the raw PayPal array:
 
-## Incoming features
+    $arr = PayPal::parse_response($response, FALSE);
 
-* Filters for validations;
-* Support for SOAP;
-* Automatic IPN management, the module automatically register to IPN calls.
+Then, you can expand and flatten it
 
-## How to use this api
+    $expanded = PayPal::expand($arr);
 
-<pre>
-$params = array(
-  'token' => 'dsnahuiy8182318edhd'
-  'verifier' => 'asdi2ue89ewioehd'
-);
-$request = PayPal::factory('PaymentsPro_SetExpressCheckout', $params);
+    $flattened = PayPal::flatten($expanded);
 
-// Now on you may set parameters through param()
-$request->param('key', 'value');
+## Validation
 
-...
+Some validation rules are given
 
-// Once you're done, you can execute the request!
-try {
-    $result = $request->execute();
-    $token = $result['token'];
-    $token_secret = $result['tokenSecret'];
-    $redirect_uri = $result->redirect_url;
-} catch(PayPal_Exception $ppe) {
-    // Do stuff in case of failure...
-}
+For request
 
-</pre>
+    $validation = PayPal_SetExpressCheckout::get_request_validation($request);
 
-## Advanced documentation
+For response
 
-### Request
+    $validation = PayPal_SetExpressCheckout::get_response_validation($response);
 
-Request are inheriting from Kohana_Request and provide all its features in a
-built-in way.
+## IPN
 
-The factory method is PayPal and not Request_PayPal because Request_PayPal would
-have required the first parameter to be an uri. Moreover, PayPal is shorter and
-cleaner.
+To enable IPN, set the ipn\_enabled option in your configuration.
 
-Also, requests name must not start by PayPal_, again for readability purpose.
+It will create an endpoint for PayPal's request.
 
-<pre>
+    example.com/ipn
 
-$request = PayPal::factory("PaymentsPro_SetExpressCheckout"); // Despites the 
-class is named PayPal_PaymentsPro_SetExpressCheckout
+Requests are automatically verified against PayPal. You only need to overload Kohana\_Controller\_IPN and set supported action. If not specified, a 404 error will be triggered. express\_checkout is given as an example.
 
-</pre>
+## Views
 
-Best way to insert data in a PayPal request is through the param method. Using
-post and query is not recommended: in fact, param will do it for you.
+A set of useful views are given to deal with common requests. They are designed to present parsed Response object using PayPal::parse\_response.
 
-<pre>
-
-$params = array(
-    "some_key" => "some_value"
-);
-
-$request = PayPal::factory("<request_class_name>", $params);
-
-// Equals to the precedent line
-$request->param($params);
-
-</pre>
-
-Overwritting param was a design feature for readability. It is usualy used for
-Route parameters, but as no route applies in external requests and param is a
-very appropriate name for the purpose, I have decided to use it as a convenient
-getter/setter for standard request parameters.
-
-### Response
-
-The response is a Validation object so you do not (and should not) have to pass
-it in another Validation object to validate it.
-
-Responses are immutable.
-
-<pre>
-
-$response = $some_request->execute();
-
-$response->data(); // Validation access
-$response[]; // Array access which alias data()
-
-$response->rule("some_field", "some_rule"); // You may add
-
-$response->check(); // Warning: throws a PayPal_Validation_Exception (which 
-inherit from PayPal_Exception) in case of failure.
-
-</pre>
-
-### Protocols
-
-This module suports many different protocols. The most common protocol used to communicate with PayPal is NVP (name-value pair). You do not really have to deal with them as the requests you will be using already inherit from its protocol. Requests will be first all implemented in NVP, then I will have to integrate some changes to be able to switch to SOAP without trouble.
-
-The main issue with SOAP is that it is not uni-dimensional, leading to a real complexity when it comes to validation. Kohana does not have multi-dimensional validation. This is why NVP is much more recommended.
-
-### Why this module is not generic
-
-Each different api requires a class, and each of their requests requires a class too. It is designed this way to provide overloading possibilities at every levels. Let say a constant name is not consistent and changes over the api? It can be overloaded in the specific api where it is different. Also each api requires specific validation rules, so having a class for each allow you to have custom validation any request.
-
-### Why Response_PayPal does not inherit from Response
-
-Response provides nothing but a body() method, which returns the body of PayPal's response. Validating or implementing convenient array access into this object is difficult (you have to create a Validation attribute). By making itself a Validation object, it opens all the Kohana validation possibilities, which is rather useful. Anyway, you would validate your input in another Validation object and probably drop the Response.
-
-### Some cool approach
-
-Let's say you have a group of inputs for a paypal checkout form, you can simply 
-pass it in the request if keys are compatible.
-
-<pre>
-
-$request->param($this->request->param("paypal"));
-
-// Response is a ArrayAccess and a Validation object, nice stuff can be done 
-like validating status
-
-$response->rule("status", "equals", array("Success"));
-
-try {
-    $response->check();
-} catch(PayPal_Exception $ppe) {
-    // Handle exception...
-}
-
-// Or in a single builder line
-
-try {
-    PayPal::factory("API_NameOfRequest", array(<some_parameters>))
-        ->execute()
-        ->rule("<some_field>", "<some_rule>") // Add extra rules
-        ->check(); // Check that throws a PayPal_Exception
-} catch(PayPal_Exception $ppe) {
-    // Handle exception...
-}
-
-</pre>
-
-
-## Support for this project
-
-PayPal has around 5 apis, which each have from 5 to 10 methods. If you want to 
-code some APIs, it's pretty simple, you only have to build the rules for request and response !
-
-Writing unittests would really make my life easier (and so your and everyone who 
-will use this module).
+* DoDirectPayment
+* GetExpressCheckoutDetails
+* GetTransactionDetails

@@ -48,5 +48,4 @@ class Kohana_PayPal_CreateRecurringPaymentsProfile extends PayPal {
                     array('in_array', PayPal::$CURRENCY_CODES)))
                 ->rule('AUTOBILLOUTAMT', 'in_array', array(':value', LayPal_CreateRecurringPaymentsProfile::$AUTO_BILLOUT_AMTS));
     }
-
 }

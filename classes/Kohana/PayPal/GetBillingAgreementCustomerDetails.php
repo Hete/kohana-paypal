@@ -15,5 +15,3 @@ defined('SYSPATH') or die('No direct script access.');
 class Kohana_PayPal_GetBillingAgreementCustomerDetails extends PayPal {
     
 }
-
-

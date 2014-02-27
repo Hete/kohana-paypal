@@ -18,12 +18,11 @@ class Kohana_Controller_IPN extends Controller {
     public function before() {
 
         parent::before();
-
+        
         $response = PayPal::factory('NotifyValidate')
-                        ->request()
-                        ->query($this->request->post())
-                        ->query('cmd', '_notify-validate')
-                        ->execute();
+            ->query($this->request->post())
+            ->query('cmd', '_notify-validate')
+            ->execute();
 
         $validation = PayPal_NotifyValidate::get_response_validation($response);
 
@@ -42,4 +41,3 @@ class Kohana_Controller_IPN extends Controller {
         $this->response->body('This action is only a test.');
     }
 }
-

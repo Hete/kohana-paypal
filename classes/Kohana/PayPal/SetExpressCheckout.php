@@ -11,7 +11,7 @@ defined('SYSPATH') or die('No direct script access.');
  */
 class Kohana_PayPal_SetExpressCheckout extends PayPal {
 
-    public function redirect_query(Response $response) {
+    public static function redirect_query(Response $response) {
     
         $response = PayPal::parse_response($response);
 

@@ -18,5 +18,4 @@ class Kohana_PayPal_CreateBillingAgreement extends PayPal {
         return parent::get_request_validation($request)
             ->rule('TOKEN', 'not_empty');
     }
-
 }

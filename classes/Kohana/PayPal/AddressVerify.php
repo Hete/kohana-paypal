@@ -13,6 +13,7 @@ defined('SYSPATH') or die('No direct script access.');
  * @license   http://kohanaframework.org/license
  */
 class Kohana_PayPal_AddressVerify extends PayPal {
+
     const CONFIRMED = 'Confirmed', UNCONFIRMED = 'Unconfirmed';
     const MATCHED = 'Matched', UNMATCHED = 'Unmatched';
 
@@ -23,6 +24,5 @@ class Kohana_PayPal_AddressVerify extends PayPal {
                 ->rule('STREET', 'not_empty')
                 ->rule('ZIP', 'not_empty');
     }
-
 }
 

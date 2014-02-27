@@ -103,7 +103,7 @@
 
         <div class="control-group">
             <?php echo Form::label('CREDITCARDTYPE', __('paypal.dodirectpayment.CREDITCARDTYPE')) ?>
-            <?php echo Form::select('dodirectpayment[CREDITCARDTYPE]', $credit_types, $dodirectpayment->param('CREDITCARDTYPE'), array('id' => 'CREDITCARDTYPE', 'class' => 'span12')) ?>
+            <?php echo Form::select('dodirectpayment[CREDITCARDTYPE]', $credit_types, $dodirectpayment['CREDITCARDTYPE'], array('id' => 'CREDITCARDTYPE', 'class' => 'span12')) ?>
         </div>
 
     </div>
@@ -148,23 +148,23 @@
 </div>
 
 <script type="text/javascript">
-    /**
-     * 
-     * @type type
-     *
-     * @package   PayPal
-     * @author    Guillaume Poirier-Morency <guillaumepoiriermorency@gmail.com>
-     * @copyright (c) 2013, Hète.ca Inc.
-     */
-    var DoDirectPayment = {
+    (function($) {
         /**
-         * 
-         * @returns {undefined}
+         *
+         * @package   PayPal
+         * @author    Guillaume Poirier-Morency <guillaumepoiriermorency@gmail.com>
+         * @copyright (c) 2013, Hète.ca Inc.
          */
-        onDateChange: function() {
-            var month = $("[name='dodirectpayment[EXPMONTH]']").val();
-            var year = $("[name='dodirectpayment[EXPYEAR]']").val();
-            $("[name='dodirectpayment[EXPDATE]']").val(month + year);
-        }
-    };
+        var DoDirectPayment = {
+            /**
+             * 
+             * @returns {undefined}
+             */
+            onDateChange: function() {
+                var month = $("[name='dodirectpayment[EXPMONTH]']").val();
+                var year = $("[name='dodirectpayment[EXPYEAR]']").val();
+                $("[name='dodirectpayment[EXPDATE]']").val(month + year);
+            }
+        };
+    })(window.jQuery);
 </script>

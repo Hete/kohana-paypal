@@ -140,17 +140,38 @@ abstract class Kohana_PayPal {
     );
 
     /**
-     * Factory for PayPal classes.
+     * Factory a PayPal request.
      * 
      * @param string $method        a PayPal method such as SetExpressCheckout.
      * @param array  $client_params see Request $client_params.
-     * @return \PayPal
+     * @return Request
      */
     public static function factory($method, $client_params = array()) {
 
         $class = "PayPal_$method";
 
-        return new $class($method, $client_params);
+        $config = Kohana::$config->load('paypal.' . PayPal::$environment);
+
+        $environment = PayPal::$environment;
+
+        $api = $config['signature'] ? 'api-3t' : 'api';
+
+        $url = "https://$api.$environment.paypal.com/nvp";
+
+        if ($environment === PayPal::LIVE) {
+            $url = "https://$api.paypal.com/nvp";
+        }
+
+        return Request::factory($url, $client_params)
+            ->client(Request_Client_External::factory($config['client_options']))
+            ->headers('Connection', 'close')
+            ->query(array(
+                'METHOD'    => $method,
+                'USER'      => $config['username'],
+                'PWD'       => $config['password'],
+                'SIGNATURE' => $config['signature'],
+                'VERSION'   => $config['api_version']
+            ));
     }
 
     /**
@@ -218,41 +239,35 @@ abstract class Kohana_PayPal {
         return $expand ? PayPal::expand($data) : $data;
     }
 
-    public static function expand($array) {
+    /**
+     * Expand a flattened PayPal array into a multi-dimensional structure.
+     *
+     * @param  array $array
+     * @return array
+     */
+    public static function expand(array $array) {
         
         foreach ($array as $key => $value) {
 
-            if (is_array($value)) {
-                continue;
+            $parts = preg_split('/_|\./', $key);
+
+            $level = &$array;
+
+            foreach ($parts as $part) {
+                $part = Valid::digit($part) ? (int) $part : $part;
+                $level[$part] = array();
+                $level = &$level[$part];
             }
 
-            if (preg_match_all('/(_\d+_)|(\.)/', $key, $matches, PREG_OFFSET_CAPTURE)) {
-
-                $match = $matches[0][count($matches) - 1];
-                $offset = $matches[1][count($matches) - 1];
-
-                // left side is a key, right side an indexed array
-                $left = substr($key, 0, $offset + 1);
-                $right = substr($key, $offset + count($match));
-                $index = (int) substr($key, $offset + 1, count($match) - 1);
-
-                if (!array_key_exists($left, $array))
-                    $array[$left] = array();
-
-                if (is_numeric($index)) {
-
-                    if (!array_key_exists($left, $array))
-                        $array[$left][$index] = array();
-
-                    $array[$left][$index][$right] = $value;
-                } else {
-                    $array[$left][$right] = $value;
-                }
-
+            // the ultimate level contains the value
+            $level = $value;
+            
+            if (count($parts) > 1) {
                 unset($array[$key]);
             }
         }
-        
+
+        return $array;
     }
 
     /**
@@ -267,9 +282,11 @@ abstract class Kohana_PayPal {
 
             if (is_array($value)) {
 
-                foreach ($value as $k => $v) {
-                    if (is_numeric($k)) {
-                        $array[$key . '_' . $k . '_'] = $v;
+                $value = PayPal::flatten($value);
+
+                foreach($value as $k => $v) {   
+                    if (is_integer($key) or $k[1] === '_') {
+                        $array[$key . '_' . $k] = $v;
                     } else {
                         $array[$key . '.' . $k] = $v;
                     }
@@ -277,6 +294,7 @@ abstract class Kohana_PayPal {
 
                 unset($array[$key]);
             }
+
         }
 
         return $array;
@@ -290,44 +308,6 @@ abstract class Kohana_PayPal {
      */
     public static function number_format($number) {
         return number_format($number, 2, '.', '');
-    }
-
-    private function __construct($method, array $client_params = array()) {
-
-        $config = Kohana::$config->load('paypal.' . PayPal::$environment);
-
-        $environment = PayPal::$environment;
-
-        $api = $config['signature'] ? 'api-3t' : 'api';
-
-        $url = "https://$api.$environment.paypal.com/nvp";
-
-        if ($environment === PayPal::LIVE) {
-            $url = "https://$api.paypal.com/nvp";
-        }
-
-        $this->request = Request::factory($url, $client_params)
-            ->client(Request_Client_External::factory($config['client_options']))
-            ->headers('Connection', 'close')
-            ->query(array(
-                'METHOD'    => $method,
-                'USER'      => $config['username'],
-                'PWD'       => $config['password'],
-                'SIGNATURE' => $config['signature'],
-                'VERSION'   => $config['api_version']
-            ));
-    }
-
-    /**
-     * Return the inner Request object.
-     *
-     * This object is mostly pre-configured. You only need to set the
-     * specific fields that is required in PayPal documentation.
-     *
-     * @return Request
-     */
-    public function request() {
-        return $this->request;
     }
 
     /**
@@ -368,5 +348,4 @@ abstract class Kohana_PayPal {
     public function redirect_query(Response $response) {
         throw new Kohana_Exception('This PayPal method does not implement redirection.');
     }
-
 }
