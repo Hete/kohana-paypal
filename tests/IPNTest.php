@@ -13,6 +13,8 @@ class IPNTest extends Unittest_TestCase {
 
     public function test_NotifyValidate() {
 
+        $this->assertTrue(Kohana::$config->load('paypal.' . PayPal::$environment . '.ipn_enabled'));
+
         $response = PayPal::factory('NotifyValidate')
             ->query(array(
                 'txn_type'          => 'express_checkout',
@@ -25,22 +27,17 @@ class IPNTest extends Unittest_TestCase {
         $this->assertEquals($response->body(), PayPal_NotifyValidate::INVALID);
     }
 
-    public function test_reflective_request() {
+    public function test_express_checkout() {
 
-        if (headers_sent()) {
-            // Skip this test
-            $this->markTestSkipped('Headers are already sent.');
-        }
-
-        $response = Request::factory("paypal/ipn")
+        $response = Request::factory('ipn')
             ->query(array(
-                "txn_type" => "express_checkout",
-                "receiver_id" => PayPal::factory("IPN_NotifyValidate")->config("ipn.receiver.id"),
-                "receiver_email" => PayPal::factory("IPN_NotifyValidate")->config("ipn.receiver.email"),
-                "residence_country" => PayPal::factory("IPN_NotifyValidate")->config("ipn.receiver.country"),
-                "test_ipn" => (PayPal::factory("IPN_NotifyValidate")->environment() === PayPal::SANDBOX) ? "1" : "0",
+                'txn_type'          => 'express_checkout',
+                'receiver_id'       => '1234',
+                'receiver_email'    => 'foo@example.com',
+                'residence_country' => 'USA',
+                'test_ipn'          => TRUE
             ))->execute();
 
-        $this->assertNotEmpty($response->body());
+        $this->assertEquals(200, $response->status());
     }
 }

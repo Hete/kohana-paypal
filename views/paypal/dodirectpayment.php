@@ -8,17 +8,17 @@
 
         <div class="control-group">
             <?php echo Form::label('FIRSTNAME', __('paypal.dodirectpayment.FIRSTNAME')) ?>
-            <?php echo Form::input('dodirectpayment[FIRSTNAME]', $dodirectpayment['FIRSTNAME'), array('id' => 'FIRSTNAME', 'class' => 'span12')) ?>
+            <?php echo Form::input('dodirectpayment[FIRSTNAME]', $dodirectpayment['FIRSTNAME'], array('id' => 'FIRSTNAME', 'class' => 'span12')) ?>
         </div>
         <div class="control-group">
             <?php echo Form::label('LASTNAME', __('paypal.dodirectpayment.LASTNAME')) ?>
-            <?php echo Form::input('dodirectpayment[LASTNAME]', $dodirectpayment['LASTNAME'), array('id' => 'LASTNAME', 'class' => 'span12')) ?>
+            <?php echo Form::input('dodirectpayment[LASTNAME]', $dodirectpayment['LASTNAME'], array('id' => 'LASTNAME', 'class' => 'span12')) ?>
         </div>
         <div class="control-group">
             <?php echo Form::label('EMAIL', __('paypal.dodirectpayment.EMAIL')) ?>
             <div class="control-input input-prepend row-fluid">
                 <div class="add-on">@</div>
-                <?php echo Form::input('dodirectpayment[EMAIL]', $dodirectpayment['EMAIL'), array('id' => 'EMAIL', 'class' => 'span11')) ?>
+                <?php echo Form::input('dodirectpayment[EMAIL]', $dodirectpayment['EMAIL'], array('id' => 'EMAIL', 'class' => 'span11')) ?>
             </div>
         </div>
     </div>
@@ -33,17 +33,17 @@
 
                 <div class="control-group">
                     <?php echo Form::label('STREET', __('paypal.dodirectpayment.STREET')) ?>
-                    <?php echo Form::input('dodirectpayment[STREET]', $dodirectpayment['STREET'), array('id' => 'STREET', 'class' => 'span12')) ?>
+                    <?php echo Form::input('dodirectpayment[STREET]', $dodirectpayment['STREET'], array('id' => 'STREET', 'class' => 'span12')) ?>
                 </div>
 
                 <div class="control-group">
                     <?php echo Form::label('CITY', __('paypal.dodirectpayment.CITY')) ?>
-                    <?php echo Form::input('dodirectpayment[CITY]', $dodirectpayment['CITY'), array('id' => 'CITY', 'class' => 'span12')) ?>
+                    <?php echo Form::input('dodirectpayment[CITY]', $dodirectpayment['CITY'], array('id' => 'CITY', 'class' => 'span12')) ?>
                 </div>
 
                 <div class="control-group">
                     <?php echo Form::label('dodirectpayment[ZIP]', __('paypal.dodirectpayment.ZIP')) ?>
-                    <?php echo Form::input('dodirectpayment[ZIP]', $dodirectpayment['ZIP'), array('id' => 'ZIP', 'class' => 'span12')) ?>
+                    <?php echo Form::input('dodirectpayment[ZIP]', $dodirectpayment['ZIP'], array('id' => 'ZIP', 'class' => 'span12')) ?>
                 </div>
 
             </div>
@@ -52,17 +52,17 @@
 
                 <div class="control-group">
                     <?php echo Form::label('STREET2', __('paypal.dodirectpayment.STREET2')) ?>
-                    <?php echo Form::input('dodirectpayment[STREET2]', $dodirectpayment['STREET2'), array('id' => 'STREET2', 'class' => 'span12')) ?>
+                    <?php echo Form::input('dodirectpayment[STREET2]', $dodirectpayment['STREET2'], array('id' => 'STREET2', 'class' => 'span12')) ?>
                 </div>
 
                 <div class="control-group">
                     <?php echo Form::label('dodirectpayment[STATE]', __('paypal.dodirectpayment.STATE'), array('id' => 'STATE')) ?>
-                    <?php echo Form::input('dodirectpayment[STATE]', $dodirectpayment['STATE'), array('class' => 'span12')) ?>
+                    <?php echo Form::input('dodirectpayment[STATE]', $dodirectpayment['STATE'], array('class' => 'span12')) ?>
                 </div>
 
                 <div class="control-group">
                     <?php echo Form::label('dodirectpayment[COUNTRYCODE]', __('paypal.dodirectpayment.COUNTRYCODE')) ?>
-                    <?php echo Form::select('dodirectpayment[COUNTRYCODE]', array('CA' => 'Canada', 'US' => 'Unites States of America'), $dodirectpayment['COUNTRYCODE'), array('id' => 'COUNTRYCODE', 'class' => 'span12')) ?>
+                    <?php echo Form::select('dodirectpayment[COUNTRYCODE]', array('CA' => 'Canada', 'US' => 'Unites States of America'), $dodirectpayment['COUNTRYCODE'], array('id' => 'COUNTRYCODE', 'class' => 'span12')) ?>
                 </div>
             </div>
         </div>
@@ -81,7 +81,7 @@
     <div class="span4">
         <div class="control-group">
             <?php echo Form::label('SHIPTOPHONENUM', __('paypal.dodirectpayment.SHIPTOPHONENUM')) ?>
-            <?php echo Form::input('dodirectpayment[SHIPTOPHONENUM]', $dodirectpayment['SHIPTOPHONENUM'), array('id' => 'SHIPTOPHONENUM', 'class' => 'span12')) ?>
+            <?php echo Form::input('dodirectpayment[SHIPTOPHONENUM]', $dodirectpayment['SHIPTOPHONENUM'], array('id' => 'SHIPTOPHONENUM', 'class' => 'span12')) ?>
         </div>
     </div>
 
@@ -139,9 +139,9 @@
                 }
                 ?>
 
-                <?php echo Form::select('dodirectpayment[EXPMONTH]', $months, substr($dodirectpayment['EXPDATE'), 0, 2), array('class' => 'span8', 'onchange' => 'DoDirectPayment.onDateChange(this)')) ?>
-                <?php echo Form::select('dodirectpayment[EXPYEAR]', $years, substr($dodirectpayment['EXPDATE'), 2), array('class' => 'span4', 'onchange' => 'DoDirectPayment.onDateChange(this)')) ?>
-                <?php echo Form::hidden('dodirectpayment[EXPDATE]', $dodirectpayment['EXPDATE'), array('class' => 'span12')) ?>
+                <?php echo Form::select('dodirectpayment[EXPMONTH]', $months, substr($dodirectpayment['EXPDATE'], 0, 2), array('class' => 'span8', 'onchange' => 'DoDirectPayment.onDateChange(this)')) ?>
+                <?php echo Form::select('dodirectpayment[EXPYEAR]', $years, substr($dodirectpayment['EXPDATE'], 2), array('class' => 'span4', 'onchange' => 'DoDirectPayment.onDateChange(this)')) ?>
+                <?php echo Form::hidden('dodirectpayment[EXPDATE]', $dodirectpayment['EXPDATE'], array('class' => 'span12')) ?>
             </div>
         </div>
     </div>

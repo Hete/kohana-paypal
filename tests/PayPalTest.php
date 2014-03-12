@@ -12,17 +12,8 @@ defined('SYSPATH') or die('No direct script access.');
  */
 class PayPalTest extends Unittest_TestCase {
 
-    private function println($message = NULL) {
-        echo $message . "\n";
-    }
-
-    private function prompt($prompt = NULL) {
-
-        $value = readline($prompt);
-
-        echo "\n";
-
-        return $value;
+    public function assertValidation(Validation $validation) {
+        return $this->assertTrue($validation->check(), print_r($validation->errors(), TRUE));    
     }
 
     public function test_request() {
@@ -30,18 +21,21 @@ class PayPalTest extends Unittest_TestCase {
         $request = PayPal::factory('SetExpressCheckout');
 
         $this->assertInstanceOf('Request', $request);
-
+    
         $this->assertEquals('https://api.sandbox.paypal.com/nvp', $request->uri());
     }
 
     public function test_parse_response() {
         
         $response = PayPal::factory('SetExpressCheckout')
-            
             ->query('AMT', 12.27)
             ->execute();
 
         $data = PayPal::parse_response($response);    
+    }
+
+    public function test_redirect() {
+        
     }
 
     public function expandables() {
@@ -95,83 +89,58 @@ class PayPalTest extends Unittest_TestCase {
         $this->assertEquals($expanded, PayPal::expand($flattened));    
     }
 
-    /**
-     * Test a PayPal response. PayPal request must be correct in order to 
-     * test responses.
-     * 
-     * @depends test_request
-     */
-    public function test_Response() {
-
-        $request = PayPal::factory('SetExpressCheckout')
-            
-            ->query(array(
-                'AMT' => 45,
-                'RETURNURL' => 'http://example.com',
-                'CANCELURL' => 'http://example.com'
-        ));
-
-        $response = $request->execute();
-
-        $this->assertNotEmpty($response->body());
-
-        $expanded_query = PayPal::parse_response($response);
-
-        $flattened_query = PayPal::parse_response($response, FALSE);
-
-        $this->assertEquals($flattened_query, PayPal::flatten($expanded_query));
-
-        $this->assertTrue(Valid::url($setexpresscheckout->redirect_url));
-    }
-
-    private $token;
-
     public function test_SetExpressCheckout() {
 
         $response = PayPal::factory('SetExpressCheckout')
-            
             ->query(array(
                     'AMT' => 45,
                     'RETURNURL' => 'http://example.com',
                     'CANCELURL' => 'http://example.com'
                 ))->execute();
 
+        $validation = PayPal_SetExpressCheckout::get_response_validation($response);
+
+        $this->assertValidation($validation);
+
         $response = PayPal::parse_response($response);
 
-        $this->token = $response->query('TOKEN');
+        // redirection
+        $this->assertEquals('https://www.sandbox.paypal.com/cgi-bin/webscr', PayPal_SetExpressCheckout::redirect_url());
 
-        $this->assertNotEmpty($this->token);
-
-        $this->println($response->redirect_url);
+        $this->assertArrayHasKey('TOKEN', $response);
+    
+        return array($response['TOKEN'], 'wert3t559t89i');
     }
-
-    private $payer_id;
 
     /**
      * @depends test_SetExpressCheckout
      */
-    public function test_DoExpressCheckoutPayment() {
+    public function test_DoExpressCheckoutPayment($token, $payer_id) {
 
-        $this->payer_id = readline('Payer ID >');
+        $response = PayPal::factory('DoExpressCheckoutPayment')
+            ->query('AMT', 45)
+            ->query('PAYERID', $payer_id)
+            ->query('TOKEN', $token)
+            ->execute();
 
-        $this->payer_id = PayPal::factory('DoExpressCheckoutPayment')
-            
-                ->query('AMT', 45)
-                ->query('PAYERID', $this->payer_id)
-                ->query('TOKEN', $this->token)
-                ->execute();
+        $validation = PayPal_DoExpressCheckoutPayment::get_response_validation($response);
+
+        $this->assertValidation($validation);
+
+        $response = PayPal::parse_response($response);
+
+        return $response['TRANSACTIONID'];
     }
 
     /**
      * @depends test_DoExpressCheckoutPayment
      */
-    public function test_GetExpressCheckoutDetails() {
+    public function test_GetExpressCheckoutDetails($token) {
 
         $response = PayPal::factory('GetExpressCheckoutDetails')
-            
-                ->query('TOKEN', $this->token)
-                ->query('PAYERID', $this->payer_id)
-                ->execute();
+            ->query('TOKEN', $token)
+            ->query('PAYERID', $this->payer_id)
+            ->execute();
 
         View::factory('paypal/getexpresscheckoutdetails', array('getexpresscheckoutdetails' => $response))
             ->render();
@@ -179,115 +148,86 @@ class PayPalTest extends Unittest_TestCase {
         $this->assertEquals($response->query('AMT'), 45);
     }
 
-    private $authorization_id;
-    private $transaction_id;
-
     public function test_DoDirectPayment() {
 
         $response = PayPal::factory('DoDirectPayment')
-            
-                ->query('EMAIL', 'info@example.com')
-                ->query('ZIP', 'H0H 0H0')
-                ->execute();
+            ->query('EMAIL', 'info@example.com')
+            ->query('ZIP', 'H0H 0H0')
+            ->execute();
+
+        $this->assertValidation(PayPal_DoDirectPayment::get_response_validation($response));
 
         $response = PayPal::parse_response($response);
 
-        $this->transaction_id = $response['TRANSACTIONID'];
-
-        View::factory('payal/dodirectpayment', array('dodirectpayment' => $response))
+        View::factory('paypal/dodirectpayment', array('dodirectpayment' => $response))
             ->render();
 
         // @todo add the Authorization method
-        $this->authorization_id = PayPal::factory('DoDirectPayment')
-            
-                ->query('EMAIL', 'info@example.com')
-                ->query('ZIP', 'H0H 0H0')
-                ->execute();
+        $response = PayPal::factory('DoDirectPayment')
+            ->query('EMAIL', 'info@example.com')
+            ->query('ZIP', 'H0H 0H0')
+            ->execute();
+
+        $this->assertValidation(PayPal_DoDirectPayment::get_response_validation($response));
 
         $response = PayPal::parse_response($response);
 
-        $this->authorization_id = $response['AUTHORIZATIONID'];
-
-        View::factory('payal/dodirectpayment', array('dodirectpayment' => $response))
+        View::factory('paypal/dodirectpayment', array('dodirectpayment' => $response))
             ->render();
+
+        return $response['AUTHORIZATIONID'];
     }
 
     /**
      * @depends test_DoDirectPayment
      */
-    public function test_DoAuthorization() {
-
-        $this->assertNotNull($this->authorization_id);
+    public function test_DoAuthorization($authorization_id) {
 
         PayPal::factory('DoAuthorization')
-            
-                ->query('AUTHORIZATIONID', $this->authorization_id)
-                ->execute();
+            ->query('AUTHORIZATIONID', $authorization_id)
+            ->execute();
     }
 
     /**
      * @depends test_DoAuthorization
      */
-    public function test_DoVoid() {
+    public function test_DoVoid($authorization_id) {
 
         PayPal::factory('DoVoid')
-            
-                ->query('AUTHORIZATIONID', $this->authorization_id)
-                ->execute();
+            ->query('AUTHORIZATIONID', $authorization_id)
+            ->execute();
+
+        return $authorization_id;
     }
 
     /**
      * @depends test_DoVoid
      */
-    public function test_DoReauthorization() {
+    public function test_DoReauthorization($authorization_id) {
 
-        PayPal::factory('DoAuthorization')
-            
-                ->query('AUTHORIZATIONID', $this->authorization_id)
-                ->execute();
+        PayPal::factory('DoReauthorization')
+            ->query('AUTHORIZATIONID', $authorization_id)
+            ->execute();
     }
 
     /**
      * @depends test_DoDirectPayment
      */
-    public function test_DoCapture() {
-
-        $this->assertNotNull($this->authorization_id);
-        $this->assertNutNull($this->transaction_id);
+    public function test_DoCapture($authorization_id) {
 
         PayPal::factory('DoCapture')
-            
-                ->query('TRANSACTIONID', $this->authorization_id)
-                ->execute();
-
-        PayPal::factory('DoCapture')
-            
-                ->query('TRANSACTIONID', $this->transaction_id)
-                ->execute();
+            ->query('AUTHORIZATIONID', $authorization_id)
+            ->execute();
     }
 
     /**
      * @depends test_DoDirectPayment
      */
-    public function test_GetTransactionDetails() {
-
-        $this->assertNotNull($this->authorization_id);
-        $this->assertNutNull($this->transaction_id);
+    public function test_GetTransactionDetails($transaction_id) {
 
         $response = PayPal::factory('GetTransactionDetails')
-            
-                ->query('TRANSACTIONID', $this->authorization_id)
-                ->execute();
-
-        $this->assertTrue(PayPal_GetTransactionDetails::get_response_validation($response)->check());
-
-        View::factory('paypal/gettransactiondetails', array('gettransactiondetails' => $response))
-            ->render();
-
-        $response = PayPal::factory('GetTransactionDetails')
-            
-                ->query('TRANSACTIONID', $this->transaction_id)
-                ->execute();
+            ->query('TRANSACTIONID', $transaction_id)
+            ->execute();
 
         $this->assertTrue(PayPal_GetTransactionDetails::get_response_validation($response)->check());
 
@@ -298,82 +238,68 @@ class PayPalTest extends Unittest_TestCase {
     /**
      * @depends test_DoCapture
      */
-    public function test_RefundTransaction() {
-
-        $this->assertNutNull($this->transaction_id);
+    public function test_RefundTransaction($transaction_id) {
 
         PayPal::factory('RefundTransaction')
-            
-                ->query('TRANSACTIONID', $this->transaction_id)
-                ->execute();
+            ->query('TRANSACTIONID', $transaction_id)
+            ->execute();
     }
 
     /**
      * @depends test_DoCapture
      */
-    public function test_TransactionSearch() {
+    public function test_TransactionSearch($transaction_id) {
 
-        $this->assertNutNull($this->transaction_id);
-
-        PayPal::factory('TransactionSearch')
-            
-                ->query('TRANSACTIONID', $this->transaction_id)
-                ->execute();
+        $response = PayPal::factory('TransactionSearch')
+            ->query('TRANSACTIONID', $transaction_id)
+            ->execute();
     }
 
     /**
      * @depends test_DoDirectPayment
      */
-    public function test_SetCustomerBillingAgreement() {
+    public function test_SetCustomerBillingAgreement($transaction_id) {
 
-        $this->assertNotNull($this->transaction_id);
+        $response = PayPal::factory('SetCustomerBillingAgreement')
+            ->query('TRANSACTIONID', $transaction_id)
+            ->execute();
 
-        $this->token = PayPal::factory('RefundTransaction')
-            
-                ->query('TRANSACTIONID', $this->transaction_id)
-                ->execute()
-                ->query('TOKEN');
+        $response = PayPal::parse_response($response);
+
+        return $response['TOKEN'];
     }
 
     /**
      * @depends test_SetCustomerBillingAgreement
      */
-    public function test_CreateBillingAgreement() {
-
-        $this->payer_id = $this->prompt('Payer ID >');
+    public function test_CreateBillingAgreement($token, $payer_id, $transaction_id) {
 
         PayPal::factory('RefundTransaction')
-            
-                ->query('TOKEN', $this->token)
-                ->query('TRANSACTIONID', $this->transaction_id)
-                ->execute();
+            ->query('TOKEN', $token)
+            ->query('PAYERID', $payer_id)
+            ->query('TRANSACTIONID', $transaction_id)
+            ->execute();
     }
 
     /**
      * @depends SetExpressCheckout
      */
-    public function test_AddressVerify() {
-
-        $this->assertNotNull($this->token);
-        $this->assertNotNull($this->payer_id);
+    public function test_AddressVerify($token, $payer_id) {
 
         PayPal::factory('AddressVerify')
-            ->query('EMAIL', $this->token)
-            ->query('ZIP', $this->payer_id)
+            ->query('EMAIL', $token)
+            ->query('ZIP', $payer_id)
             ->execute();
     }
 
     /**
      * @depends test_SetExpressCheckout
      */
-    public function test_Callback() {
+    public function test_Callback($token, $payer_id) {
 
-        $this->assertNotNull($this->token);
-        $this->assertNotNull($this->payer_id);
-
-        PayPal::factory('Callback')
-            ->query('EMAIL', $this->token)
-            ->query('ZIP', $this->payer_id)
+        $request = PayPal::factory('Callback')
+            ->query('EMAIL', $token)
+            ->query('ZIP', $payer_id)
             ->execute();
     }
 }

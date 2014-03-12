@@ -1,5 +1,5 @@
 <phpunit bootstrap="../unittest/bootstrap.php">
     <testsuite name="PayPal tests">
-        <directory>tests/</directory>
+        <directory>tests</directory>
     </testsuite>
 </phpunit>

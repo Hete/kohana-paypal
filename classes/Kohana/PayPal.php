@@ -316,7 +316,7 @@ abstract class Kohana_PayPal {
      *
      * @param Response $response
      */
-    public function redirect(Response $response) {
+    public static function redirect(Response $response) {
         HTTP::redirect(PayPal::redirect_url(), URL::query($this->redirect_query($response)));
     }
 
@@ -325,7 +325,7 @@ abstract class Kohana_PayPal {
      *
      * @return string
      */
-    public function redirect_url() {
+    public static function redirect_url() {
 
         $environment = PayPal::$environment;
 
@@ -345,7 +345,7 @@ abstract class Kohana_PayPal {
      * @param  Response $response
      * @return array
      */
-    public function redirect_query(Response $response) {
+    public static function redirect_query(Response $response) {
         throw new Kohana_Exception('This PayPal method does not implement redirection.');
     }
 }
