@@ -19,9 +19,10 @@ class Kohana_PayPal_DoReferenceTransaction extends PayPal {
 
     public static function get_request_validation(Request $request) {
         return parent::get_request_validation($request)
-                ->rule('REFERENCEID', 'not_empty')
-                ->rule('PAYMENTACTION', 'in_array', array(':value', PayPal_DoReferenceTransaction::$PAYMENT_ACTIONS))
-                ->rule('PAYMENTTIPE', 'in_array', array(':value', 'Authorization', 'InstantOnly'));
-                ->rule('IPADDRESS', 'ip');
+                        ->rule('REFERENCEID', 'not_empty')
+                        ->rule('PAYMENTACTION', 'in_array', array(':value', PayPal_DoReferenceTransaction::$PAYMENT_ACTIONS))
+                        ->rule('PAYMENTTIPE', 'in_array', array(':value', 'Authorization', 'InstantOnly'))
+                        ->rule('IPADDRESS', 'ip');
     }
+
 }

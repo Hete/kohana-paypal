@@ -27,7 +27,7 @@ class Kohana_PayPal_GetTransactionDetails extends PayPal {
             PAYMENT_STATUS_VOIDED = 'Voided',
             PAYMENT_STATUS_COMPLETED_FUNDS_HELD = 'Completed-Funds-Held';
 
-    public static get_request_validation(Request $request) {
+    public static function get_request_validation(Request $request) {
         return parent::get_request_validation($request)
             ->rule('not_empty', 'TRANSACTIONID');
     }

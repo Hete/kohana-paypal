@@ -1,0 +1,23 @@
+{
+    "name": "kohana/paypal",
+    "description": "PayPal module for the Kohana framework",
+    "homepage": "http://github.com/Hete/kohana-paypal",
+    "license": "BSD-3-Clause",
+    "keywords": ["kohana", "framework", "paypal", "ipn"],
+    "authors": [
+        {
+            "name": "Guillaume Poirier-Morency",
+            "email": "guillaumepoiriermorency@gmail.com",
+            "homepage": "https://github.com/arteymix",
+            "role": "developer"
+        }
+    ],
+    "support": {
+        "issues": "http://github.com/Hete/kohana-mail/issues",
+        "source": "http://github.com/Hete/kohana-mail"
+    },
+    "require": {
+        "kohana/core": ">=3.3",
+        "php": ">=5.3.3"
+    }
+}

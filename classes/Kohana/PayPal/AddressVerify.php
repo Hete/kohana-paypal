@@ -19,10 +19,10 @@ class Kohana_PayPal_AddressVerify extends PayPal {
 
     public static function get_request_validation(Request $request) {
         return parent::get_request_validation($request)
-                ->rule('EMAIL', 'not_empty')
-                ->rule('EMAIL', 'email')
-                ->rule('STREET', 'not_empty')
-                ->rule('ZIP', 'not_empty');
+                        ->rule('EMAIL', 'not_empty')
+                        ->rule('EMAIL', 'email')
+                        ->rule('STREET', 'not_empty')
+                        ->rule('ZIP', 'not_empty');
     }
-}
 
+}

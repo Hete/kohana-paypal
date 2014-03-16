@@ -13,25 +13,25 @@ defined('SYSPATH') or die('No direct script access.');
 class PayPalTest extends Unittest_TestCase {
 
     public function assertValidation(Validation $validation) {
-        return $this->assertTrue($validation->check(), print_r($validation->errors(), TRUE));    
+        return $this->assertTrue($validation->check(), print_r($validation->errors(), TRUE));
     }
 
     public function test_request() {
-        
+
         $request = PayPal::factory('SetExpressCheckout');
 
         $this->assertInstanceOf('Request', $request);
-    
+
         $this->assertEquals('https://api.sandbox.paypal.com/nvp', $request->uri());
     }
 
     public function test_parse_response() {
-        
-        $response = PayPal::factory('SetExpressCheckout')
-            ->query('AMT', 12.27)
-            ->execute();
 
-        $data = PayPal::parse_response($response);    
+        $response = PayPal::factory('SetExpressCheckout')
+                ->query('AMT', 12.27)
+                ->execute();
+
+        $data = PayPal::parse_response($response);
     }
 
     public function test_redirect() {
@@ -41,66 +41,62 @@ class PayPalTest extends Unittest_TestCase {
     public function expandables() {
         return array(
             array(
+                // one level array
+                array('FOO'),
+                array('FOO')
+            ),
+            array(
+                // one level dictionary
+                array('FOO' => 'BAR'),
+                array('FOO' => 'BAR')
+            ),
+            array(
+                // dot
+                array('FOO.BAR'),
+                array('FOO' => 'BAR')
+            ),
+            array(
+                // mixed dot and underscore
+                array('FOO.BAR_FOO'),
+                array('FOO' => array('BAR' => 'FOO'))
+            ),
+            array(
+                // multiple keys
                 array(
                     'FOO_0_BAR' => 'Teeest :)',
                     'FOO_1_BAR' => 'Example!'
                 ),
                 array(
                     'FOO' => array(
-                        array( // 0
+                        array(// 0
                             'BAR' => 'Teeest :)'
                         ),
-                        array( // 1
+                        array(// 1
                             'BAR' => 'Example!'
                         )
                     )
                 )
             ),
-            array(
-                array('FOO'),
-                array('FOO')
-            ),
-            array(
-                array('FOO' => 'BAR'),
-                array('FOO' => 'BAR')
-            ),
-            array(
-                array('FOO.BAR'),
-                array('FOO' => 'BAR')
-            ),
-            array(
-                array('FOO.BAR_FOO'),
-                array('FOO' => array('BAR' => 'FOO'))
-            ),
-        );    
-    }
-
-    /**
-     * @dataProvider expandables
-     */
-    public function test_flatten(array $flattened, array $expanded) {
-        $this->assertEquals($flattened, PayPal::flatten($expanded));
+        );
     }
 
     /**
      * @dataProvider expandables
      */
     public function test_expand(array $flattened, array $expanded) {
-        $this->assertEquals($expanded, PayPal::expand($flattened));    
+        $this->assertEquals($expanded, PayPal::expand($flattened));
     }
 
     public function test_SetExpressCheckout() {
 
         $response = PayPal::factory('SetExpressCheckout')
-            ->query(array(
-                    'AMT' => 45,
-                    'RETURNURL' => 'http://example.com',
-                    'CANCELURL' => 'http://example.com'
-                ))->execute();
+                        ->query(array(
+                            'AMT' => 45,
+                            'RETURNURL' => 'http://example.com',
+                            'CANCELURL' => 'http://example.com'
+                        ))->execute();
 
-        $validation = PayPal_SetExpressCheckout::get_response_validation($response);
-
-        $this->assertValidation($validation);
+        $this->assertValidation(PayPal_SetExpressCheckout::get_response_validation($response));
 
         $response = PayPal::parse_response($response);
 
@@ -108,7 +104,7 @@ class PayPalTest extends Unittest_TestCase {
         $this->assertEquals('https://www.sandbox.paypal.com/cgi-bin/webscr', PayPal_SetExpressCheckout::redirect_url());
 
         $this->assertArrayHasKey('TOKEN', $response);
-    
+
         return array($response['TOKEN'], 'wert3t559t89i');
     }
 
@@ -118,10 +114,10 @@ class PayPalTest extends Unittest_TestCase {
     public function test_DoExpressCheckoutPayment($token, $payer_id) {
 
         $response = PayPal::factory('DoExpressCheckoutPayment')
-            ->query('AMT', 45)
-            ->query('PAYERID', $payer_id)
-            ->query('TOKEN', $token)
-            ->execute();
+                ->query('AMT', 45)
+                ->query('PAYERID', $payer_id)
+                ->query('TOKEN', $token)
+                ->execute();
 
         $validation = PayPal_DoExpressCheckoutPayment::get_response_validation($response);
 
@@ -138,12 +134,12 @@ class PayPalTest extends Unittest_TestCase {
     public function test_GetExpressCheckoutDetails($token) {
 
         $response = PayPal::factory('GetExpressCheckoutDetails')
-            ->query('TOKEN', $token)
-            ->query('PAYERID', $this->payer_id)
-            ->execute();
+                ->query('TOKEN', $token)
+                ->query('PAYERID', $this->payer_id)
+                ->execute();
 
         View::factory('paypal/getexpresscheckoutdetails', array('getexpresscheckoutdetails' => $response))
-            ->render();
+                ->render();
 
         $this->assertEquals($response->query('AMT'), 45);
     }
@@ -151,29 +147,29 @@ class PayPalTest extends Unittest_TestCase {
     public function test_DoDirectPayment() {
 
         $response = PayPal::factory('DoDirectPayment')
-            ->query('EMAIL', 'info@example.com')
-            ->query('ZIP', 'H0H 0H0')
-            ->execute();
+                ->query('EMAIL', 'info@example.com')
+                ->query('ZIP', 'H0H 0H0')
+                ->execute();
 
         $this->assertValidation(PayPal_DoDirectPayment::get_response_validation($response));
 
         $response = PayPal::parse_response($response);
 
         View::factory('paypal/dodirectpayment', array('dodirectpayment' => $response))
-            ->render();
+                ->render();
 
         // @todo add the Authorization method
         $response = PayPal::factory('DoDirectPayment')
-            ->query('EMAIL', 'info@example.com')
-            ->query('ZIP', 'H0H 0H0')
-            ->execute();
+                ->query('EMAIL', 'info@example.com')
+                ->query('ZIP', 'H0H 0H0')
+                ->execute();
 
         $this->assertValidation(PayPal_DoDirectPayment::get_response_validation($response));
 
         $response = PayPal::parse_response($response);
 
         View::factory('paypal/dodirectpayment', array('dodirectpayment' => $response))
-            ->render();
+                ->render();
 
         return $response['AUTHORIZATIONID'];
     }
@@ -184,8 +180,8 @@ class PayPalTest extends Unittest_TestCase {
     public function test_DoAuthorization($authorization_id) {
 
         PayPal::factory('DoAuthorization')
-            ->query('AUTHORIZATIONID', $authorization_id)
-            ->execute();
+                ->query('AUTHORIZATIONID', $authorization_id)
+                ->execute();
     }
 
     /**
@@ -194,8 +190,8 @@ class PayPalTest extends Unittest_TestCase {
     public function test_DoVoid($authorization_id) {
 
         PayPal::factory('DoVoid')
-            ->query('AUTHORIZATIONID', $authorization_id)
-            ->execute();
+                ->query('AUTHORIZATIONID', $authorization_id)
+                ->execute();
 
         return $authorization_id;
     }
@@ -206,8 +202,8 @@ class PayPalTest extends Unittest_TestCase {
     public function test_DoReauthorization($authorization_id) {
 
         PayPal::factory('DoReauthorization')
-            ->query('AUTHORIZATIONID', $authorization_id)
-            ->execute();
+                ->query('AUTHORIZATIONID', $authorization_id)
+                ->execute();
     }
 
     /**
@@ -216,8 +212,8 @@ class PayPalTest extends Unittest_TestCase {
     public function test_DoCapture($authorization_id) {
 
         PayPal::factory('DoCapture')
-            ->query('AUTHORIZATIONID', $authorization_id)
-            ->execute();
+                ->query('AUTHORIZATIONID', $authorization_id)
+                ->execute();
     }
 
     /**
@@ -226,13 +222,13 @@ class PayPalTest extends Unittest_TestCase {
     public function test_GetTransactionDetails($transaction_id) {
 
         $response = PayPal::factory('GetTransactionDetails')
-            ->query('TRANSACTIONID', $transaction_id)
-            ->execute();
+                ->query('TRANSACTIONID', $transaction_id)
+                ->execute();
 
         $this->assertTrue(PayPal_GetTransactionDetails::get_response_validation($response)->check());
 
         View::factory('paypal/gettransactiondetails', array('gettransactiondetails' => $response))
-            ->render();
+                ->render();
     }
 
     /**
@@ -241,8 +237,8 @@ class PayPalTest extends Unittest_TestCase {
     public function test_RefundTransaction($transaction_id) {
 
         PayPal::factory('RefundTransaction')
-            ->query('TRANSACTIONID', $transaction_id)
-            ->execute();
+                ->query('TRANSACTIONID', $transaction_id)
+                ->execute();
     }
 
     /**
@@ -251,8 +247,8 @@ class PayPalTest extends Unittest_TestCase {
     public function test_TransactionSearch($transaction_id) {
 
         $response = PayPal::factory('TransactionSearch')
-            ->query('TRANSACTIONID', $transaction_id)
-            ->execute();
+                ->query('TRANSACTIONID', $transaction_id)
+                ->execute();
     }
 
     /**
@@ -261,8 +257,8 @@ class PayPalTest extends Unittest_TestCase {
     public function test_SetCustomerBillingAgreement($transaction_id) {
 
         $response = PayPal::factory('SetCustomerBillingAgreement')
-            ->query('TRANSACTIONID', $transaction_id)
-            ->execute();
+                ->query('TRANSACTIONID', $transaction_id)
+                ->execute();
 
         $response = PayPal::parse_response($response);
 
@@ -275,10 +271,10 @@ class PayPalTest extends Unittest_TestCase {
     public function test_CreateBillingAgreement($token, $payer_id, $transaction_id) {
 
         PayPal::factory('RefundTransaction')
-            ->query('TOKEN', $token)
-            ->query('PAYERID', $payer_id)
-            ->query('TRANSACTIONID', $transaction_id)
-            ->execute();
+                ->query('TOKEN', $token)
+                ->query('PAYERID', $payer_id)
+                ->query('TRANSACTIONID', $transaction_id)
+                ->execute();
     }
 
     /**
@@ -287,9 +283,9 @@ class PayPalTest extends Unittest_TestCase {
     public function test_AddressVerify($token, $payer_id) {
 
         PayPal::factory('AddressVerify')
-            ->query('EMAIL', $token)
-            ->query('ZIP', $payer_id)
-            ->execute();
+                ->query('EMAIL', $token)
+                ->query('ZIP', $payer_id)
+                ->execute();
     }
 
     /**
@@ -298,8 +294,9 @@ class PayPalTest extends Unittest_TestCase {
     public function test_Callback($token, $payer_id) {
 
         $request = PayPal::factory('Callback')
-            ->query('EMAIL', $token)
-            ->query('ZIP', $payer_id)
-            ->execute();
+                ->query('EMAIL', $token)
+                ->query('ZIP', $payer_id)
+                ->execute();
     }
+
 }

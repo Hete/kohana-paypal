@@ -53,22 +53,21 @@ abstract class Kohana_PayPal {
      * Environment types.
      */
     const SANDBOX = 'sandbox', LIVE = 'live', SANDBOX_BETA = 'sandbox-beta';
-
     const NONE = 'None';
 
     /**
      * Acknowledgements
      */
     const SUCCESS = 'Success',
-          SUCCESS_WITH_WARNING = 'SuccessWithWarning',
-          FAILURE = 'Failure',
-          FAILURE_WITH_WARNING = 'FailureWithWarning';
+            SUCCESS_WITH_WARNING = 'SuccessWithWarning',
+            FAILURE = 'Failure',
+            FAILURE_WITH_WARNING = 'FailureWithWarning';
 
     /**
      * Short date format supported by PayPal.
      */
     const SHORT_DATE_FORMAT = 'Y-m-d\T',
-          DATE_FORMAT = 'Y-m-d\TH:i:s.BP';
+            DATE_FORMAT = 'Y-m-d\TH:i:s.BP';
 
     /**
      * Supported currencies.
@@ -80,6 +79,7 @@ abstract class Kohana_PayPal {
         'EUR', 'HKD', 'HUF', 'ILS', 'JPY', 'MYR', 'MXN', 'NOK', 'NZD', 'PHP',
         'PLN', 'GBP', 'SGD', 'SEK', 'CHF', 'TWD', 'THB', 'USD'
     );
+
     /**
      * Supported days of week.
      * 
@@ -89,6 +89,7 @@ abstract class Kohana_PayPal {
         'NO_DAY_SPECIFIED', 'SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY',
         'THURSDAY', 'FRIDAY', 'SATURDAY'
     );
+
     /**
      * Supported months of year.
      * 
@@ -98,6 +99,7 @@ abstract class Kohana_PayPal {
         'NO_MONTH_SPECIFIED', 'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY',
         'JUNE', 'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'
     );
+
     /**
      * Required states.
      * 
@@ -107,6 +109,7 @@ abstract class Kohana_PayPal {
         'REQUIRED',
         'NOT_REQUIRED'
     );
+
     /**
      * Defines all the possible acknowledgements values.
      *
@@ -119,6 +122,7 @@ abstract class Kohana_PayPal {
         'SuccessWithWarning',
         'FailureWithWarning'
     );
+
     /**
      * Defines all the success acknowledgements
      *
@@ -129,6 +133,7 @@ abstract class Kohana_PayPal {
         'SuccessWithWarning',
         'PartialSuccess'
     );
+
     /**
      * Defines all the failure acknowledgements.
      *
@@ -148,30 +153,26 @@ abstract class Kohana_PayPal {
      */
     public static function factory($method, $client_params = array()) {
 
-        $class = "PayPal_$method";
-
         $config = Kohana::$config->load('paypal.' . PayPal::$environment);
-
-        $environment = PayPal::$environment;
 
         $api = $config['signature'] ? 'api-3t' : 'api';
 
-        $url = "https://$api.$environment.paypal.com/nvp";
+        $url = "https://$api." . PayPal::$environment . '.paypal.com/nvp';
 
-        if ($environment === PayPal::LIVE) {
+        if (PayPal::$environment === PayPal::LIVE) {
             $url = "https://$api.paypal.com/nvp";
         }
 
         return Request::factory($url, $client_params)
-            ->client(Request_Client_External::factory($config['client_options']))
-            ->headers('Connection', 'close')
-            ->query(array(
-                'METHOD'    => $method,
-                'USER'      => $config['username'],
-                'PWD'       => $config['password'],
-                'SIGNATURE' => $config['signature'],
-                'VERSION'   => $config['api_version']
-            ));
+                        ->client(Request_Client_External::factory($config['client_options']))
+                        ->headers('Connection', 'close')
+                        ->query(array(
+                            'METHOD' => $method,
+                            'USER' => $config['username'],
+                            'PWD' => $config['password'],
+                            'SIGNATURE' => $config['signature'],
+                            'VERSION' => $config['api_version']
+        ));
     }
 
     /**
@@ -182,10 +183,10 @@ abstract class Kohana_PayPal {
      */
     public static function get_request_validation(Request $request) {
         return Validation::factory($request->query())
-            ->rule('USER', 'not_empty')
-            ->rule('PWD', 'not_empty')
-            ->rule('VERSION', 'not_empty')
-            ->rule('METHOD', 'equals', array(':value', str_replace('PayPal_', '', get_called_class())));
+                        ->rule('USER', 'not_empty')
+                        ->rule('PWD', 'not_empty')
+                        ->rule('VERSION', 'not_empty')
+                        ->rule('METHOD', 'equals', array(':value', str_replace('PayPal_', '', get_called_class())));
     }
 
     /**
@@ -198,8 +199,8 @@ abstract class Kohana_PayPal {
      */
     public static function get_response_validation(Response $response) {
         return Validation::factory(PayPal::parse_response($response, FALSE))
-                ->rule('ACK', 'not_empty')
-                ->rule('ACK', 'in_array', array(':value', PayPal::$SUCCESS_ACKNOWLEDGEMENTS));
+                        ->rule('ACK', 'not_empty')
+                        ->rule('ACK', 'in_array', array(':value', PayPal::$SUCCESS_ACKNOWLEDGEMENTS));
     }
 
     /**
@@ -246,58 +247,14 @@ abstract class Kohana_PayPal {
      * @return array
      */
     public static function expand(array $array) {
-        
-        foreach ($array as $key => $value) {
 
-            $parts = preg_split('/_|\./', $key);
-
-            $level = &$array;
-
-            foreach ($parts as $part) {
-                $part = Valid::digit($part) ? (int) $part : $part;
-                $level[$part] = array();
-                $level = &$level[$part];
-            }
-
-            // the ultimate level contains the value
-            $level = $value;
-            
-            if (count($parts) > 1) {
-                unset($array[$key]);
-            }
-        }
-
-        return $array;
-    }
-
-    /**
-     * Flatten a multidimensional mixed array into a flattened PayPal array.
-     * 
-     * @param  array $array
-     * @return array
-     */
-    public static function flatten(array $array) {
+        $expanded = array();
 
         foreach ($array as $key => $value) {
-
-            if (is_array($value)) {
-
-                $value = PayPal::flatten($value);
-
-                foreach($value as $k => $v) {   
-                    if (is_integer($key) or $k[1] === '_') {
-                        $array[$key . '_' . $k] = $v;
-                    } else {
-                        $array[$key . '.' . $k] = $v;
-                    }
-                }
-
-                unset($array[$key]);
-            }
-
+            Arr::set_path($expanded, preg_replace('/\_/', '.', $key), $value);
         }
 
-        return $array;
+        return $expanded;
     }
 
     /**
@@ -348,4 +305,5 @@ abstract class Kohana_PayPal {
     public static function redirect_query(Response $response) {
         throw new Kohana_Exception('This PayPal method does not implement redirection.');
     }
+
 }

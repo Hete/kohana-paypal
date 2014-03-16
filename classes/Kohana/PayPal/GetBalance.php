@@ -17,6 +17,7 @@ class Kohana_PayPal_GetBalance extends PayPal {
 
     public static function get_request_validation(Response $response) {
         return parent::get_request_validation($response)
-            ->rule('RETURNALLCURRENCIES', 'in_array', array(':value', array(0, 1));
+                        ->rule('RETURNALLCURRENCIES', 'in_array', array(':value', array(0, 1)));
     }
+
 }
