@@ -1,11 +1,15 @@
 # PayPal module for Kohana 3.3
 
-This module supports classic PayPal api along with an IPN endpoint.
+This module supports classic NVP PayPal api along with an IPN endpoint.
+
+NVP api is being deprecated by the new RESTful api. New projects should use new api.
 
 ## Featuers
-* Full-support for NVP api
-* Validation
-* IPN 
+
+* classic NVP api
+* validations for Request and Response objects
+* IPN endpoint
+* various views
 
 ## Basic usage
 
@@ -20,9 +24,8 @@ You can pass options like with Request factory
 You can get the inner Request object
 
     $response = $setexpresscheckout
-        ->request()
-            ->query('AMT', 33.23)
-            ->execute();
+        ->query('AMT', 33.23)
+        ->execute();
 
 Executing the Request will returna Response object.
 
@@ -45,11 +48,9 @@ If you need the raw PayPal array:
 
     $arr = PayPal::parse_response($response, FALSE);
 
-Then, you can expand and flatten it
+Then you can expand it
 
     $expanded = PayPal::expand($arr);
-
-    $flattened = PayPal::flatten($expanded);
 
 ## Validation
 
