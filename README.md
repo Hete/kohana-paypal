@@ -74,6 +74,15 @@ It will create an endpoint for PayPal's request.
 
 Requests are automatically verified against PayPal. You only need to overload Kohana\_Controller\_IPN and set supported action. If not specified, a 404 error will be triggered. express\_checkout is given as an example.
 
+Then, override the IPN controller.
+
+    class Controller\_PayPal\_IPN extends Kohana\_Controller\_PayPal\_IPN {
+    
+        public function action\_express\_checkout() {
+            // Put your code here...
+        }
+    }
+
 ## Views
 
 A set of useful views are given to deal with common requests. They are designed to present parsed Response object using PayPal::parse\_response.
