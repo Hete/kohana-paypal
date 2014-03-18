@@ -10,6 +10,5 @@ if (Kohana::$config->load('paypal.' . PayPal::$environment . '.ipn_enabled') ===
      * You have to configure your PayPal account to send its request to this
      * endpoint.
      */
-    Route::set('ipn', 'ipn')
-            ->defaults(array('controller' => 'IPN'));
+    Route::set('ipn', 'ipn')->defaults(array('controller' => 'PayPal_IPN'));
 }

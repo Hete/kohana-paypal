@@ -13,7 +13,7 @@ defined('SYSPATH') or die('No direct script access.');
  * @copyright (c) 2013, Hète.ca Inc.
  * @license   http://kohanaframework.org/license
  */
-class Kohana_Controller_IPN extends Controller {
+class Kohana_Controller_PayPal_IPN extends Controller {
 
     public function before() {
 
@@ -32,13 +32,6 @@ class Kohana_Controller_IPN extends Controller {
 
         // Update action to be called
         $this->request->action($this->request->post('txn_type'));
-    }
-
-    /**
-     * Example of function to deal with express checkout ipn.
-     */
-    public function action_express_checkout() {
-        $this->response->body('This action is only a test.');
     }
 
 }
