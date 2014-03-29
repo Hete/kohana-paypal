@@ -4,7 +4,7 @@ This module supports classic NVP PayPal api along with an IPN endpoint.
 
 NVP api is being deprecated by the new RESTful api. New projects should use new api.
 
-## Featuers
+## Features
 
 * classic NVP api
 * validations for Request and Response objects
@@ -17,7 +17,7 @@ NVP api is being deprecated by the new RESTful api. New projects should use new 
 
 You can pass options like with Request factory
 
-    $setexpresscheckotu = PayPal::factory('SetExpressCheckout', array(
+    $setexpresscheckout = PayPal::factory('SetExpressCheckout', array(
         'cache' => Cache::instance()
     ));
 
@@ -30,14 +30,14 @@ You can get the inner Request object
 Executing the Request will returna Response object.
 
 Redirection are handled for requests that requires user interaction.
-    
+
     $url = PayPal_SetExpressCheckout::redirect_url($response);
     $param = PayPal_SetExpressCheckout::redirect_query($response);
 
     HTTP::redirect($url . URL::query($param));
 
 Or simply
-    
+
     PayPal_SetExpressCheckout::redirect($response);
 
 PayPal class provides a method for parsing the Response into an associative array.
@@ -77,7 +77,7 @@ Requests are automatically verified against PayPal. You only need to overload Ko
 Then, override the IPN controller.
 
     class Controller\_PayPal\_IPN extends Kohana\_Controller\_PayPal\_IPN {
-    
+
         public function action\_express\_checkout() {
             // Put your code here...
         }
