@@ -1,11 +1,15 @@
 # PayPal module for Kohana 3.3
 
-This module supports classic PayPal api along with an IPN endpoint.
+This module supports classic NVP PayPal api along with an IPN endpoint.
 
-## Featuers
-* Full-support for NVP api
-* Validation
-* IPN 
+NVP api is being deprecated by the new RESTful api. New projects should use new api.
+
+## Features
+
+* classic NVP api
+* validations for Request and Response objects
+* IPN endpoint
+* various views
 
 ## Basic usage
 
@@ -13,28 +17,27 @@ This module supports classic PayPal api along with an IPN endpoint.
 
 You can pass options like with Request factory
 
-    $setexpresscheckotu = PayPal::factory('SetExpressCheckout', array(
+    $setexpresscheckout = PayPal::factory('SetExpressCheckout', array(
         'cache' => Cache::instance()
     ));
 
 You can get the inner Request object
 
     $response = $setexpresscheckout
-        ->request()
-            ->query('AMT', 33.23)
-            ->execute();
+        ->query('AMT', 33.23)
+        ->execute();
 
 Executing the Request will returna Response object.
 
 Redirection are handled for requests that requires user interaction.
-    
+
     $url = PayPal_SetExpressCheckout::redirect_url($response);
     $param = PayPal_SetExpressCheckout::redirect_query($response);
 
     HTTP::redirect($url . URL::query($param));
 
 Or simply
-    
+
     PayPal_SetExpressCheckout::redirect($response);
 
 PayPal class provides a method for parsing the Response into an associative array.
@@ -45,11 +48,9 @@ If you need the raw PayPal array:
 
     $arr = PayPal::parse_response($response, FALSE);
 
-Then, you can expand and flatten it
+Then you can expand it
 
     $expanded = PayPal::expand($arr);
-
-    $flattened = PayPal::flatten($expanded);
 
 ## Validation
 
@@ -72,6 +73,15 @@ It will create an endpoint for PayPal's request.
     example.com/ipn
 
 Requests are automatically verified against PayPal. You only need to overload Kohana\_Controller\_IPN and set supported action. If not specified, a 404 error will be triggered. express\_checkout is given as an example.
+
+Then, override the IPN controller.
+
+    class Controller\_PayPal\_IPN extends Kohana\_Controller\_PayPal\_IPN {
+
+        public function action\_express\_checkout() {
+            // Put your code here...
+        }
+    }
 
 ## Views
 
