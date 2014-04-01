@@ -21,13 +21,11 @@ You can pass options like with Request factory
         'cache' => Cache::instance()
     ));
 
-You can get the inner Request object
+It returns a prepared Request object that you can execute
 
     $response = $setexpresscheckout
         ->query('AMT', 33.23)
         ->execute();
-
-Executing the Request will returna Response object.
 
 Redirection are handled for requests that requires user interaction.
 
