@@ -4,6 +4,9 @@ defined('SYSPATH') or die('No direct script access.');
 
 /**
  * Controller to deal with IPN requests.
+ *
+ * Implemented action deals with a specific txn_type value. You could implement
+ * the express_checkout action for instance.
  * 
  * @link https://developer.paypal.com/webapps/developer/docs/classic/ipn/integration-guide/IPNandPDTVariables/
  * 
@@ -19,19 +22,19 @@ class Kohana_Controller_PayPal_IPN extends Controller {
 
         parent::before();
 
-        $response = PayPal::factory('NotifyValidate')
+        $response = Request::factory('https://www.paypal.com/cgi-bin/webscr')
                 ->query($this->request->post())
-                ->query('cmd', '_notify-validate')
+                ->query('_cmd', 'notify-validate')
                 ->execute();
 
-        $validation = PayPal_NotifyValidate::get_response_validation($response);
+        if ($response === 'VERIFIED') {
 
-        if (!$validation->check()) {
-            throw new HTTP_Exception_401('Posted data does not match against PayPal.');
+            // Update action to be called
+            $this->request->action($this->request->post('txn_type'));
+        } else { 
+
+            throw new HTTP_Exception_403('Posted data does not match against PayPal.');
         }
 
-        // Update action to be called
-        $this->request->action($this->request->post('txn_type'));
     }
-
 }

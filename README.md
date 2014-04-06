@@ -9,7 +9,6 @@ NVP api is being deprecated by the new RESTful api. New projects should use new 
 * classic NVP api
 * validations for Request and Response objects
 * IPN endpoint
-* various views
 
 ## Basic usage
 
@@ -82,11 +81,3 @@ Then, override the IPN controller.
             // Put your code here...
         }
     }
-
-## Views
-
-A set of useful views are given to deal with common requests. They are designed to present parsed Response object using PayPal::parse\_response.
-
-* DoDirectPayment
-* GetExpressCheckoutDetails
-* GetTransactionDetails

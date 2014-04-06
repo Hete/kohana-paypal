@@ -12,7 +12,15 @@ defined('SYSPATH') or die('No direct script access.');
  */
 class PayPalTest extends Unittest_TestCase {
 
+    public function setUp() {
+        
+        parent::setUp();
+
+        $this->assertEquals(PayPal::SANDBOX, PayPal::$environment, 'Do not run unittests with a live account: you might get some surprises.');
+    }
+
     public function assertValidation(Validation $validation) {
+
         return $this->assertTrue($validation->check(), print_r($validation->errors(), TRUE));
     }
 
@@ -52,13 +60,13 @@ class PayPalTest extends Unittest_TestCase {
             ),
             array(
                 // dot
-                array('FOO.BAR'),
-                array('FOO' => 'BAR')
+                array('FOO.BAR' => 'BAR'),
+                array('FOO' => array('BAR' => 'BAR'))
             ),
             array(
                 // mixed dot and underscore
-                array('FOO.BAR_FOO'),
-                array('FOO' => array('BAR' => 'FOO'))
+                array('FOO.BAR_FOO' => 'FOO'),
+                array('FOO' => array('BAR' => array('FOO' => 'FOO')))
             ),
             array(
                 // multiple keys
@@ -68,10 +76,10 @@ class PayPalTest extends Unittest_TestCase {
                 ),
                 array(
                     'FOO' => array(
-                        array(// 0
+                        '0' => array(// 0
                             'BAR' => 'Teeest :)'
                         ),
-                        array(// 1
+                        '1' => array(// 1
                             'BAR' => 'Example!'
                         )
                     )
@@ -89,12 +97,14 @@ class PayPalTest extends Unittest_TestCase {
 
     public function test_SetExpressCheckout() {
 
-        $response = PayPal::factory('SetExpressCheckout')
-                        ->query(array(
-                            'AMT' => 45,
-                            'RETURNURL' => 'http://example.com',
-                            'CANCELURL' => 'http://example.com'
-                        ))->execute();
+        $request = PayPal::factory('SetExpressCheckout')
+            ->query('AMT', 45)
+            ->query('RETURNURL', 'http://example.com')
+            ->query('CANCELURL', 'http://example.com');
+
+        $this->assertValidation(PayPal_SetExpressCheckout::get_request_validation($request));
+
+        $response = $request->execute();
 
         $this->assertValidation(PayPal_SetExpressCheckout::get_response_validation($response));
 
@@ -138,38 +148,41 @@ class PayPalTest extends Unittest_TestCase {
                 ->query('PAYERID', $this->payer_id)
                 ->execute();
 
-        View::factory('paypal/getexpresscheckoutdetails', array('getexpresscheckoutdetails' => $response))
-                ->render();
-
         $this->assertEquals($response->query('AMT'), 45);
     }
 
     public function test_DoDirectPayment() {
 
         $response = PayPal::factory('DoDirectPayment')
+                ->query('CREDITCARDTYPE', 'Visa')
+                ->query('ACCT', '4222222222222')
+                ->query('CVV2', '272')
+                ->query('EXPDATE', '052020')
                 ->query('EMAIL', 'info@example.com')
                 ->query('ZIP', 'H0H 0H0')
+                ->query('STREET', '55, Sesam street')
+                ->query('AMT', 44.1)
                 ->execute();
 
         $this->assertValidation(PayPal_DoDirectPayment::get_response_validation($response));
 
         $response = PayPal::parse_response($response);
-
-        View::factory('paypal/dodirectpayment', array('dodirectpayment' => $response))
-                ->render();
 
         // @todo add the Authorization method
         $response = PayPal::factory('DoDirectPayment')
+                ->query('CREDITCARDTYPE', 'Visa')
+                ->query('ACCT', '4222222222222')
+                ->query('CVV2', '272')
+                ->query('EXPDATE', '052020')
                 ->query('EMAIL', 'info@example.com')
                 ->query('ZIP', 'H0H 0H0')
+                ->query('STREET', '55, Sesam street')
+                ->query('AMT', 44.1)
                 ->execute();
 
         $this->assertValidation(PayPal_DoDirectPayment::get_response_validation($response));
 
         $response = PayPal::parse_response($response);
-
-        View::factory('paypal/dodirectpayment', array('dodirectpayment' => $response))
-                ->render();
 
         return $response['AUTHORIZATIONID'];
     }
@@ -226,9 +239,6 @@ class PayPalTest extends Unittest_TestCase {
                 ->execute();
 
         $this->assertTrue(PayPal_GetTransactionDetails::get_response_validation($response)->check());
-
-        View::factory('paypal/gettransactiondetails', array('gettransactiondetails' => $response))
-                ->render();
     }
 
     /**
@@ -297,6 +307,21 @@ class PayPalTest extends Unittest_TestCase {
                 ->query('EMAIL', $token)
                 ->query('ZIP', $payer_id)
                 ->execute();
+    }
+    
+    public function test_ipn() {
+
+        $response = Request::factory('ipn')
+            ->method(Request::POST)
+            ->post(array(
+                'txn_type'          => 'express_checkout',
+                'receiver_id'       => '1234',
+                'receiver_email'    => 'foo@example.com',
+                'residence_country' => 'USA',
+                'test_ipn'          => TRUE
+            ))->execute();
+
+        $this->assertEquals(403, $response->status());
     }
 
 }

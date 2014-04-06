@@ -53,6 +53,10 @@ abstract class Kohana_PayPal {
      * Environment types.
      */
     const SANDBOX = 'sandbox', LIVE = 'live', SANDBOX_BETA = 'sandbox-beta';
+
+    /**
+     * None.
+     */
     const NONE = 'None';
 
     /**
@@ -160,6 +164,7 @@ abstract class Kohana_PayPal {
         $url = "https://$api." . PayPal::$environment . '.paypal.com/nvp';
 
         if (PayPal::$environment === PayPal::LIVE) {
+
             $url = "https://$api.paypal.com/nvp";
         }
 
@@ -182,6 +187,7 @@ abstract class Kohana_PayPal {
      * @return Validation
      */
     public static function get_request_validation(Request $request) {
+
         return Validation::factory($request->query())
                         ->rule('USER', 'not_empty')
                         ->rule('PWD', 'not_empty')
@@ -198,6 +204,7 @@ abstract class Kohana_PayPal {
      * @return Validation
      */
     public static function get_response_validation(Response $response) {
+
         return Validation::factory(PayPal::parse_response($response, FALSE))
                         ->rule('ACK', 'not_empty')
                         ->rule('ACK', 'in_array', array(':value', PayPal::$SUCCESS_ACKNOWLEDGEMENTS));
@@ -251,6 +258,9 @@ abstract class Kohana_PayPal {
         $expanded = array();
 
         foreach ($array as $key => $value) {
+
+            $path = preg_replace('/_/', '.', $key); // PayPal mixes dot with underscores
+
             Arr::set_path($expanded, preg_replace('/\_/', '.', $key), $value);
         }
 
@@ -264,6 +274,7 @@ abstract class Kohana_PayPal {
      * @return string
      */
     public static function number_format($number) {
+
         return number_format($number, 2, '.', '');
     }
 
@@ -274,7 +285,8 @@ abstract class Kohana_PayPal {
      * @param Response $response
      */
     public static function redirect(Response $response) {
-        HTTP::redirect(PayPal::redirect_url(), URL::query($this->redirect_query($response)));
+
+        HTTP::redirect(static::redirect_url(), URL::query(static::redirect_query($response)));
     }
 
     /**
@@ -303,6 +315,7 @@ abstract class Kohana_PayPal {
      * @return array
      */
     public static function redirect_query(Response $response) {
+
         throw new Kohana_Exception('This PayPal method does not implement redirection.');
     }
 

@@ -58,7 +58,7 @@ class Kohana_PayPal_DoDirectPayment extends PayPal {
             ))
             ->rules('COUNTRYCODE', array(
                 array('not_empty'),
-                array('in_array', array(':value', PayPal::$COUNTRY_CODES))
+                array('exact_length', array(':value', 2))
             ))
             ->rules('STREET',array(
                 array('not_empty'),
