@@ -269,13 +269,16 @@ abstract class Kohana_PayPal {
 
     /**
      * Format numbers specifically for PayPal API.
+     * 
+     * 2 decimal places, period for the decimal point and comma for the 
+     * optional thousands separator.
      *
      * @param  number $number
      * @return string
      */
     public static function number_format($number) {
 
-        return number_format($number, 2, '.', '');
+        return number_format($number, 2, '.', ',');
     }
 
     /**
