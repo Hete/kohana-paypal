@@ -1,6 +1,6 @@
 {
-    "name": "kohana/paypal",
-    "type": "kohana/module",
+    "name": "hete/paypal",
+    "type": "kohana-module",
     "description": "PayPal module for the Kohana framework",
     "homepage": "http://github.com/Hete/kohana-paypal",
     "license": "BSD-3-Clause",
