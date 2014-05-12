@@ -10,8 +10,8 @@ defined('SYSPATH') or die('No direct script access.');
  * @package    PayPal
  * @subpackage PaymentsPro
  * @author     Hète.ca Team
- * @copyright  (c) 2013, Hète.ca Inc.
- * @license    http://kohanaframework.org/license
+ * @copyright  (c) 2014, Hète.ca Inc.
+ * @license    BSD-3-Clauses
  */
 class Kohana_PayPal_DoDirectPayment extends PayPal {
 

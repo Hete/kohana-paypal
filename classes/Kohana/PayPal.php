@@ -26,21 +26,16 @@ defined('SYSPATH') or die('No direct script access.');
  *
  *     $data = PayPal::parse_response($response);
  *
- *
- * If you want to dump your multidimensional structure back to PayPal's format
- *
- *     $data = PayPal::flatten($data);
- *
  * Redirect the user if it is appliable.
  *
- *     $setexpresscheckout->redirect($response);
+ *     PayPal_SetExpressCheckout->redirect($response);
  *
  * @link https://developer.paypal.com/docs/classic/
  * 
  * @package   PayPal
- * @author    Guillaume Poirier-Morency <guillaumepoiriermorency@gmail.com>
- * @copyright (c) 2012, Hète.ca Inc.
- * @license   http://kohanaframework.org/license
+ * @author    Hète.ca Team
+ * @copyright (c) 2014, Hète.ca Inc.
+ * @license   BSD-3-Clause
  */
 abstract class Kohana_PayPal {
 
@@ -152,7 +147,7 @@ abstract class Kohana_PayPal {
      * Factory a PayPal request.
      * 
      * @param string $method        a PayPal method such as SetExpressCheckout.
-     * @param array  $client_params see Request $client_params.
+     * @param array  $client_params see Request::factory $client_params.
      * @return Request
      */
     public static function factory($method, $client_params = array()) {
@@ -259,8 +254,6 @@ abstract class Kohana_PayPal {
 
         foreach ($array as $key => $value) {
 
-            $path = preg_replace('/_/', '.', $key); // PayPal mixes dot with underscores
-
             Arr::set_path($expanded, preg_replace('/\_/', '.', $key), $value);
         }
 
@@ -302,6 +295,7 @@ abstract class Kohana_PayPal {
         $environment = PayPal::$environment;
 
         if ($environment === PayPal::LIVE) {
+
             return 'https://www.paypal.com/cgi-bin/webscr';
         }
 

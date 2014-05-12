@@ -9,8 +9,8 @@ defined('SYSPATH') or die('No direct script access.');
  * 
  * @package   PayPal
  * @author    Hète.ca Team
- * @copyright (c) 2013, Hète.ca Inc.
- * @license   http://kohanaframework.org/license
+ * @copyright (c) 2014, Hète.ca Inc.
+ * @license   BSD-3-Clauses
  */
 class Kohana_PayPal_DoCapture extends PayPal {
 
@@ -21,6 +21,7 @@ class Kohana_PayPal_DoCapture extends PayPal {
     );
 
     public static function get_request_validation(Request $request) {
+
         return parent::get_request_validation($request)
                         ->rule('AUTHORIZATIONID', 'not_empty')
                         ->rule('AMT', 'not_empty')

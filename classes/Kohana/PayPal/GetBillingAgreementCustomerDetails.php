@@ -10,7 +10,7 @@ defined('SYSPATH') or die('No direct script access.');
  * @package   PayPal
  * @author    Hète.ca Team
  * @copyright (c) 2013, Hète.ca Inc.
- * @license   http://kohanaframework.org/license
+ * @license   BSD-3-Clauses
  */
 class Kohana_PayPal_GetBillingAgreementCustomerDetails extends PayPal {
     

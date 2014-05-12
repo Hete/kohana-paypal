@@ -6,9 +6,11 @@ defined('SYSPATH') or die('No direct script access.');
  * GetTransactionDetails
  * 
  * @link https://developer.paypal.com/docs/classic/api/merchant/GetTransactionDetails_API_Operation_NVP/    
- * @package PayPal
- * @author  Guillaume Poirier-Morency <guillaumepoiriermorency@gmail.com>
- * @license http://kohanaframework.org/license
+ * 
+ * @package   PayPal
+ * @author    Guillaume Poirier-Morency <guillaumepoiriermorency@gmail.com>
+ * @copyright (c) 2014, Hète.ca Inc.
+ * @license   BSD-3-Clauses
  */
 class Kohana_PayPal_GetTransactionDetails extends PayPal {
 
@@ -39,6 +41,7 @@ class Kohana_PayPal_GetTransactionDetails extends PayPal {
     );
 
     public static function get_request_validation(Request $request) {
+        
         return parent::get_request_validation($request)
                         ->rule('not_empty', 'TRANSACTIONID');
     }

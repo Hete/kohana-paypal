@@ -13,8 +13,8 @@ defined('SYSPATH') or die('No direct script access.');
  * @package   PayPal
  * @category  Controllers
  * @author    Hète.ca Team
- * @copyright (c) 2013, Hète.ca Inc.
- * @license   http://kohanaframework.org/license
+ * @copyright (c) 2014, Hète.ca Inc.
+ * @license   BSD-3-Clause
  */
 class Kohana_Controller_PayPal_IPN extends Controller {
 

@@ -7,10 +7,10 @@ defined('SYSPATH') or die('No direct script access.');
  * 
  * @link https://developer.paypal.com/webapps/developer/docs/classic/api/merchant/MassPay_API_Operation_NVP/
  * 
- * @package    PayPal
- * @subpackage MassPay
- * @author     Guillaume Poirier-Morency <guillaumepoiriermorency@gmail.com>
- * @license    http://kohanaframework.org/license 
+ * @package   PayPal
+ * @author    Guillaume Poirier-Morency <guillaumepoiriermorency@gmail.com>
+ * @coypright (c) 2014, Hète.ca Inc.
+ * @license   BSD-3-Clauses
  */
 class Kohana_PayPal_MassPay extends PayPal {
 
@@ -19,6 +19,7 @@ class Kohana_PayPal_MassPay extends PayPal {
     );
 
     public function rules() {
+
         return array(
             'EMAILSUBJECT' => array(
                 array('max_length', array(':value', 255))
@@ -44,4 +45,5 @@ class Kohana_PayPal_MassPay extends PayPal {
             )
         );
     }
+
 }

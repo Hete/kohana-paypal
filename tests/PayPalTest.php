@@ -5,6 +5,8 @@ defined('SYSPATH') or die('No direct script access.');
 /**
  * General tests for the PayPal module.
  * 
+ * You need to set up a sandbox account in order to test anything.
+ * 
  * @package  PayPal
  * @category Tests
  * @author   Guillaume Poirier-Morency <guillaumepoiriermorency@gmail.com>
@@ -13,7 +15,7 @@ defined('SYSPATH') or die('No direct script access.');
 class PayPalTest extends Unittest_TestCase {
 
     public function setUp() {
-        
+
         parent::setUp();
 
         $this->assertEquals(PayPal::SANDBOX, PayPal::$environment, 'Do not run unittests with a live account: you might get some surprises.');
@@ -24,16 +26,22 @@ class PayPalTest extends Unittest_TestCase {
         return $this->assertTrue($validation->check(), print_r($validation->errors(), TRUE));
     }
 
-    public function test_request() {
+    public function testRequest() {
 
         $request = PayPal::factory('SetExpressCheckout');
 
         $this->assertInstanceOf('Request', $request);
 
-        $this->assertEquals('https://api.sandbox.paypal.com/nvp', $request->uri());
+        $this->assertEquals('https://api-3t.sandbox.paypal.com/nvp', $request->uri());
+
+        $this->assertArrayHasKey('METHOD', $request->query());
+        $this->assertArrayHasKey('USER', $request->query());
+        $this->assertArrayHasKey('PWD', $request->query());
+        $this->assertArrayHasKey('SIGNATURE', $request->query());
+        $this->assertArrayHasKey('VERSION', $request->query());
     }
 
-    public function test_parse_response() {
+    public function testParseResponse() {
 
         $response = PayPal::factory('SetExpressCheckout')
                 ->query('AMT', 12.27)
@@ -42,11 +50,8 @@ class PayPalTest extends Unittest_TestCase {
         $data = PayPal::parse_response($response);
     }
 
-    public function test_redirect() {
-        
-    }
-
     public function expandables() {
+
         return array(
             array(
                 // one level array
@@ -91,16 +96,16 @@ class PayPalTest extends Unittest_TestCase {
     /**
      * @dataProvider expandables
      */
-    public function test_expand(array $flattened, array $expanded) {
+    public function testExpand(array $flattened, array $expanded) {
         $this->assertEquals($expanded, PayPal::expand($flattened));
     }
 
     public function test_SetExpressCheckout() {
 
         $request = PayPal::factory('SetExpressCheckout')
-            ->query('AMT', 45)
-            ->query('RETURNURL', 'http://example.com')
-            ->query('CANCELURL', 'http://example.com');
+                ->query('AMT', 45)
+                ->query('RETURNURL', 'http://example.com')
+                ->query('CANCELURL', 'http://example.com');
 
         $this->assertValidation(PayPal_SetExpressCheckout::get_request_validation($request));
 
@@ -308,20 +313,20 @@ class PayPalTest extends Unittest_TestCase {
                 ->query('ZIP', $payer_id)
                 ->execute();
     }
-    
-    public function test_ipn() {
+
+    public function testIPN() {
 
         $response = Request::factory('ipn')
-            ->method(Request::POST)
-            ->post(array(
-                'txn_type'          => 'express_checkout',
-                'receiver_id'       => '1234',
-                'receiver_email'    => 'foo@example.com',
-                'residence_country' => 'USA',
-                'test_ipn'          => TRUE
-            ))->execute();
+                        ->method(Request::POST)
+                        ->post(array(
+                            'txn_type' => 'express_checkout',
+                            'receiver_id' => '1234',
+                            'receiver_email' => 'foo@example.com',
+                            'residence_country' => 'USA',
+                            'test_ipn' => TRUE
+                        ))->execute();
 
-        $this->assertEquals(403, $response->status());
+        $this->assertEquals(403, $response->status(), $response->body());
     }
 
 }
