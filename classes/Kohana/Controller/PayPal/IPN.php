@@ -22,19 +22,26 @@ class Kohana_Controller_PayPal_IPN extends Controller {
 
         parent::before();
 
-        $response = Request::factory('https://www.paypal.com/cgi-bin/webscr')
-                ->query($this->request->post())
-                ->query('cmd', '_notify-validate')
-                ->execute();
-
-        if ($response->body() === 'VERIFIED') {
-
-            // Update action to be called
-            $this->request->action($this->request->post('txn_type'));
-        } else {
-
-            throw new HTTP_Exception_403('Posted data does not match against PayPal.');
+        // Ensure that we are not sandboxing a live app or the opposite
+        if ((bool) $this->request->post('test_ipn') === (PayPal::$environment === PayPal::LIVE)) {
+            
+            throw new HTTP_Exception_403('Sandbox IPN notification on a live app.');
         }
-    }
 
+        if (PayPal::$environment === PayPal::LIVE) {
+
+            $response = Request::factory('https://www.paypal.com/cgi-bin/webscr')
+                    ->query($this->request->post())
+                    ->query('cmd', '_notify-validate')
+                    ->execute();
+
+            if ($response->body() !== 'VERIFIED') {
+
+                throw new HTTP_Exception_403('Posted data does not match against PayPal.');
+            }
+        }
+
+        // Update action to be called
+        $this->request->action($this->request->post('txn_type'));
+    }
 }
