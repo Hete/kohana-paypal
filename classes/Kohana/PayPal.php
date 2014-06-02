@@ -63,10 +63,37 @@ abstract class Kohana_PayPal {
             FAILURE_WITH_WARNING = 'FailureWithWarning';
 
     /**
-     * Short date format supported by PayPal.
+     * Short date format.
      */
-    const SHORT_DATE_FORMAT = 'Y-m-d\T',
-            DATE_FORMAT = 'Y-m-d\TH:i:s.BP';
+    const SHORT_DATE_FORMAT = 'Y-m-d\T';
+
+    /**
+     * Long date format.
+     */
+    const DATE_FORMAT = 'Y-m-d\TH:i:s.BP';
+
+    /**
+     * Supported countries.
+     *
+     * @var array
+     */
+    public static $COUNTRIES = array(
+        'AL', 'DZ', 'AS', 'AD', 'AI', 'AG', 'AR', 'AM', 'AW', 'AU', 'AT', 'AZ',
+        'BS', 'BH', 'BD', 'BB', 'BY', 'BE', 'BZ', 'BJ', 'BM', 'BO', 'BA', 'BW',
+        'BR', 'VG', 'BN', 'BG', 'BF', 'KH', 'CM', 'CA', 'CV', 'KY', 'CL', 'CN',
+        'CO', 'CK', 'HR', 'CY', 'CZ', 'DK', 'DJ', 'DM', 'DO', 'TP', 'EG', 'SV',
+        'EE', 'FJ', 'FI', 'FR', 'GF', 'PF', 'GA', 'GE', 'DE', 'GH', 'GI', 'GR',
+        'GD', 'GP', 'GU', 'GT', 'GN', 'GY', 'HT', 'HN', 'HK', 'HU', 'IS', 'IN',
+        'ID', 'IE', 'IL', 'IT', 'CI', 'JM', 'JP', 'JO', 'KZ', 'KE', 'KW', 'LA',
+        'LV', 'LB', 'LS', 'LT', 'LU', 'MO', 'MK', 'MG', 'MY', 'MV', 'ML', 'MT',
+        'MH', 'MQ', 'MU', 'MX', 'FM', 'MD', 'MN', 'MS', 'MA', 'MZ', 'NA', 'NP',
+        'NL', 'AN', 'NZ', 'NI', 'MP', 'NO', 'OM', 'PK', 'PW', 'PS', 'PA', 'PG',
+        'PY', 'PE', 'PH', 'PL', 'PT', 'PR', 'QA', 'RO', 'RU', 'RW', 'KN', 'LC',
+        'VC', 'WS', 'SA', 'CS', 'SC', 'SG', 'SK', 'SI', 'SB', 'ZA', 'KR', 'ES',
+        'LK', 'SZ', 'SE', 'CH', 'TW', 'TZ', 'TH', 'TG', 'TO', 'TT', 'TN', 'TR',
+        'TM', 'TC', 'UG', 'UA', 'AE', 'GB', 'US', 'UY', 'UZ', 'VU', 'VE', 'VN',
+        'VI', 'YE', 'ZM',
+    );
 
     /**
      * Supported currencies.
@@ -206,7 +233,31 @@ abstract class Kohana_PayPal {
     }
 
     /**
-     * Parse a PayPal Response body into an associative array.
+     * Parse a PayPal Response body.
+     * 
+     * The result will be automatically expanded unless you set the $expand
+     * argument to false.
+     *
+     * @param Response $response 
+     * @param boolean  $expand   expand PayPal array and dictionary syntax.
+     * @return array the parsed body of the Response object.
+     */
+    public static function parse_response(Response $response, $expand = TRUE) {
+
+        $data = NULL;
+
+        parse_str($response->body(), $data);
+
+        if ($data === NULL) {
+
+            throw new Kohana_Exception('Couldn\'t parse Response body. :body', array(':body' => $response->body()));
+        }
+
+        return $expand ? PayPal::expand($data) : $data;
+    }
+
+    /**
+     * Expand a flattened PayPal array into a multi-dimensional structure.
      *
      * It will parse
      *
@@ -224,29 +275,8 @@ abstract class Kohana_PayPal {
      *
      *     KEY1 => array(KEY2 => VALUE)
      * 
-     *
-     * @param Response $response 
-     * @param boolean  $expand   expand PayPal array and dictionary syntax.
-     * @return array the parsed body of the Response object.
-     */
-    public static function parse_response(Response $response, $expand = TRUE) {
-
-        $data = NULL;
-
-        parse_str($response->body(), $data);
-
-        if ($data === NULL) {
-            throw new Kohana_Exception("Couldn't parse Response body. :body", array(':body' => $response->body()));
-        }
-
-        return $expand ? PayPal::expand($data) : $data;
-    }
-
-    /**
-     * Expand a flattened PayPal array into a multi-dimensional structure.
-     *
-     * @param  array $array
-     * @return array
+     * @param array $array PayPal array to expand.
+     * @return array expanded array.
      */
     public static function expand(array $array) {
 
@@ -266,7 +296,7 @@ abstract class Kohana_PayPal {
      * 2 decimal places, period for the decimal point and comma for the 
      * optional thousands separator.
      *
-     * @param  number $number
+     * @param number $number
      * @return string
      */
     public static function number_format($number) {
@@ -303,12 +333,9 @@ abstract class Kohana_PayPal {
     }
 
     /**
-     * Generates redirect query.
-
-     * This must be implemented by the method you are using, otherwise an
-     * exception will be thrown.
+     * Generates a redirect query.
      *
-     * @param  Response $response
+     * @param Response $response
      * @return array
      */
     public static function redirect_query(Response $response) {
