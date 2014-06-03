@@ -34,7 +34,7 @@ class Kohana_PayPal_CreateRecurringPaymentsProfile extends PayPal {
                         ->rule('MAXFAILEDPAYMENTS')
                         ->rules('BILLINGPERIOD', array(
                             array('not_empty'),
-                            array('in_array', array(':value', PayPal_CreateRecurringPaymentsProfile::$BILLING_PERIODS))))
+                            array('in_array', array(':value', static::$BILLING_PERIODS))))
                         ->rules('BILLINGFREQUENCY', array(
                             array('not_empty'),
                             array('range', array(':value', 1, 52))))
@@ -45,7 +45,7 @@ class Kohana_PayPal_CreateRecurringPaymentsProfile extends PayPal {
                         ->rules('CURRENCYCODE', array(
                             array('not_empty'),
                             array('in_array', PayPal::$CURRENCY_CODES)))
-                        ->rule('AUTOBILLOUTAMT', 'in_array', array(':value', PayPal_CreateRecurringPaymentsProfile::$AUTO_BILLOUT_AMTS));
+                        ->rule('AUTOBILLOUTAMT', 'in_array', array(':value', static::$AUTO_BILLOUT_AMTS));
     }
 
 }

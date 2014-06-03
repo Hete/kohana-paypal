@@ -92,7 +92,7 @@ abstract class Kohana_PayPal {
         'VC', 'WS', 'SA', 'CS', 'SC', 'SG', 'SK', 'SI', 'SB', 'ZA', 'KR', 'ES',
         'LK', 'SZ', 'SE', 'CH', 'TW', 'TZ', 'TH', 'TG', 'TO', 'TT', 'TN', 'TR',
         'TM', 'TC', 'UG', 'UA', 'AE', 'GB', 'US', 'UY', 'UZ', 'VU', 'VE', 'VN',
-        'VI', 'YE', 'ZM',
+        'VI', 'YE', 'ZM'
     );
 
     /**

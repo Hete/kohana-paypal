@@ -18,6 +18,6 @@ class Kohana_PayPal_Callback extends PayPal {
     public static function get_request_validation(Request $request) {
         return parent::get_request_validation($request)
                 ->rule('CURRENCYCODE', 'not_empty')
-                ->rule('CURRENCYCODE', 'in_array', array(':value', PayPal::$CURRENTY_CODES));
+                ->rule('CURRENCYCODE', 'in_array', array(':value', static::$CURRENTY_CODES));
     }
 }

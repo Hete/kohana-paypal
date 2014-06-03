@@ -25,7 +25,7 @@ class Kohana_PayPal_MassPay extends PayPal {
                 array('max_length', array(':value', 255))
             ),
             'RECEIVERTYPE' => array(
-                array('in_array', array(':value', PayPal_MassPay::$RECEIVER_TYPES))
+                array('in_array', array(':value', static::$RECEIVER_TYPES))
             ),
             'L_EMAIL0' => array(
                 array('email')

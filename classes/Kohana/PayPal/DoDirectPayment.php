@@ -44,7 +44,7 @@ class Kohana_PayPal_DoDirectPayment extends PayPal {
                             array('email')))
                         ->rules('CREDITCARDTYPE', array(
                             array('not_empty'),
-                            array('in_array', array(':value', PayPal_DoDirectPayment::$CREDIT_CARD_TYPES))))
+                            array('in_array', array(':value', static::$CREDIT_CARD_TYPES))))
                         ->rules('ACCT', array(
                             array('not_empty'),
                             array('credit_card', array(':value', $request->query('CREDITCARDTYPE')))
@@ -55,11 +55,11 @@ class Kohana_PayPal_DoDirectPayment extends PayPal {
                         ))
                         ->rules('EXPDATE', array(
                             array('not_empty'),
-                            // @todo add a regex rule for matching MMYYYY date format
+                                // @todo add a regex rule for matching MMYYYY date format
                         ))
                         ->rules('COUNTRYCODE', array(
                             array('not_empty'),
-                            array('exact_length', array(':value', 2))
+                            array('in_array', array(':value', static::$COUNTRIES))
                         ))
                         ->rules('STREET', array(
                             array('not_empty'),

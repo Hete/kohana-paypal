@@ -26,7 +26,7 @@ class Kohana_PayPal_DoCapture extends PayPal {
                         ->rule('AUTHORIZATIONID', 'not_empty')
                         ->rule('AMT', 'not_empty')
                         ->rule('AMT', 'numeric')
-                        ->rule('COMPLETETYPE', 'in_array', array(':value' => PayPal_DoCapture::$COMPLETE_TYPES))
+                        ->rule('COMPLETETYPE', 'in_array', array(':value' => static::$COMPLETE_TYPES))
                         ->rule('INVNUM', 'max_length', array(':value', 127))
                         ->rule('NOTE', 'max_length', array(':value', 255));
     }
