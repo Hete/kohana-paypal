@@ -177,9 +177,9 @@ abstract class Kohana_PayPal {
      * @param array  $client_params see Request::factory $client_params.
      * @return Request
      */
-    public static function factory($method, $client_params = array()) {
+    public static function factory($method, Kohana_Cache $cache = NULL) {
 
-        $config = Kohana::$config->load('paypal.' . PayPal::$environment);
+        $config = Kohana::config('paypal.' . PayPal::$environment);
 
         $api = $config['signature'] ? 'api-3t' : 'api';
 
@@ -190,8 +190,7 @@ abstract class Kohana_PayPal {
             $url = "https://$api.paypal.com/nvp";
         }
 
-        return Request::factory($url, $client_params)
-                        ->client(Request_Client_External::factory($config['client_options']))
+        return Request::factory($url, $cache)
                         ->headers('Connection', 'close')
                         ->query(array(
                             'METHOD' => $method,
