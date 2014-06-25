@@ -1,6 +1,8 @@
-<phpunit colors="true" verbose="true" bootstrap="../unittest/bootstrap.php">
+<phpunit bootstrap="../unittest/bootstrap.php">
+    <php>
+        <server name="KOHANA_ENV" value="TESTING"/>
+    </php>
     <testsuite name="PayPal tests">
-        <directory suffix='.php'>tests/</directory>  
-        <directory suffix='.php'>tests/paypal/</directory>  
+        <directory>tests</directory>
     </testsuite>
 </phpunit>

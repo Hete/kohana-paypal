@@ -2,85 +2,63 @@
 
 defined('SYSPATH') or die('No direct script access.');
 
+/**
+ * Configuration for PayPal.
+ * 
+ * @package   PayPal
+ * @author    Guillaume Poirier-Morency <guillaumepoiriermorency@gmail.com>
+ * @copyright (c) 2013, Hète.ca Inc.
+ * @license   http://kohanaframework.org/license
+ */
 return array(
-    // PayPal environment: live, sandbox, beta-sandbox
-    'sandbox' => array(
-        // PayPal API and username
-        'username' => NULL,
-        'password' => NULL,
-        // PayPal API signature
-        'signature' => NULL,
-        // Static api id for sandbox apps.
-        'api_id' => 'APP-80W284485P519543T',
-        // Client settings
-        'client' => array(
-            // Additionnal options
-            'options' => array(
-                CURLOPT_USERAGENT => "Kohana",
-            )
-        ),
-        // Language for responses
-        'lang' => 'en_US',
-        'ipn' => array(
-            'enabled' => TRUE, // If enabled, will automatically register ipn notification
-            'receiver' => array(
-                'id' => "28fj8098wjnu",
-                'email' => "foo@foo.com",
-                'country' => "US"
-            ),
-            'protocol' => 'http'
-        ),
-    ),
     'live' => array(
-        // PayPal API and username
+        /**
+         * Credentials
+         *
+         * @link https://developer.paypal.com/docs/classic/api/apiCredentials
+         */
         'username' => NULL,
         'password' => NULL,
-        // PayPal API signature
+        /**
+         * If you do not set a signature, it is assumed that an OpenSSL
+         * certificate is used. If it is the case, you must CURLOPT_CAINFO in
+         * the client_options.
+         */
         'signature' => NULL,
-        'api_id' => NULL,
-        // cURL settings
-        'curl' => array(
-            // Additionnal options
-            'options' => array(
-                CURLOPT_SSL_VERIFYPEER => TRUE,
-                CURLOPT_USERAGENT => "Kohana",
-            )
-        ),
-        // Language for responses
-        'lang' => 'en_US',
-        'ipn' => array(
-            'enabled' => TRUE, // If enabled, will automatically register ipn notification
-            'receiver' => array(
-                'id' => "28fj8098wjnu",
-                'email' => "foo@foo.com",
-                'country' => "US"
-            ),
-            'protocol' => 'http'
-        ),
+        /**
+         * API version for NVP.
+         */
+        'api_version' => '99.0',
+        /**
+         * Options for cURL.
+         *
+         * If you need to set your SSL certificate information, you will need
+         * to the following:
+         *     CURLOPT_CAINFO => APPPATH . 'paypal-certificate.crt',
+         *
+         */
+        'client_options' => array(),
+        /**
+         * IPN opens an endpoint so that PayPal can notify you about updates on
+         * your transactions. It is useful for updating transaction status. You
+         * have to implement actions specifically to your application.
+         */
+        'ipn_enabled' => FALSE
+    ),
+    'sandbox' => array(
+        'username' => NULL,
+        'password' => NULL,
+        'signature' => NULL,
+        'api_version' => '99.0',
+        'client_options' => array(),
+        'ipn_enabled' => FALSE
     ),
     'sandbox-beta' => array(
-        // PayPal API and username
         'username' => NULL,
         'password' => NULL,
-        // PayPal API signature
         'signature' => NULL,
-        // Static api id for sandbox apps.
-        'api_id' => 'APP-80W284485P519543T',
-        'curl' => array(
-            'options' => array(
-                CURLOPT_USERAGENT => "Kohana",
-            )
-        ),
-        // Language for responses
-        'lang' => 'en_US',
-        'ipn' => array(
-            'enabled' => TRUE,
-            'receiver' => array(
-                'id' => NULL,
-                'email' => NULL,
-                'country' => NULL
-            ),
-            'protocol' => 'http'
-        ),
+        'api_version' => '99.0',
+        'client_options' => array(),
+        'ipn_enabled' => FALSE
     ),
 );
