@@ -147,11 +147,11 @@ abstract class Kohana_PayPal {
     /**
      * Factory a PayPal request.
      * 
-     * @param string $method        a PayPal method such as SetExpressCheckout.
-     * @param array  $client_params see Request $client_params.
+     * @param  string $method    a PayPal method such as SetExpressCheckout.
+     * @param  HTTP_Cache $cache caches the Response.
      * @return Request
      */
-    public static function factory($method, $client_params = array()) {
+    public static function factory($method, HTTP_Cache $cache = NULL) {
 
         $config = Kohana::$config->load('paypal.' . PayPal::$environment);
 
@@ -160,10 +160,11 @@ abstract class Kohana_PayPal {
         $url = "https://$api." . PayPal::$environment . '.paypal.com/nvp';
 
         if (PayPal::$environment === PayPal::LIVE) {
+
             $url = "https://$api.paypal.com/nvp";
         }
 
-        return Request::factory($url, $client_params)
+        return Request::factory($url, $cache)
                         ->client(Request_Client_External::factory($config['client_options']))
                         ->headers('Connection', 'close')
                         ->query(array(
