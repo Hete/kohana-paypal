@@ -175,8 +175,9 @@ abstract class Kohana_PayPal {
      * 
      * @uses Request::factory
      *
-     * @param  string $method    a PayPal method such as SetExpressCheckout.
-     * @param  HTTP_Cache $cache caches the Response.
+     * @param  string     $method a PayPal method such as SetExpressCheckout.
+     * @param  HTTP_Cache $cache  caches the Response.
+     *
      * @return Request
      */
     public static function factory($method, HTTP_Cache $cache = NULL) {
@@ -195,7 +196,7 @@ abstract class Kohana_PayPal {
         /**
          * Construct a basic Request.
          */
-        $request = Request::factory($url, $cache)
+        return Request::factory($url, $cache)
                         ->headers('Connection', 'close')
                         ->query(array(
                             'METHOD' => $method,
@@ -204,15 +205,6 @@ abstract class Kohana_PayPal {
                             'SIGNATURE' => $config['signature'],
                             'VERSION' => $config['api_version']
         ));
-
-        /**
-         * Set cURL options
-         */
-        $request
-            ->client()
-            ->options($config['client_options']);
-
-        return $request;
     }
 
     /**
