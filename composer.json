@@ -1,5 +1,6 @@
 {
-    "name": "kohana/paypal",
+    "name": "hete/paypal",
+    "type": "kohana-module",
     "description": "PayPal module for the Kohana framework",
     "homepage": "http://github.com/Hete/kohana-paypal",
     "license": "BSD-3-Clause",
@@ -13,8 +14,8 @@
         }
     ],
     "support": {
-        "issues": "http://github.com/Hete/kohana-mail/issues",
-        "source": "http://github.com/Hete/kohana-mail"
+        "issues": "http://github.com/Hete/kohana-paypal/issues",
+        "source": "http://github.com/Hete/kohana-paypal"
     },
     "require": {
         "kohana/core": ">=3.3",

@@ -9,8 +9,8 @@ defined('SYSPATH') or die('No direct script access.');
  * 
  * @package   PayPal
  * @author    Hète.ca Team
- * @copyright (c) 2013, Hète.ca Inc.
- * @license   http://kohanaframework.org/license
+ * @copyright (c) 2014, Hète.ca Inc.
+ * @license   BSD-3-Clauses
  */
 class Kohana_PayPal_CreateRecurringPaymentsProfile extends PayPal {
 
@@ -22,6 +22,7 @@ class Kohana_PayPal_CreateRecurringPaymentsProfile extends PayPal {
     );
 
     public static function get_request_validation(Request $request) {
+        
         return parent::get_request_validation($request)
                         ->rule('TOKEN', 'not_empty')
                         ->rule('SUBSCRIBERNAME', 'max_length', array(':value', 32))
@@ -33,7 +34,7 @@ class Kohana_PayPal_CreateRecurringPaymentsProfile extends PayPal {
                         ->rule('MAXFAILEDPAYMENTS')
                         ->rules('BILLINGPERIOD', array(
                             array('not_empty'),
-                            array('in_array', array(':value', PayPal_CreateRecurringPaymentsProfile::$BILLING_PERIODS))))
+                            array('in_array', array(':value', static::$BILLING_PERIODS))))
                         ->rules('BILLINGFREQUENCY', array(
                             array('not_empty'),
                             array('range', array(':value', 1, 52))))
@@ -44,7 +45,7 @@ class Kohana_PayPal_CreateRecurringPaymentsProfile extends PayPal {
                         ->rules('CURRENCYCODE', array(
                             array('not_empty'),
                             array('in_array', PayPal::$CURRENCY_CODES)))
-                        ->rule('AUTOBILLOUTAMT', 'in_array', array(':value', PayPal_CreateRecurringPaymentsProfile::$AUTO_BILLOUT_AMTS));
+                        ->rule('AUTOBILLOUTAMT', 'in_array', array(':value', static::$AUTO_BILLOUT_AMTS));
     }
 
 }

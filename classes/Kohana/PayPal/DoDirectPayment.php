@@ -10,8 +10,8 @@ defined('SYSPATH') or die('No direct script access.');
  * @package    PayPal
  * @subpackage PaymentsPro
  * @author     Hète.ca Team
- * @copyright  (c) 2013, Hète.ca Inc.
- * @license    http://kohanaframework.org/license
+ * @copyright  (c) 2014, Hète.ca Inc.
+ * @license    BSD-3-Clauses
  */
 class Kohana_PayPal_DoDirectPayment extends PayPal {
 
@@ -35,40 +35,42 @@ class Kohana_PayPal_DoDirectPayment extends PayPal {
     );
 
     public static function get_request_validation(Request $request) {
+
         return parent::get_request_validation($request)
-            ->rule('FIRSTNAME', 'not_empty')
-            ->rule('LASTNAME', 'not_empty')
-            ->rules('EMAIL', array(
-                array('not_empty'),
-                array('email')))
-            ->rules('CREDITCARDTYPE', array(
-                array('not_empty'),
-                array('in_array', array(':value', PayPal_DoDirectPayment::$CREDIT_CARD_TYPES))))
-            ->rules('ACCT', array(
-                array('not_empty'),
-                array('credit_card', array(':value', $request->query('CREDITCARDTYPE')))
-            ))
-            ->rules('CVV2', array(
-                array('not_empty'),
-                array('max_length', array(':value', 4))
-            ))
-            ->rules('EXPDATE', array(
-                array('not_empty'),
-                array('data', array(':value', 'mY'))
-            ))
-            ->rules('COUNTRYCODE', array(
-                array('not_empty'),
-                array('in_array', array(':value', PayPal::$COUNTRY_CODES))
-            ))
-            ->rules('STREET',array(
-                array('not_empty'),
-                array('max_length', array(':value', 100))
-            ))
-            ->rule('STREET2', 'max_length', array(':value', 100))
-            ->rule('CITY', 'not_empty')
-            ->rule('STATE', 'not_empty')
-            ->rule('ZIP', 'not_empty')
-            ->rule('SHIPTOPHONENUM', 'phone')
-            ->rule('IPADRESS', 'ip');
+                        ->rule('FIRSTNAME', 'not_empty')
+                        ->rule('LASTNAME', 'not_empty')
+                        ->rules('EMAIL', array(
+                            array('not_empty'),
+                            array('email')))
+                        ->rules('CREDITCARDTYPE', array(
+                            array('not_empty'),
+                            array('in_array', array(':value', static::$CREDIT_CARD_TYPES))))
+                        ->rules('ACCT', array(
+                            array('not_empty'),
+                            array('credit_card', array(':value', $request->query('CREDITCARDTYPE')))
+                        ))
+                        ->rules('CVV2', array(
+                            array('not_empty'),
+                            array('max_length', array(':value', 4))
+                        ))
+                        ->rules('EXPDATE', array(
+                            array('not_empty'),
+                                // @todo add a regex rule for matching MMYYYY date format
+                        ))
+                        ->rules('COUNTRYCODE', array(
+                            array('not_empty'),
+                            array('in_array', array(':value', static::$COUNTRIES))
+                        ))
+                        ->rules('STREET', array(
+                            array('not_empty'),
+                            array('max_length', array(':value', 100))
+                        ))
+                        ->rule('STREET2', 'max_length', array(':value', 100))
+                        ->rule('CITY', 'not_empty')
+                        ->rule('STATE', 'not_empty')
+                        ->rule('ZIP', 'not_empty')
+                        ->rule('SHIPTOPHONENUM', 'phone')
+                        ->rule('IPADRESS', 'ip');
     }
+
 }
