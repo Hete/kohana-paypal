@@ -173,6 +173,8 @@ abstract class Kohana_PayPal {
     /**
      * Factory a PayPal request.
      * 
+     * @uses Request::factory
+     *
      * @param string $method        a PayPal method such as SetExpressCheckout.
      * @param array  $client_params see Request::factory $client_params.
      * @return Request
@@ -190,8 +192,10 @@ abstract class Kohana_PayPal {
             $url = "https://$api.paypal.com/nvp";
         }
 
-        return Request::factory($url, $client_params)
-                        ->client(Request_Client_External::factory($config['client_options']))
+        /**
+         * Construct a basic Request.
+         */
+        $request = Request::factory($url, $client_params)
                         ->headers('Connection', 'close')
                         ->query(array(
                             'METHOD' => $method,
@@ -200,6 +204,15 @@ abstract class Kohana_PayPal {
                             'SIGNATURE' => $config['signature'],
                             'VERSION' => $config['api_version']
         ));
+
+        /**
+         * Set cURL options
+         */
+        $request
+            ->client()
+            ->options($config['client_options']);
+
+        return $request;
     }
 
     /**

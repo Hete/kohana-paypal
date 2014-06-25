@@ -46,6 +46,9 @@ class PayPalTest extends Unittest_TestCase {
         $this->assertArrayHasKey('VERSION', $request->query());
     }
 
+    /**
+     * Does not execute any external requesting.
+     */
     public function testLiveRequest() {
         
         PayPal::$environment = PayPal::LIVE;    
@@ -73,6 +76,11 @@ class PayPalTest extends Unittest_TestCase {
         $this->markTestIncomplete();
     }
 
+    /**
+     * Expendables data to test PayPal::expand function.
+     *
+     * @return array
+     */
     public function expandables() {
 
         return array(
