@@ -195,7 +195,7 @@ abstract class Kohana_PayPal {
         /**
          * Construct a basic Request.
          */
-        $request = Request::factory($url, $client_params)
+        return Request::factory($url, $client_params)
                         ->headers('Connection', 'close')
                         ->query(array(
                             'METHOD' => $method,
@@ -204,15 +204,6 @@ abstract class Kohana_PayPal {
                             'SIGNATURE' => $config['signature'],
                             'VERSION' => $config['api_version']
         ));
-
-        /**
-         * Set cURL options
-         */
-        $request
-            ->client()
-            ->options($config['client_options']);
-
-        return $request;
     }
 
     /**

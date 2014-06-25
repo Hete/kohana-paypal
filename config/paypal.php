@@ -30,15 +30,6 @@ return array(
          */
         'api_version' => '99.0',
         /**
-         * Options for cURL.
-         *
-         * If you need to set your SSL certificate information, you will need
-         * to the following:
-         *     CURLOPT_CAINFO => APPPATH . 'paypal-certificate.crt',
-         *
-         */
-        'client_options' => array(),
-        /**
          * IPN opens an endpoint so that PayPal can notify you about updates on
          * your transactions. It is useful for updating transaction status. You
          * have to implement actions specifically to your application.
@@ -50,7 +41,6 @@ return array(
         'password' => NULL,
         'signature' => NULL,
         'api_version' => '99.0',
-        'client_options' => array(),
         'ipn_enabled' => FALSE
     ),
     'sandbox-beta' => array(
@@ -58,7 +48,6 @@ return array(
         'password' => NULL,
         'signature' => NULL,
         'api_version' => '99.0',
-        'client_options' => array(),
         'ipn_enabled' => FALSE
     ),
 );
