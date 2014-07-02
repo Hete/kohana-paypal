@@ -28,7 +28,7 @@ return array(
         /**
          * API version for NVP.
          */
-        'api_version' => '99.0',
+        'api_version' => '115.0',
         /**
          * IPN opens an endpoint so that PayPal can notify you about updates on
          * your transactions. It is useful for updating transaction status. You
@@ -40,14 +40,14 @@ return array(
         'username' => NULL,
         'password' => NULL,
         'signature' => NULL,
-        'api_version' => '99.0',
+        'api_version' => '115.0',
         'ipn_enabled' => FALSE
     ),
     'sandbox-beta' => array(
         'username' => NULL,
         'password' => NULL,
         'signature' => NULL,
-        'api_version' => '99.0',
+        'api_version' => '115.0',
         'ipn_enabled' => FALSE
     ),
 );
