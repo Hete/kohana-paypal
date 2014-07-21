@@ -310,17 +310,6 @@ abstract class Kohana_PayPal {
     }
 
     /**
-     * Call HTTP::redirect to the PayPal::redirect_url() along with the
-     * redirection query generated from the $response.
-     *
-     * @param Response $response
-     */
-    public static function redirect(Response $response) {
-
-        HTTP::redirect(static::redirect_url(), URL::query(static::redirect_query($response)));
-    }
-
-    /**
      * Redirection url.
      *
      * @return string
