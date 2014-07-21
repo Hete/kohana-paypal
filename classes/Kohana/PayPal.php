@@ -316,7 +316,7 @@ abstract class Kohana_PayPal {
      */
     public static function redirect(Response $response) {
 
-        HTTP::redirect(static::redirect_url(), URL::query(static::redirect_query($response)));
+        HTTP::redirect(static::redirect_url() . URL::query(static::redirect_query($response)));
     }
 
     /**
