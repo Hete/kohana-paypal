@@ -17,7 +17,7 @@ class Kohana_PayPal_SetExpressCheckout extends PayPal {
         $response = PayPal::parse_response($response);
 
         return array(
-            'cmd' => 'express-checkout',
+            'cmd' => '_express-checkout',
             'token' => $response['TOKEN']
         );
     }
