@@ -26,7 +26,7 @@ $response = $setexpresscheckout
     ->execute();
 ```
 
-Do not pass an array to Request::query, it will erase the initial configuration
+Do not pass an array to `Request::query`, it will erase the initial configuration
 which contains the credentials and method.
 
 Redirection are handled for requests that requires user interaction.
@@ -69,17 +69,17 @@ $response_validation = PayPal_SetExpressCheckout::get_response_validation($respo
 
 IPN
 ---
-To enable IPN, set the ipn\_enabled option in your configuration. It will create 
+To enable IPN, set the `ipn_enabled` option in your configuration. It will create 
 an endpoint for PayPal's request.
 
     example.com/ipn
 
-Requests are automatically verified against PayPal. You only need to overload 
-Kohana\_Controller\_IPN and set supported action. If not specified, a 404 error 
-will be triggered.
+Requests are automatically verified against PayPal in the live environment. You only 
+need to overload `Kohana_Controller_IPN` and set supported action. If not specified, 
+a 404 error will be triggered.
 
 In your application, you only need to override the IPN controller and implement
-the appropriate action. Action name will match the txn_type key in PayPal's 
+the appropriate action. Action name will match the `txn_type` key in PayPal's 
 query.
 ```php
 class Controller_PayPal_IPN extends Kohana_Controller_PayPal_IPN {
