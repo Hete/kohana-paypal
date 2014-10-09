@@ -257,6 +257,17 @@ abstract class Kohana_PayPal {
             throw new Kohana_Exception('Couldn\'t parse Response body. :body', array(':body' => $response->body()));
         }
 
+		$matches = NULL;
+
+		// some values might be encoded in base64
+		foreach ($data as $key => $value)
+		{
+			if (preg_match('/xxxBASE64_STARTxxx([A-Za-z0-9+\/]+)xxxBASE64_ENDxxx/', $value, $matches))
+			{
+				$data[$key] = base64_decode($matches[1]);
+			}
+		}
+
         return $expand ? PayPal::expand($data) : $data;
     }
 
