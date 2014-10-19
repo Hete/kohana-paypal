@@ -18,7 +18,11 @@
         "source": "http://github.com/Hete/kohana-paypal"
     },
     "require": {
-        "kohana/core": ">=3.3",
-        "php": ">=5.3.3"
+        "php": ">=5.3.3",
+        "kohana/core": "3.3.*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "4.3.*",
+        "kohana/unittest": "3.3.*"    
     }
 }
