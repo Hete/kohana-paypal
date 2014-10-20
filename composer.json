@@ -22,7 +22,7 @@
         "kohana/core": "3.3.*"
     },
     "require-dev": {
-        "phpunit/phpunit": "4.3.*",
+        "phpunit/phpunit": "3.7.*",
         "kohana/unittest": "3.3.*"    
     }
 }
