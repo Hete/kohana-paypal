@@ -31,7 +31,7 @@ defined('SYSPATH') or die('No direct script access.');
  *     PayPal_SetExpressCheckout->redirect($response);
  *
  * @link https://developer.paypal.com/docs/classic/
- * 
+ *
  * @package   PayPal
  * @author    Hète.ca Team
  * @copyright (c) 2014, Hète.ca Inc.
@@ -97,7 +97,7 @@ abstract class Kohana_PayPal {
 
     /**
      * Supported currencies.
-     * 
+     *
      * @var array
      */
     public static $CURRENCY_CODES = array(
@@ -108,7 +108,7 @@ abstract class Kohana_PayPal {
 
     /**
      * Supported days of week.
-     * 
+     *
      * @var array
      */
     public static $DAYS_OF_WEEK = array(
@@ -118,7 +118,7 @@ abstract class Kohana_PayPal {
 
     /**
      * Supported months of year.
-     * 
+     *
      * @var array
      */
     public static $MONTHS_OF_YEAR = array(
@@ -128,8 +128,8 @@ abstract class Kohana_PayPal {
 
     /**
      * Required states.
-     * 
-     * @var array 
+     *
+     * @var array
      */
     public static $REQUIRED_STATES = array(
         'REQUIRED',
@@ -172,24 +172,24 @@ abstract class Kohana_PayPal {
 
     /**
      * Factory a PayPal request.
-     * 
+     *
      * @uses Request::factory
      *
      * @param string $method        a PayPal method such as SetExpressCheckout.
      * @param array  $client_params see Request::factory $client_params.
      * @return Request
      */
-    public static function factory($method, $client_params = array()) {
-
+    public static function factory($method, $client_params = array())
+	{
         $config = Kohana::$config->load('paypal.' . PayPal::$environment);
 
         $api = $config['signature'] ? 'api-3t' : 'api';
 
-        $url = "https://$api." . PayPal::$environment . '.paypal.com/nvp';
+        $url = 'https://'.$api.'.'.PayPal::$environment.'.paypal.com/nvp';
 
-        if (PayPal::$environment === PayPal::LIVE) {
-
-            $url = "https://$api.paypal.com/nvp";
+        if (PayPal::$environment === PayPal::LIVE)
+		{
+            $url = 'https://'.$api.'.paypal.com/nvp';
         }
 
         /**
@@ -198,22 +198,22 @@ abstract class Kohana_PayPal {
         return Request::factory($url, $client_params)
                         ->headers('Connection', 'close')
                         ->query(array(
-                            'METHOD' => $method,
-                            'USER' => $config['username'],
-                            'PWD' => $config['password'],
+                            'METHOD'    => $method,
+                            'USER'      => $config['username'],
+                            'PWD'       => $config['password'],
                             'SIGNATURE' => $config['signature'],
-                            'VERSION' => $config['api_version']
+                            'VERSION'   => $config['api_version']
         ));
     }
 
     /**
      * Creates a Validation object for a PayPal Request.
-     * 
+     *
      * @param Request $request
      * @return Validation
      */
-    public static function get_request_validation(Request $request) {
-
+    public static function get_request_validation(Request $request)
+	{
         return Validation::factory($request->query())
                         ->rule('USER', 'not_empty')
                         ->rule('PWD', 'not_empty')
@@ -225,12 +225,12 @@ abstract class Kohana_PayPal {
      * Creates a Validation object for a PayPal Response.
      *
      * Fields are kept flattened since Validation is one-dimensional.
-     * 
+     *
      * @param Response $response
      * @return Validation
      */
-    public static function get_response_validation(Response $response) {
-
+    public static function get_response_validation(Response $response)
+	{
         return Validation::factory(PayPal::parse_response($response, FALSE))
                         ->rule('ACK', 'not_empty')
                         ->rule('ACK', 'in_array', array(':value', PayPal::$SUCCESS_ACKNOWLEDGEMENTS));
@@ -238,22 +238,22 @@ abstract class Kohana_PayPal {
 
     /**
      * Parse a PayPal Response body.
-     * 
+     *
      * The result will be automatically expanded unless you set the $expand
      * argument to false.
      *
-     * @param Response $response 
+     * @param Response $response
      * @param boolean  $expand   expand PayPal array and dictionary syntax.
      * @return array the parsed body of the Response object.
      */
-    public static function parse_response(Response $response, $expand = TRUE) {
-
+    public static function parse_response(Response $response, $expand = TRUE)
+	{
         $data = NULL;
 
         parse_str($response->body(), $data);
 
-        if ($data === NULL) {
-
+        if ($data === NULL) 
+		{
             throw new Kohana_Exception('Couldn\'t parse Response body. :body', array(':body' => $response->body()));
         }
 
@@ -289,16 +289,16 @@ abstract class Kohana_PayPal {
      * Into
      *
      *     KEY1 => array(KEY2 => VALUE)
-     * 
+     *
      * @param array $array PayPal array to expand.
      * @return array expanded array.
      */
-    public static function expand(array $array) {
-
+    public static function expand(array $array)
+	{
         $expanded = array();
 
-        foreach ($array as $key => $value) {
-
+        foreach ($array as $key => $value) 
+		{
             Arr::set_path($expanded, preg_replace('/\_/', '.', $key), $value);
         }
 
@@ -307,15 +307,15 @@ abstract class Kohana_PayPal {
 
     /**
      * Format numbers specifically for PayPal API.
-     * 
-     * 2 decimal places, period for the decimal point and comma for the 
+     *
+     * 2 decimal places, period for the decimal point and comma for the
      * optional thousands separator.
      *
      * @param number $number
      * @return string
      */
-    public static function number_format($number) {
-
+    public static function number_format($number)
+	{
         return number_format($number, 2, '.', ',');
     }
 
@@ -325,9 +325,9 @@ abstract class Kohana_PayPal {
      *
      * @param Response $response
      */
-    public static function redirect(Response $response) {
-
-        HTTP::redirect(static::redirect_url() . URL::query(static::redirect_query($response)));
+    public static function redirect(Response $response)
+	{
+        HTTP::redirect(static::redirect_url().URL::query(static::redirect_query($response)));
     }
 
     /**
@@ -335,16 +335,16 @@ abstract class Kohana_PayPal {
      *
      * @return string
      */
-    public static function redirect_url() {
-
+    public static function redirect_url()
+	{
         $environment = PayPal::$environment;
 
-        if ($environment === PayPal::LIVE) {
-
+        if ($environment === PayPal::LIVE) 
+		{
             return 'https://www.paypal.com/cgi-bin/webscr';
         }
 
-        return "https://www.$environment.paypal.com/cgi-bin/webscr";
+        return 'https://www.'.$environment.'.paypal.com/cgi-bin/webscr';
     }
 
     /**
@@ -353,8 +353,8 @@ abstract class Kohana_PayPal {
      * @param Response $response
      * @return array
      */
-    public static function redirect_query(Response $response) {
-
+    public static function redirect_query(Response $response)
+	{
         throw new Kohana_Exception('This PayPal method does not implement redirection.');
     }
 
