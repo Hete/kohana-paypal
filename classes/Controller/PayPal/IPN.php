@@ -1,7 +1,3 @@
-<?php
+<?php defined('SYSPATH') or die('No direct script access.');
 
-defined('SYSPATH') or die('No direct script access.');
-
-class Controller_PayPal_IPN extends Kohana_Controller_PayPal_IPN {
-    
-}
+class Controller_PayPal_IPN extends Kohana_Controller_PayPal_IPN {}

@@ -1,7 +1,3 @@
-<?php
+<?php defined('SYSPATH') or die('No direct script access.');
 
-defined('SYSPATH') or die('No direct script access.');
-
-class PayPal_BillOutstandingAmount extends Kohana_PayPal_BillOutstandingAmount {
-    
-}
+class PayPal_BillOutstandingAmount extends Kohana_PayPal_BillOutstandingAmount {}

@@ -1,10 +1,8 @@
-<?php
-
-defined('SYSPATH') or die('No direct script access.');
+<?php defined('SYSPATH') or die('No direct script access.');
 
 /**
  * SetExpressCheckout
- *  
+ *
  * @package   Paypal
  * @author    Guillaume Poirier-Morency <guillaumepoiriermorency@gmail.com>
  * @copyright (c) 2014, Hète.ca Inc.
@@ -12,14 +10,14 @@ defined('SYSPATH') or die('No direct script access.');
  */
 class Kohana_PayPal_SetExpressCheckout extends PayPal {
 
-    public static function redirect_query(Response $response) {
+	public static function redirect_query(Response $response) 
+	{
+		$response = PayPal::parse_response($response);
 
-        $response = PayPal::parse_response($response);
-
-        return array(
-            'cmd' => '_express-checkout',
-            'token' => $response['TOKEN']
-        );
-    }
+		return array(
+				'cmd'   => '_express-checkout',
+				'token' => $response['TOKEN']
+			);
+	}
 
 }

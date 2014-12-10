@@ -1,15 +1,13 @@
-<?php
-
-defined('SYSPATH') or die('No direct script access.');
+<?php defined('SYSPATH') or die('No direct script access.');
 
 /**
  * Controller to deal with IPN requests.
  *
  * Implemented action deals with a specific txn_type value. You could implement
  * the express_checkout action for instance.
- * 
+ *
  * @link https://developer.paypal.com/webapps/developer/docs/classic/ipn/integration-guide/IPNandPDTVariables/
- * 
+ *
  * @package   PayPal
  * @category  Controllers
  * @author    Hète.ca Team
@@ -18,25 +16,25 @@ defined('SYSPATH') or die('No direct script access.');
  */
 class Kohana_Controller_PayPal_IPN extends Controller {
 
-    public function before() {
-
+    public function before()
+    {
         parent::before();
 
-        // Ensure that we are not sandboxing a live app or the opposite
-        if ((bool) $this->request->post('test_ipn') === (PayPal::$environment === PayPal::LIVE)) {
-            
-            throw new HTTP_Exception_403('Sandbox IPN notification on a live app.');
-        }
-
-        if (PayPal::$environment === PayPal::LIVE) {
+        if (PayPal::$environment === PayPal::LIVE)
+		{
+			// Ensure that we are not sandboxing a live app
+			if ($this->request->post('test_ipn'))
+			{
+				throw new HTTP_Exception_403('Sandbox IPN notification on a live app.');
+			}
 
             $response = Request::factory('https://www.paypal.com/cgi-bin/webscr')
                     ->query($this->request->post())
                     ->query('cmd', '_notify-validate')
                     ->execute();
 
-            if ($response->body() !== 'VERIFIED') {
-
+            if ($response->body() !== 'VERIFIED')
+			{
                 throw new HTTP_Exception_403('Posted data does not match against PayPal.');
             }
         }
