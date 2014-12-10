@@ -1,12 +1,10 @@
-<?php
+<?php defined('SYSPATH') or die('No direct script access.');
 
-defined('SYSPATH') or die('No direct script access.');
-
-if (Kohana::$config->load('paypal.' . PayPal::$environment . '.ipn_enabled') === TRUE) {
-
+if (Kohana::$config->load('paypal.'.PayPal::$environment.'.ipn_enabled') === TRUE) 
+{
     /**
      * Capture IPN (Instant Payment Notification).
-     * 
+     *
      * You have to configure your PayPal account to send its request to this
      * endpoint.
      */

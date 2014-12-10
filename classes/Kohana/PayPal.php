@@ -120,9 +120,8 @@ abstract class Kohana_PayPal {
 	 * @var array
 	 */
 	public static $MONTHS_OF_YEAR = array(
-			'NO_MONTH_SPECIFIED', 'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL',
-			'MAY', 'JUNE', 'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER',
-			'NOVEMBER', 'DECEMBER'
+			'NO_MONTH_SPECIFIED', 'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY',
+			'JUNE', 'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'
 			);
 
 	/**
@@ -182,8 +181,7 @@ abstract class Kohana_PayPal {
 	{
 		$config = Kohana::$config->load('paypal.'.PayPal::$environment);
 
-		// uses the cerificate api if the signature is not set
-		$api = ($config['signature'] === NULL) ? 'api' : 'api-3t';
+		$api = $config['signature'] ? 'api-3t' : 'api';
 
 		$url = 'https://'.$api.'.'.PayPal::$environment.'.paypal.com/nvp';
 
@@ -252,7 +250,7 @@ abstract class Kohana_PayPal {
 
 		parse_str($response->body(), $data);
 
-		if ($data === NULL) 
+		if ($data === NULL)
 		{
 			throw new Kohana_Exception('Couldn\'t parse Response body. :body', array(':body' => $response->body()));
 		}
@@ -297,7 +295,7 @@ abstract class Kohana_PayPal {
 	{
 		$expanded = array();
 
-		foreach ($array as $key => $value) 
+		foreach ($array as $key => $value)
 		{
 			Arr::set_path($expanded, preg_replace('/\_/', '.', $key), $value);
 		}
@@ -339,7 +337,7 @@ abstract class Kohana_PayPal {
 	{
 		$environment = PayPal::$environment;
 
-		if ($environment === PayPal::LIVE) 
+		if ($environment === PayPal::LIVE)
 		{
 			return 'https://www.paypal.com/cgi-bin/webscr';
 		}

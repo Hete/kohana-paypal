@@ -1,0 +1,14 @@
+language: php
+
+php:
+    - 5.3
+    - 5.4
+    - 5.5
+    - hhvm
+
+install:
+    - composer install
+    - vendor/bin/koharness
+    - cd /tmp/koharness
+
+script: vendor/bin/phpunit --bootstrap modules/unittest/bootstrap.php modules/paypal/tests
