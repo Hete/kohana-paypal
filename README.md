@@ -1,7 +1,7 @@
 PayPal module for the Kohana framework
 ======================================
 
-[![Build Status](https://travis-ci.org/Hete/kohana-paypal.svg?branch=3.3%2Fdevelop)](https://travis-ci.org/Hete/kohana-paypal)
+[![Build Status](https://travis-ci.org/Hete/kohana-paypal.svg?branch=3.4%2Fdevelop)](https://travis-ci.org/Hete/kohana-paypal)
 
 This module supports classic NVP PayPal api along with an IPN endpoint.
 
