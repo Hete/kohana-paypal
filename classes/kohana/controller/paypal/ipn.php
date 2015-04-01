@@ -22,13 +22,11 @@ class Kohana_Controller_PayPal_IPN extends Controller {
 
         parent::before();
 
-        // Ensure that we are not sandboxing a live app or the opposite
-        if ((bool) $this->request->post('test_ipn') === (PayPal::$environment === PayPal::LIVE)) {
-            
-            throw new HTTP_Exception_403('Sandbox IPN notification on a live app.');
-        }
-
         if (PayPal::$environment === PayPal::LIVE) {
+            // Ensure that we are not sandboxing a live app or the opposite
+            if ($this->request->post('test_ipn')) {
+                throw new HTTP_Exception_403('Sandbox IPN notification on a live app.');
+            }
 
             $response = Request::factory('https://www.paypal.com/cgi-bin/webscr')
                     ->query($this->request->post())
@@ -44,4 +42,5 @@ class Kohana_Controller_PayPal_IPN extends Controller {
         // Update action to be called
         $this->request->action($this->request->post('txn_type'));
     }
+
 }
